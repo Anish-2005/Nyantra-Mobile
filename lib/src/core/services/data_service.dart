@@ -139,8 +139,6 @@ class DataService {
           ? await _firestore
                 .collection('applications')
                 .where('beneficiaryId', whereIn: beneficiaryIds.take(10))
-                .orderBy('applicationDate', descending: true)
-                .limit(limit)
                 .get()
           : null;
 
@@ -252,7 +250,6 @@ class DataService {
             .collection('disbursements')
             .where('applicationId', whereIn: applicationIdsList.take(10))
             .where('status', isEqualTo: 'completed')
-            .orderBy('disbursementDate', descending: true)
             .limit(limit - activities.length)
             .get();
 
@@ -378,7 +375,10 @@ class DataService {
   }
 
   static Future<void> createBeneficiary(BeneficiaryModel beneficiary) async {
-    await _firestore.collection('beneficiaries').add(beneficiary.toFirestore());
+    await _firestore
+        .collection('beneficiaries')
+        .doc(beneficiary.id)
+        .set(beneficiary.toFirestore());
   }
 
   static Future<void> updateBeneficiary(
@@ -648,7 +648,10 @@ class DataService {
   }
 
   static Future<void> createGrievance(GrievanceModel grievance) async {
-    await _firestore.collection('grievances').add(grievance.toFirestore());
+    await _firestore
+        .collection('grievances')
+        .doc(grievance.id)
+        .set(grievance.toFirestore());
   }
 
   // Append a communication message to a grievance's `communication` array
