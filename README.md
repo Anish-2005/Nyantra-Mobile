@@ -84,3 +84,95 @@ The app is designed to work in low-connectivity rural environments, offering **o
 - Flutter Lints  
 - Firebase Crashlytics  
 - Firebase Analytics  
+
+### Mobile Application
+```bash
+flutter pub get      # Install dependencies
+flutter run          # Run on device/emulator
+flutter build apk    # Build Android APK
+flutter build ios    # Build iOS app
+```
+
+---
+
+## 🎨 Design System
+
+- **Themes**: Light/Dark mode with CSS custom properties
+- **Typography**: System fonts with fallbacks
+- **Color Palette**: Accessible color combinations
+- **Components**: Glassmorphism effects and smooth animations
+- **Responsive**: Mobile-first design with breakpoint system
+
+---
+
+## 🌐 Internationalization
+
+- **Languages**: English (en) and Hindi (hi)
+- **Implementation**: JSON-based translations with React Context
+- **Coverage**: Complete UI translation with RTL support ready
+- **Management**: Automated scripts for key extraction and validation
+
+---
+
+## 🔒 Security & Privacy
+
+- **Authentication**: Firebase Auth with email/password and Google sign-in
+- **Authorization**: Role-based access control (Admin/User)
+- **Data Encryption**: Firebase's built-in encryption at rest
+- **API Security**: Server-side validation and input sanitization
+- **Privacy**: GDPR-compliant data handling practices
+
+---
+
+## 📈 Performance
+
+- **Web Vitals**: Optimized for Core Web Vitals
+- **Bundle Size**: Tree-shaken imports and lazy loading
+- **Caching**: Intelligent caching strategies
+- **Mobile**: Optimized for low-bandwidth environments
+- **PWA Ready**: Service worker and offline capabilities
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+- Follow TypeScript strict mode
+- Use ESLint and Prettier for code formatting
+- Write tests for new features
+- Update documentation for API changes
+- Ensure accessibility compliance
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Built for disaster relief management under PM-CARES initiatives
+- Inspired by real-world humanitarian aid workflows
+- Thanks to the open-source community for the amazing tools and libraries
+
+---
+
+## 📞 Support
+
+For support and questions:
+- Create an issue in this repository
+- Contact the development team
+- Check the documentation in `/docs` folder
+
+---
+
+*Built with ❤️ for efficient disaster relief operations*
+
