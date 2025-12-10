@@ -95,6 +95,23 @@ flutter build ios    # Build iOS app
 
 ---
 
+### Mobile Application — Flutter
+
+| Category | Technology | Version | Purpose |
+|----------|-----------|---------|---------|
+| **Framework** | Flutter | 3.8+ | Cross-platform mobile development |
+| **Language** | Dart | 3.8+ | Optimized for mobile performance |
+| **State Management** | Provider | 6.1+ | Reactive state management pattern |
+| **Backend** | Firebase SDK | 3.0+ | Same backend as web application |
+| **Local Storage** | Shared Preferences | 2.2+ | Persistent local data storage |
+| **Offline Support** | SQLite (sqflite) | 2.3+ | Local database for offline functionality |
+| **PDF Generation** | pdf + printing | 3.10+ / 5.13+ | Mobile PDF creation and export |
+| **Speech Input** | speech_to_text | 7.0+ | Voice-enabled form filling |
+| **Navigation** | go_router | 14.0+ | Declarative routing and deep linking |
+| **Animations** | flutter_animate | 4.5+ | Declarative animations |
+| **Network** | http + connectivity_plus | 1.2+ / 6.0+ | API calls and network monitoring |
+
+
 ## 🎨 Design System
 
 - **Themes**: Light/Dark mode with CSS custom properties
