@@ -1,103 +1,269 @@
-# Nyantra Mobile 🚀
-
 <div align="center">
-  <img src="/assets/images/Logo-Light.png" alt="Nyantra Mobile Logo" width="120" height="120"/>
 
-  <h3>Direct Benefit Transfer Management System</h3>
-  <p><em>Empowering Social Justice Through Technology</em></p>
+# 🚀 Nyantra Mobile
 
-  [![Flutter](https://img.shields.io/badge/Flutter-3.8+-02569B?logo=flutter)](https://flutter.dev)
-  [![Dart](https://img.shields.io/badge/Dart-3.8+-0175C2?logo=dart)](https://dart.dev)
-  [![Firebase](https://img.shields.io/badge/Firebase-Enabled-FFCA28?logo=firebase)](https://firebase.google.com)
-  [![License](https://img.shields.io/badge/License-Private-red)]()
+### *Direct Benefit Transfer Made Simple*
+
+[![Flutter](https://img.shields.io/badge/Flutter-3.8+-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.8+-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Firebase](https://img.shields.io/badge/Firebase-Cloud-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com)
+[![Offline](https://img.shields.io/badge/Offline-First-success?logo=airplane&logoColor=white)]()
+
+**Empowering social justice through accessible, offline-first technology**
+
+[Features](#-what-it-does) • [Architecture](#-architecture) • [Tech Stack](#-tech-stack) • [Setup](#-quick-start)
 
 </div>
 
 ---
 
-## 📱 Overview
+## 🎯 What Is This?
 
-**Nyantra Mobile** is a comprehensive beneficiary-facing Flutter application designed to streamline the Direct Benefit Transfer (DBT) process for victims seeking relief under the SC/ST (Prevention of Atrocities) Act, 1989 and other social justice schemes. Built with a focus on accessibility, offline capability, and user empowerment, this app ensures transparent, efficient, and dignified assistance delivery.
+A **Flutter mobile app** that helps beneficiaries apply for and track government relief funds under the SC/ST Prevention of Atrocities Act. Think of it as your pocket-sized advocate that works even without internet.
 
-### 🎯 Mission
-Digitize and democratize access to government relief schemes with a mobile-first approach, ensuring no victim is left behind due to connectivity, literacy, or bureaucratic barriers.
+```mermaid
+graph LR
+    A[👤 Beneficiary] -->|Creates| B[📝 Application]
+    B -->|Submits| C[☁️ Cloud]
+    C -->|Approves| D[💰 Disbursement]
+    D -->|25% → 50% → 25%| E[✅ Relief Paid]
+    A -.->|Tracks| E
+    style A fill:#e1f5ff
+    style E fill:#d4edda
+```
 
-### 🌟 Core Capabilities
-- **Offline-First Architecture**: Full functionality in low/no connectivity areas
-- **Multi-Lingual Support**: English & Hindi (extensible)
-- **Accessibility-Focused**: Speech-to-text, screen readers, high-contrast modes
-- **Real-Time Synchronization**: Seamless data sync with Firestore backend
-- **End-to-End Security**: Firebase Auth + encrypted local storage
+### Why It Matters
+- 🌐 **Works Offline** – No internet? No problem. Data syncs when connected
+- 🗣️ **Voice Input** – Speak your application (accessibility++)
+- 🌍 **Multi-Language** – English & Hindi support
+- 🔒 **Secure** – Firebase Auth + encrypted local storage
 
 ---
 
-## ✨ Features
+## ✨ What It Does
 
-### 👥 Beneficiary Management
-- **Complete Profile System**: Create, view, edit beneficiary information
-- **Document Management**: Capture and upload supporting documents
-- **Aadhaar Integration**: Identity verification ready
-- **Multi-beneficiary Support**: Manage multiple beneficiary profiles
-- **Offline Data Entry**: Forms work without internet connectivity
+<table>
+<tr>
+<td width="50%">
 
-### 📝 Application Processing
-- **Guided Form Creation**: Step-by-step application wizard
-- **Draft Management**: Auto-save and resume incomplete applications
-- **Document Attachments**: Camera/gallery integration for evidence upload
-- **Speech-to-Text**: Voice input for accessibility
-- **Status Tracking**: Real-time application status updates
-- **Application History**: View and search past submissions
-- **Edit Capabilities**: Modify pending applications before submission
+### 👥 **Beneficiary Management**
+Register profiles, upload documents, manage identities
 
-### 💰 Disbursement Tracking
-- **Three-Stage Disbursement Visualization**:
-  - **Initial Release**: 25% immediate relief
-  - **Interim Payment**: 50% during processing
-  - **Final Settlement**: Remaining 25% upon completion
-- **Payment Timeline**: Visual representation of disbursement stages
-- **Receipt Generation**: Download payment receipts
-- **Transaction History**: Complete disbursement audit trail
-- **Alert Notifications**: Real-time payment status updates
+### 📝 **Application System**
+Create, edit, save drafts, submit applications
 
-### 📢 Grievance & Feedback System
-- **Grievance Submission**: Report issues with applications or payments
-- **Category-Based Classification**: Organized grievance types
-- **Status Tracking**: Monitor grievance resolution progress
-- **Feedback Mechanism**: Rate and review system experience
-- **Communication History**: View all interactions and responses
+### 💰 **Payment Tracking**
+Monitor 3-stage disbursement (25%→50%→25%)
 
-### 📊 Dashboard & Analytics
-- **Overview Statistics**: Key metrics at a glance
-- **Activity Timeline**: Recent actions and updates
-- **Quick Actions**: Shortcut access to common tasks
-- **Notification Center**: In-app alerts and updates
-- **Sync Status**: Visual indicator of data synchronization
+</td>
+<td width="50%">
 
-### 🎨 User Experience
-- **Material Design 3**: Modern, intuitive interface
-- **Adaptive Layouts**: Optimized for phones, tablets, and desktops
-- **Dark/Light Themes**: User preference-based theming
-- **Animated Backgrounds**: Engaging visual experience
-- **Responsive Navigation**: Context-aware sidebar and bottom navigation
-- **Accessibility Features**: Screen reader support, high-contrast modes
+### 📢 **Grievance Support**
+File complaints, track resolutions
 
-### 🔐 Security & Authentication
-- **Firebase Authentication**: Secure login system
-- **Google Sign-In**: One-tap authentication
-- **Role-Based Access Control**: Beneficiary and Officer roles
-- **Session Management**: Secure token handling
-- **Local Data Encryption**: SQLite database security
-- **Secure Document Storage**: Firebase Storage integration
+### 📊 **Dashboard Analytics**
+Overview of applications, payments, status
 
-### 🔄 Offline Capabilities
-- **Local-First Database**: SQLite for offline data persistence
-- **Intelligent Sync Engine**: Automatic background synchronization
-- **Conflict Resolution**: Smart merge strategies for concurrent edits
-- **Queue Management**: Pending operations tracked and retried
-- **Connectivity Detection**: Network status monitoring
-- **Offline Indicators**: Clear visual feedback on sync status
+### 🔄 **Smart Sync**
+Auto-sync when online, queue when offline
 
-### 📱 Additional Features
+</td>
+</tr>
+</table>
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    subgraph Client["📱 Mobile App"]
+        UI[Material Design UI]
+        Provider[State Management<br/>Provider Pattern]
+        Local[SQLite Database<br/>Offline Storage]
+    end
+    
+    subgraph Services["⚙️ Services Layer"]
+        Auth[🔐 Auth Service]
+        Sync[🔄 Sync Engine]
+        Firebase[☁️ Firebase Service]
+    end
+    
+    subgraph Backend["☁️ Cloud"]
+        Firestore[(Firestore DB)]
+        Storage[(Storage)]
+        FAuth[Firebase Auth]
+    end
+    
+    UI --> Provider
+    Provider --> Local
+    Provider --> Services
+    Sync -.->|Queue & Retry| Local
+    Services --> Backend
+    
+    style Client fill:#e3f2fd
+    style Services fill:#fff3e0
+    style Backend fill:#f3e5f5
+```
+
+### Data Flow
+1. **Offline Mode**: User creates application → Saves to SQLite → Queued for sync
+2. **Online Mode**: Sync engine uploads → Firestore stores → Real-time updates
+3. **Conflict Resolution**: Smart merge when offline edits clash with server
+
+---
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Flutter 3.8+ |
+| **Language** | Dart 3.8+ |
+| **State** | Provider |
+| **Backend** | Firebase (Auth, Firestore, Storage) |
+| **Database** | SQLite |
+| **Navigation** | GoRouter |
+| **i18n** | flutter_localizations |
+| **Features** | Speech-to-Text, PDF Generation, Connectivity Detection |
+
+</div>
+
+### Key Dependencies
+```yaml
+firebase_core, firebase_auth, cloud_firestore   # Backend
+provider                                         # State management  
+sqflite                                         # Offline storage
+go_router                                       # Navigation
+speech_to_text, pdf, printing                   # Advanced features
+connectivity_plus                               # Network detection
+```
+
+---
+
+## 📂 Project Structure
+
+```
+lib/
+├── main.dart                          # App entry point
+└── src/
+    ├── core/                          # Core functionality
+    │   ├── providers/                 # State management
+    │   │   ├── auth_provider.dart
+    │   │   ├── connectivity_provider.dart
+    │   │   └── sync_status_provider.dart
+    │   └── services/                  # Business logic
+    │       ├── firebase_service.dart
+    │       └── sync_service.dart
+    ├── features/                      # Feature modules
+    │   ├── auth/                      # Authentication
+    │   ├── beneficiaries/             # Profile management
+    │   ├── dashboard/                 # Main dashboard
+    │   ├── disbursements/             # Payment tracking
+    │   └── grievances/                # Complaint system
+    └── components/                    # Reusable widgets
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Flutter 3.8+ installed ([Get Flutter](https://flutter.dev))
+- Firebase project configured
+- Android Studio / VS Code
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repo-url>
+cd Nyantra-Mobile
+
+# Install dependencies
+flutter pub get
+
+# Run the app
+flutter run
+```
+
+### Firebase Setup
+1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+2. Add `google-services.json` to `android/app/`
+3. Enable Authentication, Firestore, and Storage
+4. Update Firebase configuration in the app
+
+---
+
+## 🎨 Features Showcase
+
+### Offline-First Design
+```mermaid
+sequenceDiagram
+    participant User
+    participant App
+    participant SQLite
+    participant Firestore
+    
+    User->>App: Create Application
+    App->>SQLite: Save Locally
+    App-->>User: ✅ Saved
+    
+    Note over App,Firestore: When connection available
+    
+    App->>Firestore: Sync Data
+    Firestore-->>App: Confirm
+    App->>SQLite: Update Sync Status
+```
+
+### Disbursement Stages
+```
+┌──────────────────────────────────────────────┐
+│  Application Approved                        │
+└──────────────────────────────────────────────┘
+           │
+           ├─► Stage 1: 25% Immediate Relief ✅
+           │
+           ├─► Stage 2: 50% Interim Payment  ⏳
+           │
+           └─► Stage 3: 25% Final Settlement ⏳
+```
+
+---
+
+## 🔒 Security Features
+
+- ✅ Firebase Authentication with Google Sign-In
+- ✅ Role-based access control (Beneficiary/Officer)
+- ✅ Encrypted local database
+- ✅ Secure document storage
+- ✅ Session management & token handling
+
+---
+
+## 🌍 Localization
+
+Supports multiple languages with easy extensibility:
+- 🇬🇧 English
+- 🇮🇳 Hindi
+- Easily add more in `assets/translations/`
+
+---
+
+## 📄 License
+
+Private Project – All Rights Reserved
+
+---
+
+<div align="center">
+
+**Built with ❤️ for Social Justice**
+
+*Making government relief accessible to everyone, everywhere*
+
+</div>
 - **PDF Generation**: Export applications and receipts
 - **Email Integration**: Send documents and notifications
 - **Internationalization**: Easy language switching
