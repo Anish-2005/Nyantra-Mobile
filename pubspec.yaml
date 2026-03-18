@@ -65,7 +65,7 @@ dependencies:
 
   # Speech Recognition
   speech_to_text: ^7.0.0
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
 
   # Email functionality
   http: ^1.2.1
