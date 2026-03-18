@@ -66,7 +66,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     final localeProvider = context.watch<LocaleProvider>();
     final themeProvider = context.watch<ThemeProvider>();
     final authProvider = context.watch<AuthProvider>();
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = themeProvider.isDark;
     final selectedGradient = LinearGradient(
       colors: [theme.colorScheme.primary, theme.colorScheme.tertiary],
     );

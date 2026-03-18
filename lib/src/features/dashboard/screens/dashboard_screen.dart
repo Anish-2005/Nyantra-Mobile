@@ -7,6 +7,7 @@ import '../../../core/providers/locale_provider.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/connectivity_provider.dart';
 import '../../../core/providers/sync_status_provider.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../../core/services/sync_service.dart';
 import '../../../components/animated_background.dart';
 import '../widgets/sidebar.dart';
@@ -67,13 +68,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tokens = theme.extension<AppThemeTokens>();
+    final themeProvider = context.watch<ThemeProvider>();
     final localeProvider = context.watch<LocaleProvider>();
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 1024;
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = themeProvider.isDark;
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Make scaffold transparent
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
           // Animated Background

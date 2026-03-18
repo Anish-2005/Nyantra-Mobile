@@ -43,64 +43,103 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tokens = theme.extension<AppThemeTokens>();
-    if (tokens == null) {
-      return ColoredBox(color: theme.scaffoldBackgroundColor);
-    }
+    final isDarkTheme = widget.isDark || theme.brightness == Brightness.dark;
+    final shouldForceDarkPalette =
+        isDarkTheme && (tokens == null || _isLightBackground(tokens));
+    final backgroundGradient = shouldForceDarkPalette
+        ? const LinearGradient(
+            colors: [Color(0xFF030B1A), Color(0xFF08203D), Color(0xFF0B2A4F)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          )
+        : tokens?.backgroundGradient ??
+              const LinearGradient(
+                colors: [Color(0xFFFFFFFF), Color(0xFFFFFAF3), Color(0xFFFFF1E1)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              );
+    final brandStart = shouldForceDarkPalette
+        ? const Color(0xFF0EA5E9)
+        : tokens?.brandStart ?? const Color(0xFF155EEF);
+    final brandEnd = shouldForceDarkPalette
+        ? const Color(0xFF7DD3FC)
+        : tokens?.brandEnd ?? const Color(0xFF0E9384);
+    final tertiaryColor = shouldForceDarkPalette
+        ? const Color(0xFF60A5FA)
+        : theme.colorScheme.tertiary;
+    final textureGridColor = shouldForceDarkPalette
+        ? const Color(0xFF2C4D72)
+        : tokens?.borderSubtle ?? const Color(0xFFE7E5E4);
 
-    return Stack(
-      children: [
-        DecoratedBox(decoration: BoxDecoration(gradient: tokens.backgroundGradient)),
-        AnimatedBuilder(
-          animation: _orbController,
-          builder: (context, child) {
-            return Stack(
-              children: [
-                _floatingOrb(
-                  alignment: const Alignment(-0.9, -0.85),
-                  color: tokens.brandStart,
-                  size: 280,
-                  glow: 58,
-                  t: _orbController.value,
-                  dxAmplitude: 40,
-                  dyAmplitude: 28,
+    return SizedBox.expand(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(gradient: backgroundGradient),
+            child: const SizedBox.expand(),
+          ),
+          AnimatedBuilder(
+            animation: _orbController,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  _floatingOrb(
+                    alignment: const Alignment(-0.9, -0.85),
+                    color: brandStart,
+                    size: 280,
+                    glow: 58,
+                    t: _orbController.value,
+                    dxAmplitude: 40,
+                    dyAmplitude: 28,
+                  ),
+                  _floatingOrb(
+                    alignment: const Alignment(0.85, -0.55),
+                    color: brandEnd,
+                    size: 220,
+                    glow: 52,
+                    t: 1 - _orbController.value,
+                    dxAmplitude: 35,
+                    dyAmplitude: 18,
+                  ),
+                  _floatingOrb(
+                    alignment: const Alignment(0.9, 0.92),
+                    color: tertiaryColor,
+                    size: 320,
+                    glow: 64,
+                    t: _orbController.value * 0.8,
+                    dxAmplitude: 26,
+                    dyAmplitude: 34,
+                  ),
+                ],
+              );
+            },
+          ),
+          AnimatedBuilder(
+            animation: _textureController,
+            builder: (context, child) {
+              return CustomPaint(
+                painter: _TexturePainter(
+                  animation: _textureController.value,
+                  tokenColor: brandStart,
+                  gridColor: textureGridColor,
                 ),
-                _floatingOrb(
-                  alignment: const Alignment(0.85, -0.55),
-                  color: tokens.brandEnd,
-                  size: 220,
-                  glow: 52,
-                  t: 1 - _orbController.value,
-                  dxAmplitude: 35,
-                  dyAmplitude: 18,
-                ),
-                _floatingOrb(
-                  alignment: const Alignment(0.9, 0.92),
-                  color: theme.colorScheme.tertiary,
-                  size: 320,
-                  glow: 64,
-                  t: _orbController.value * 0.8,
-                  dxAmplitude: 26,
-                  dyAmplitude: 34,
-                ),
-              ],
-            );
-          },
-        ),
-        AnimatedBuilder(
-          animation: _textureController,
-          builder: (context, child) {
-            return CustomPaint(
-              painter: _TexturePainter(
-                animation: _textureController.value,
-                tokenColor: tokens.brandStart,
-                gridColor: tokens.borderSubtle,
-              ),
-              size: MediaQuery.of(context).size,
-            );
-          },
-        ),
-      ],
+                child: const SizedBox.expand(),
+              );
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  bool _isLightBackground(AppThemeTokens tokens) {
+    final averageLuminance =
+        (tokens.backgroundStart.computeLuminance() +
+                tokens.backgroundMid.computeLuminance() +
+                tokens.backgroundEnd.computeLuminance()) /
+            3;
+    return averageLuminance > 0.32;
   }
 
   Widget _floatingOrb({

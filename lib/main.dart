@@ -9,6 +9,7 @@ import 'src/core/providers/locale_provider.dart';
 import 'src/core/providers/auth_provider.dart';
 import 'src/core/providers/connectivity_provider.dart';
 import 'src/core/providers/sync_status_provider.dart';
+import 'src/core/theme/app_theme.dart' as app_theme;
 import 'src/core/constants/app_constants.dart';
 import 'src/core/utils/app_logger.dart';
 import 'src/features/auth/screens/login_screen.dart';
@@ -87,7 +88,9 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp(
             title: AppConstants.appTitle,
-            theme: themeProvider.themeData,
+            theme: app_theme.AppTheme.light(),
+            darkTheme: app_theme.AppTheme.dark(),
+            themeMode: themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
             locale: localeProvider.flutterLocale,
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,

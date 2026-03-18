@@ -24,17 +24,15 @@ class ThemeProvider extends ChangeNotifier {
   Future<void> _loadTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final themeString = prefs.getString(_themeKey);
+      final themeString = prefs.getString(_themeKey)?.trim().toLowerCase();
 
-      if (themeString == 'light') {
+      if (themeString == 'light' || themeString == 'apptheme.light') {
         _theme = AppTheme.light;
-      } else if (themeString == 'dark') {
+      } else if (themeString == 'dark' || themeString == 'apptheme.dark') {
         _theme = AppTheme.dark;
       } else {
-        // Check system preference
-        final brightness =
-            WidgetsBinding.instance.platformDispatcher.platformBrightness;
-        _theme = brightness == Brightness.dark ? AppTheme.dark : AppTheme.light;
+        // Keep explicit dark default when nothing valid is persisted.
+        _theme = AppTheme.dark;
       }
     } catch (error, stackTrace) {
       AppLogger.warning(
@@ -50,6 +48,7 @@ class ThemeProvider extends ChangeNotifier {
 
   Future<void> setTheme(AppTheme theme) async {
     _theme = theme;
+    notifyListeners();
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_themeKey, theme.name);
@@ -60,7 +59,6 @@ class ThemeProvider extends ChangeNotifier {
         stackTrace: stackTrace,
       );
     }
-    notifyListeners();
   }
 
   void toggleTheme() {
