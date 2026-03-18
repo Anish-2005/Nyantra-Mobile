@@ -13,6 +13,8 @@ import '../../../components/animated_background.dart';
 import '../widgets/sidebar.dart';
 import '../widgets/dashboard_content.dart';
 import '../widgets/sync_status_widget.dart';
+import 'profile_page.dart';
+import 'settings_page.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -208,7 +210,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                             ),
                             onSelected: (value) {
-                              if (value == 'logout') {
+                              if (value == 'profile') {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const ProfilePage(),
+                                  ),
+                                );
+                              } else if (value == 'settings') {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const SettingsPage(),
+                                  ),
+                                );
+                              } else if (value == 'logout') {
                                 context.read<AuthProvider>().signOut();
                               }
                             },
