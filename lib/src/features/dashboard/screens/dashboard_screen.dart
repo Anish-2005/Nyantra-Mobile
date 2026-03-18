@@ -64,6 +64,76 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  Widget _buildTopBarTitle(
+    ThemeData theme,
+    LocaleProvider localeProvider,
+    bool isMobile,
+  ) {
+    final pageTitle = _getPageTitle(localeProvider);
+
+    if (isMobile) {
+      return Text(
+        pageTitle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.2,
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          pageTitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.2,
+          ),
+        ),
+        Text(
+          localeProvider.translate('nav.brandName'),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectivityButton(AppThemeTokens? tokens) {
+    return Consumer<ConnectivityProvider>(
+      builder: (context, connectivityProvider, child) {
+        final isOnline = connectivityProvider.isOnline;
+        final statusColor = isOnline
+            ? (tokens?.online ?? Colors.green)
+            : (tokens?.offline ?? Colors.red);
+
+        return Tooltip(
+          message: isOnline ? 'Online' : 'Offline',
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+            ),
+            child: Icon(
+              isOnline ? Icons.wifi_rounded : Icons.wifi_off_rounded,
+              size: 18,
+              color: statusColor,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -103,7 +173,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: AppBar(
-                        toolbarHeight: 70,
+                        toolbarHeight: 66,
                         backgroundColor: Colors.transparent,
                         elevation: 0,
                         automaticallyImplyLeading: false,
@@ -116,75 +186,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               )
                             : const SizedBox.shrink(),
-                        titleSpacing: isMobile ? 6 : 16,
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _getPageTitle(localeProvider),
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            Text(
-                              localeProvider.translate('nav.brandName'),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
+                        titleSpacing: isMobile ? 4 : 16,
+                        title: _buildTopBarTitle(theme, localeProvider, isMobile),
                         actions: [
-                          Consumer<ConnectivityProvider>(
-                            builder: (context, connectivityProvider, child) {
-                              final statusColor = connectivityProvider.isOnline
-                                  ? (tokens?.online ?? Colors.green)
-                                  : (tokens?.offline ?? Colors.red);
-                              final statusText = connectivityProvider.isOnline
-                                  ? 'Online'
-                                  : 'Offline';
-                              return Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: statusColor.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(999),
-                                  border: Border.all(
-                                    color: statusColor.withValues(alpha: 0.28),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      connectivityProvider.isOnline
-                                          ? Icons.wifi
-                                          : Icons.wifi_off,
-                                      size: 14,
-                                      color: statusColor,
-                                    ),
-                                    if (!isMobile) ...[
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        statusText,
-                                        style: theme.textTheme.labelSmall
-                                            ?.copyWith(
-                                              color: statusColor,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              );
-                            },
+                          Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: _buildConnectivityButton(tokens),
                           ),
                           const Padding(
-                            padding: EdgeInsets.only(right: 8),
-                            child: SyncStatusWidget(),
+                            padding: EdgeInsets.only(right: 6),
+                            child: SyncStatusWidget(compact: true),
                           ),
                           PopupMenuButton<String>(
                             color: theme.cardColor.withValues(alpha: 0.95),

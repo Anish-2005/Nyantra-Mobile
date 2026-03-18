@@ -4,7 +4,9 @@ import '../../../core/providers/sync_status_provider.dart';
 import '../../../core/theme/app_theme.dart';
 
 class SyncStatusWidget extends StatelessWidget {
-  const SyncStatusWidget({super.key});
+  final bool compact;
+
+  const SyncStatusWidget({super.key, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
@@ -25,55 +27,106 @@ class SyncStatusWidget extends StatelessWidget {
               : syncProvider.hasPendingSync
               ? () => _triggerManualSync(context)
               : null,
-          borderRadius: BorderRadius.circular(999),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: statusColor.withValues(alpha: 0.35),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: (tokens?.shadowSoft ?? Colors.black12).withValues(
-                    alpha: 0.18,
-                  ),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
+          borderRadius: BorderRadius.circular(compact ? 12 : 999),
+          child: Tooltip(
+            message: syncProvider.getStatusText(),
+            child: Container(
+              width: compact ? 38 : null,
+              height: compact ? 38 : null,
+              padding: compact
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: statusColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(compact ? 12 : 999),
+                border: Border.all(
+                  color: statusColor.withValues(alpha: 0.35),
+                  width: 1,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  syncProvider.getStatusIcon(),
-                  size: 14,
-                  color: statusColor,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  syncProvider.getStatusText(),
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: statusColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                if (syncProvider.status == SyncStatus.syncing)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 6),
-                    child: SizedBox(
-                      width: 12,
-                      height: 12,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(statusColor),
-                      ),
+                boxShadow: [
+                  BoxShadow(
+                    color: (tokens?.shadowSoft ?? Colors.black12).withValues(
+                      alpha: 0.18,
                     ),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
-              ],
+                ],
+              ),
+              child: compact
+                  ? Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Center(
+                          child: Icon(
+                            syncProvider.getStatusIcon(),
+                            size: 18,
+                            color: statusColor,
+                          ),
+                        ),
+                        if (syncProvider.status == SyncStatus.syncing)
+                          Positioned(
+                            right: 4,
+                            bottom: 4,
+                            child: SizedBox(
+                              width: 10,
+                              height: 10,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.8,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  statusColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (syncProvider.hasPendingSync &&
+                            syncProvider.status != SyncStatus.syncing)
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: Container(
+                              width: 7,
+                              height: 7,
+                              decoration: BoxDecoration(
+                                color: statusColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                      ],
+                    )
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          syncProvider.getStatusIcon(),
+                          size: 14,
+                          color: statusColor,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          syncProvider.getStatusText(),
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: statusColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        if (syncProvider.status == SyncStatus.syncing)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 6),
+                            child: SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  statusColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
             ),
           ),
         );

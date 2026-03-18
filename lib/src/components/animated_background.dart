@@ -123,6 +123,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
                   animation: _textureController.value,
                   tokenColor: brandStart,
                   gridColor: textureGridColor,
+                  isDarkPalette: isDarkTheme,
                 ),
                 child: const SizedBox.expand(),
               );
@@ -178,11 +179,13 @@ class _TexturePainter extends CustomPainter {
   final double animation;
   final Color tokenColor;
   final Color gridColor;
+  final bool isDarkPalette;
 
   const _TexturePainter({
     required this.animation,
     required this.tokenColor,
     required this.gridColor,
+    required this.isDarkPalette,
   });
 
   @override
@@ -193,7 +196,7 @@ class _TexturePainter extends CustomPainter {
     final linePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = gridColor.withValues(alpha: 0.16);
+      ..color = gridColor.withValues(alpha: isDarkPalette ? 0.09 : 0.16);
     final random = Random(17);
 
     const spacing = 58.0;
@@ -220,6 +223,7 @@ class _TexturePainter extends CustomPainter {
   bool shouldRepaint(covariant _TexturePainter oldDelegate) {
     return oldDelegate.animation != animation ||
         oldDelegate.tokenColor != tokenColor ||
-        oldDelegate.gridColor != gridColor;
+        oldDelegate.gridColor != gridColor ||
+        oldDelegate.isDarkPalette != isDarkPalette;
   }
 }
