@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -155,12 +153,12 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
                     gradient: LinearGradient(
                       colors: widget.isDark
                           ? [
-                              const Color(0xFF06B6D4).withOpacity(0.3),
-                              const Color(0xFF8B5CF6).withOpacity(0.3),
+                              const Color(0xFF06B6D4).withValues(alpha: 0.3),
+                              const Color(0xFF8B5CF6).withValues(alpha: 0.3),
                             ]
                           : [
-                              const Color(0xFFFB7185).withOpacity(0.2),
-                              const Color(0xFFFB923C).withOpacity(0.2),
+                              const Color(0xFFFB7185).withValues(alpha: 0.2),
+                              const Color(0xFFFB923C).withValues(alpha: 0.2),
                             ],
                     ),
                     boxShadow: [
@@ -169,7 +167,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
                             (widget.isDark
                                     ? const Color(0xFF06B6D4)
                                     : const Color(0xFFFB7185))
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -198,12 +196,12 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
                     gradient: LinearGradient(
                       colors: widget.isDark
                           ? [
-                              const Color(0xFF8B5CF6).withOpacity(0.3),
-                              const Color(0xFF06B6D4).withOpacity(0.3),
+                              const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                              const Color(0xFF06B6D4).withValues(alpha: 0.3),
                             ]
                           : [
-                              const Color(0xFFFB923C).withOpacity(0.2),
-                              const Color(0xFFFB7185).withOpacity(0.2),
+                              const Color(0xFFFB923C).withValues(alpha: 0.2),
+                              const Color(0xFFFB7185).withValues(alpha: 0.2),
                             ],
                     ),
                     boxShadow: [
@@ -212,7 +210,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
                             (widget.isDark
                                     ? const Color(0xFF8B5CF6)
                                     : const Color(0xFFFB923C))
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                         blurRadius: 15,
                         spreadRadius: 3,
                       ),
@@ -239,7 +237,7 @@ class ParticlePainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.fill
       ..color = (isDark ? const Color(0xFF06B6D4) : const Color(0xFFFB7185))
-          .withOpacity(0.1);
+          .withValues(alpha: 0.1);
 
     final random = Random(42); // Fixed seed for consistent pattern
 

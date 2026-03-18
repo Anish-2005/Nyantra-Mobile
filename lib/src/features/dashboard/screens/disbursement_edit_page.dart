@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -177,7 +175,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
                           color: theme.cardColor,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: theme.dividerColor.withOpacity(0.1),
+                            color: theme.dividerColor.withValues(alpha: 0.1),
                           ),
                         ),
                         child: Column(
@@ -203,12 +201,12 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
                         padding: const EdgeInsets.all(16),
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.errorContainer.withOpacity(
+                          color: theme.colorScheme.errorContainer.withValues(alpha: 
                             0.1,
                           ),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: theme.colorScheme.error.withOpacity(0.3),
+                            color: theme.colorScheme.error.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -236,7 +234,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
                         color: theme.cardColor,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Column(
@@ -276,7 +274,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
                                     decoration: InputDecoration(
                                       labelText: 'Total Installments',
                                       filled: true,
-                                      fillColor: theme.cardColor.withOpacity(
+                                      fillColor: theme.cardColor.withValues(alpha: 
                                         0.03,
                                       ),
                                       border: OutlineInputBorder(
@@ -311,7 +309,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
                                     decoration: InputDecoration(
                                       labelText: 'Completed Installments',
                                       filled: true,
-                                      fillColor: theme.cardColor.withOpacity(
+                                      fillColor: theme.cardColor.withValues(alpha: 
                                         0.03,
                                       ),
                                       border: OutlineInputBorder(
@@ -431,7 +429,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );

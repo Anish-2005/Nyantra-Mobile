@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -140,11 +138,14 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
       _beneficiaryError = null;
     });
 
+    final locale = context.read<LocaleProvider>();
+
     try {
       final beneficiaryDoc = await FirebaseFirestore.instance
           .collection('beneficiaries')
           .doc(beneficiaryId.trim())
           .get();
+      if (!mounted) return;
 
       if (beneficiaryDoc.exists) {
         final data = beneficiaryDoc.data()!;
@@ -199,15 +200,14 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
         setState(() {
           _beneficiaryValid = false;
           _checkingBeneficiary = false;
-          final locale = context.read<LocaleProvider>();
           _beneficiaryError = locale.translate('extracted.beneficiaryNotFound');
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _beneficiaryValid = false;
         _checkingBeneficiary = false;
-        final locale = context.read<LocaleProvider>();
         _beneficiaryError = locale.translate(
           'extracted.errorValidatingBeneficiary',
         );
@@ -343,11 +343,11 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
             colors: isDark
                 ? [
                     theme.scaffoldBackgroundColor,
-                    theme.scaffoldBackgroundColor.withOpacity(0.8),
+                    theme.scaffoldBackgroundColor.withValues(alpha: 0.8),
                   ]
                 : [
                     theme.scaffoldBackgroundColor,
-                    theme.scaffoldBackgroundColor.withOpacity(0.9),
+                    theme.scaffoldBackgroundColor.withValues(alpha: 0.9),
                   ],
           ),
         ),
@@ -384,7 +384,7 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                                   (isDark
                                           ? const Color(0xFF06B6D4)
                                           : const Color(0xFFFB7185))
-                                      .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                               blurRadius: 20,
                               spreadRadius: 2,
                               offset: const Offset(0, 8),
@@ -401,10 +401,10 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                                     vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                      color: Colors.white.withOpacity(0.3),
+                                      color: Colors.white.withValues(alpha: 0.3),
                                       width: 1,
                                     ),
                                   ),
@@ -460,7 +460,7 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                                     'applications.fillDetailsBelow',
                                   ),
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                     height: 1.4,
                                   ),
                                 )
@@ -695,12 +695,12 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.dividerColor.withOpacity(0.1),
+          color: theme.dividerColor.withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
             blurRadius: 10,
             spreadRadius: 0,
             offset: const Offset(0, 2),
@@ -717,12 +717,12 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
               gradient: LinearGradient(
                 colors: isDark
                     ? [
-                        theme.cardColor.withOpacity(0.8),
-                        theme.cardColor.withOpacity(0.6),
+                        theme.cardColor.withValues(alpha: 0.8),
+                        theme.cardColor.withValues(alpha: 0.6),
                       ]
                     : [
-                        theme.cardColor.withOpacity(0.9),
-                        theme.cardColor.withOpacity(0.7),
+                        theme.cardColor.withValues(alpha: 0.9),
+                        theme.cardColor.withValues(alpha: 0.7),
                       ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -780,7 +780,7 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -825,7 +825,7 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -881,7 +881,7 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                       ? Colors.red
                       : _beneficiaryValid
                       ? Colors.green
-                      : theme.dividerColor.withOpacity(0.5),
+                      : theme.dividerColor.withValues(alpha: 0.5),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -946,7 +946,7 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -1005,7 +1005,7 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

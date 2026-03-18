@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -60,7 +58,7 @@ class LoadingState extends StatelessWidget {
             Text(
               message!,
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.textTheme.bodyLarge?.color?.withOpacity(0.8),
+                color: theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.8),
               ),
               textAlign: TextAlign.center,
             ).animate(

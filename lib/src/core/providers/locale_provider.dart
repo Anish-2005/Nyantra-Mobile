@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +18,7 @@ class LocaleProvider extends ChangeNotifier {
       _locale == AppLocale.en ? const Locale('en') : const Locale('hi');
 
   LocaleProvider() {
-    _loadLocale();
+    unawaited(_loadLocale());
   }
 
   LocaleProvider.forTest({

@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -19,7 +17,7 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData get themeData => _getThemeData();
 
   ThemeProvider() {
-    _loadTheme();
+    unawaited(_loadTheme());
   }
 
   Future<void> _loadTheme() async {
@@ -78,8 +76,8 @@ class ThemeProvider extends ChangeNotifier {
           ? const Color(0xFF0F172A)
           : const Color(0xFFF8FAFC),
       cardColor: isDark
-          ? const Color(0xFF1E293B).withOpacity(0.7)
-          : const Color(0xFFFFFFFF).withOpacity(0.8),
+          ? const Color(0xFF1E293B).withValues(alpha: 0.7)
+          : const Color(0xFFFFFFFF).withValues(alpha: 0.8),
       textTheme: baseTheme.textTheme.apply(
         fontFamily: 'Inter',
         bodyColor: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
@@ -89,8 +87,8 @@ class ThemeProvider extends ChangeNotifier {
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: isDark
-            ? const Color(0xFF1E293B).withOpacity(0.95)
-            : const Color(0xFFFFFFFF).withOpacity(0.95),
+            ? const Color(0xFF1E293B).withValues(alpha: 0.95)
+            : const Color(0xFFFFFFFF).withValues(alpha: 0.95),
         foregroundColor: isDark
             ? const Color(0xFFF1F5F9)
             : const Color(0xFF0F172A),

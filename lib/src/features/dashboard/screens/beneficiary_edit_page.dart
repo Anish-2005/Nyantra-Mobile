@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/beneficiary_model.dart';
@@ -356,7 +354,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -397,7 +395,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -431,7 +429,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -467,7 +465,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );

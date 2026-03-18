@@ -3,7 +3,8 @@ import 'dart:io';
 
 const _enPath = 'assets/translations/en.json';
 const _hiPath = 'assets/translations/hi.json';
-const _placeholderRegex = RegExp(r'\{[a-zA-Z0-9_.]+\}');
+const _singleBracePlaceholderRegex = RegExp(r'\{([a-zA-Z0-9_.]+)\}');
+const _doubleBracePlaceholderRegex = RegExp(r'\{\{([a-zA-Z0-9_.]+)\}\}');
 
 void main() {
   final enFile = File(_enPath);
@@ -15,8 +16,12 @@ void main() {
     return;
   }
 
-  final enJson = jsonDecode(enFile.readAsStringSync()) as Map<String, dynamic>;
-  final hiJson = jsonDecode(hiFile.readAsStringSync()) as Map<String, dynamic>;
+  final enJson = _loadLocaleMap(_enPath);
+  final hiJson = _loadLocaleMap(_hiPath);
+  if (enJson == null || hiJson == null) {
+    exitCode = 1;
+    return;
+  }
 
   final enLeaves = <String, dynamic>{};
   final hiLeaves = <String, dynamic>{};
@@ -82,6 +87,24 @@ void main() {
   );
 }
 
+Map<String, dynamic>? _loadLocaleMap(String path) {
+  final file = File(path);
+  try {
+    final decoded = jsonDecode(file.readAsStringSync());
+    if (decoded is! Map<String, dynamic>) {
+      stderr.writeln('Invalid locale root in $path: expected JSON object.');
+      return null;
+    }
+    return decoded;
+  } on FormatException catch (error) {
+    stderr.writeln('Invalid JSON in $path: ${error.message}');
+    return null;
+  } catch (error) {
+    stderr.writeln('Failed to read $path: $error');
+    return null;
+  }
+}
+
 void _collectLeaves(
   dynamic node,
   String path,
@@ -107,8 +130,21 @@ void _collectLeaves(
 }
 
 Set<String> _extractPlaceholders(String input) {
-  return _placeholderRegex
-      .allMatches(input)
-      .map((match) => match.group(0)!)
-      .toSet();
+  final placeholders = <String>{};
+
+  for (final match in _doubleBracePlaceholderRegex.allMatches(input)) {
+    final name = match.group(1);
+    if (name != null) {
+      placeholders.add(name);
+    }
+  }
+
+  for (final match in _singleBracePlaceholderRegex.allMatches(input)) {
+    final name = match.group(1);
+    if (name != null) {
+      placeholders.add(name);
+    }
+  }
+
+  return placeholders;
 }

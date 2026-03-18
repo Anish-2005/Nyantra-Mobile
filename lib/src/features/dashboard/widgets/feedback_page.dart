@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use, avoid_unnecessary_containers
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -318,7 +318,7 @@ class _FeedbackPageState extends State<FeedbackPage>
                                 (isDark
                                         ? const Color(0xFF8B5CF6)
                                         : const Color(0xFFF59E0B))
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: 2,
                             offset: const Offset(0, 8),
@@ -335,10 +335,10 @@ class _FeedbackPageState extends State<FeedbackPage>
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
+                                    color: Colors.white.withValues(alpha: 0.3),
                                     width: 1,
                                   ),
                                 ),
@@ -389,7 +389,7 @@ class _FeedbackPageState extends State<FeedbackPage>
                                   'extracted.feedback.helpImprove',
                                 ),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                   height: 1.4,
                                 ),
                               )
@@ -413,10 +413,10 @@ class _FeedbackPageState extends State<FeedbackPage>
                         Container(
                           margin: const EdgeInsets.only(bottom: 20),
                           decoration: BoxDecoration(
-                            color: theme.cardColor.withOpacity(0.8),
+                            color: theme.cardColor.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: theme.dividerColor.withOpacity(0.1),
+                              color: theme.dividerColor.withValues(alpha: 0.1),
                             ),
                           ),
                           child: TabBar(
@@ -468,10 +468,10 @@ class _FeedbackPageState extends State<FeedbackPage>
                         Expanded(
                           child: Container(
                             decoration: BoxDecoration(
-                              color: theme.cardColor.withOpacity(0.8),
+                              color: theme.cardColor.withValues(alpha: 0.8),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: theme.dividerColor.withOpacity(0.1),
+                                color: theme.dividerColor.withValues(alpha: 0.1),
                               ),
                             ),
                             child: TabBarView(
@@ -623,7 +623,7 @@ class _FeedbackPageState extends State<FeedbackPage>
             Icon(
               Icons.account_circle,
               size: 64,
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -679,7 +679,7 @@ class _FeedbackPageState extends State<FeedbackPage>
                 Icon(
                   Icons.feedback_outlined,
                   size: 64,
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -726,7 +726,7 @@ class _FeedbackPageState extends State<FeedbackPage>
                           decoration: BoxDecoration(
                             color: _getStatusColor(
                               feedback.status,
-                            ).withOpacity(0.1),
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: _getStatusColor(feedback.status),

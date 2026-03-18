@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/sync_status_provider.dart';
@@ -24,7 +22,7 @@ class SyncStatusWidget extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: syncProvider.getStatusColor().withOpacity(0.1),
+              color: syncProvider.getStatusColor().withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: syncProvider.getStatusColor(),

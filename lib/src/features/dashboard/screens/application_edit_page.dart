@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -327,7 +327,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
                   decoration: InputDecoration(
                     labelText: locale.translate('extracted.address'),
                     filled: true,
-                    fillColor: theme.cardColor.withOpacity(0.03),
+                    fillColor: theme.cardColor.withValues(alpha: 0.03),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -431,7 +431,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -470,7 +470,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         suffixIcon: Icon(Icons.calendar_today),
       ),
@@ -505,7 +505,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -537,7 +537,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );

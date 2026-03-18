@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously, avoid_unnecessary_containers
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -70,7 +70,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                 (isDark
                                         ? const Color(0xFF06B6D4)
                                         : const Color(0xFFFB7185))
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: 2,
                             offset: const Offset(0, 8),
@@ -87,10 +87,10 @@ class _ReportsPageState extends State<ReportsPage> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
+                                    color: Colors.white.withValues(alpha: 0.3),
                                     width: 1,
                                   ),
                                 ),
@@ -143,7 +143,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                   'reports.pageSubtitle',
                                 ),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                   height: 1.4,
                                 ),
                               )
@@ -166,10 +166,10 @@ class _ReportsPageState extends State<ReportsPage> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),
                         decoration: BoxDecoration(
-                          color: theme.cardColor.withOpacity(0.8),
+                          color: theme.cardColor.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: theme.dividerColor.withOpacity(0.1),
+                            color: theme.dividerColor.withValues(alpha: 0.1),
                           ),
                         ),
                         child: TextField(
@@ -181,7 +181,7 @@ class _ReportsPageState extends State<ReportsPage> {
                             prefixIcon: Icon(
                               Icons.search,
                               color: theme.textTheme.bodyMedium?.color
-                                  ?.withOpacity(0.6),
+                                  ?.withValues(alpha: 0.6),
                             ),
                             border: InputBorder.none,
                             contentPadding: const EdgeInsets.symmetric(
@@ -198,10 +198,10 @@ class _ReportsPageState extends State<ReportsPage> {
                         margin: const EdgeInsets.only(bottom: 20),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: theme.cardColor.withOpacity(0.8),
+                          color: theme.cardColor.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: theme.dividerColor.withOpacity(0.1),
+                            color: theme.dividerColor.withValues(alpha: 0.1),
                           ),
                         ),
                         child: Row(
@@ -389,7 +389,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                   Icon(
                                     Icons.error_outline,
                                     size: 64,
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
@@ -447,7 +447,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                     Icons.file_copy_outlined,
                                     size: 64,
                                     color: theme.textTheme.bodyMedium?.color
-                                        ?.withOpacity(0.5),
+                                        ?.withValues(alpha: 0.5),
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
@@ -475,10 +475,10 @@ class _ReportsPageState extends State<ReportsPage> {
                                       horizontal: 32,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: theme.cardColor.withOpacity(0.5),
+                                      color: theme.cardColor.withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: theme.dividerColor.withOpacity(
+                                        color: theme.dividerColor.withValues(alpha: 
                                           0.2,
                                         ),
                                       ),
@@ -569,9 +569,9 @@ class _ReportsPageState extends State<ReportsPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.8),
+        color: theme.cardColor.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -589,7 +589,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     decoration: BoxDecoration(
                       color: _getCategoryColor(
                         report.category,
-                      ).withOpacity(0.1),
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -613,7 +613,7 @@ class _ReportsPageState extends State<ReportsPage> {
                           report.id,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.textTheme.bodySmall?.color
-                                ?.withOpacity(0.6),
+                                ?.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -625,7 +625,7 @@ class _ReportsPageState extends State<ReportsPage> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(report.status).withOpacity(0.1),
+                      color: _getStatusColor(report.status).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
@@ -646,7 +646,7 @@ class _ReportsPageState extends State<ReportsPage> {
               Text(
                 report.description,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -686,7 +686,7 @@ class _ReportsPageState extends State<ReportsPage> {
                   Text(
                     '${localeProvider.translate('reports.type')}: ${report.type}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                      color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                     ),
                   ),
                   ElevatedButton.icon(
@@ -698,7 +698,7 @@ class _ReportsPageState extends State<ReportsPage> {
                       size: 16,
                       color: report.status == 'completed'
                           ? Colors.white
-                          : theme.textTheme.bodySmall?.color?.withOpacity(0.5),
+                          : theme.textTheme.bodySmall?.color?.withValues(alpha: 0.5),
                     ),
                     label: Text(localeProvider.translate('reports.download')),
                     style: ElevatedButton.styleFrom(
@@ -739,7 +739,7 @@ class _ReportsPageState extends State<ReportsPage> {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -808,7 +808,7 @@ class _ReportsPageState extends State<ReportsPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: theme.scaffoldBackgroundColor.withOpacity(0.9),
+      backgroundColor: theme.scaffoldBackgroundColor.withValues(alpha: 0.9),
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.8,
         decoration: BoxDecoration(
@@ -827,7 +827,7 @@ class _ReportsPageState extends State<ReportsPage> {
                 ),
                 border: Border(
                   bottom: BorderSide(
-                    color: theme.dividerColor.withOpacity(0.1),
+                    color: theme.dividerColor.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -839,7 +839,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     decoration: BoxDecoration(
                       color: _getCategoryColor(
                         report.category,
-                      ).withOpacity(0.1),
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -863,7 +863,7 @@ class _ReportsPageState extends State<ReportsPage> {
                           report.id,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.textTheme.bodySmall?.color
-                                ?.withOpacity(0.6),
+                                ?.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -891,12 +891,12 @@ class _ReportsPageState extends State<ReportsPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(report.status).withOpacity(0.1),
+                        color: _getStatusColor(report.status).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: _getStatusColor(
                             report.status,
-                          ).withOpacity(0.3),
+                          ).withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -923,10 +923,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.cardColor.withOpacity(0.5),
+                        color: theme.cardColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Column(
@@ -964,10 +964,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.cardColor.withOpacity(0.5),
+                        color: theme.cardColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Column(
@@ -1009,10 +1009,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.cardColor.withOpacity(0.5),
+                        color: theme.cardColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Column(
@@ -1056,10 +1056,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.cardColor.withOpacity(0.5),
+                        color: theme.cardColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Text(
@@ -1069,7 +1069,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                 'reports.no_description_available',
                               ),
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                          color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 
                             0.8,
                           ),
                           height: 1.5,
@@ -1133,7 +1133,7 @@ class _ReportsPageState extends State<ReportsPage> {
               '$label:',
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -1141,7 +1141,7 @@ class _ReportsPageState extends State<ReportsPage> {
             child: Text(
               value,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.9),
+                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.9),
               ),
             ),
           ),

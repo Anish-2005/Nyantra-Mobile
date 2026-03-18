@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -172,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen>
                   Text(
                         localeProvider.translate('hero.description'),
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.textTheme.bodyLarge?.color?.withOpacity(
+                          color: theme.textTheme.bodyLarge?.color?.withValues(alpha: 
                             0.8,
                           ),
                           height: 1.5,
@@ -260,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   (isDark
                                           ? const Color(0xFF06B6D4)
                                           : const Color(0xFFFB7185))
-                                      .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                               blurRadius: 20,
                               spreadRadius: 2,
                               offset: const Offset(0, 8),
@@ -345,10 +343,10 @@ class _LoginScreenState extends State<LoginScreen>
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: theme.cardColor.withOpacity(0.1),
+                          color: theme.cardColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: theme.dividerColor.withOpacity(0.2),
+                            color: theme.dividerColor.withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -505,12 +503,12 @@ class _LoginScreenState extends State<LoginScreen>
                       gradient: LinearGradient(
                         colors: isDark
                             ? [
-                                const Color(0xFF06B6D4).withOpacity(0.3),
-                                const Color(0xFF8B5CF6).withOpacity(0.3),
+                                const Color(0xFF06B6D4).withValues(alpha: 0.3),
+                                const Color(0xFF8B5CF6).withValues(alpha: 0.3),
                               ]
                             : [
-                                const Color(0xFFFB7185).withOpacity(0.2),
-                                const Color(0xFFFB923C).withOpacity(0.2),
+                                const Color(0xFFFB7185).withValues(alpha: 0.2),
+                                const Color(0xFFFB923C).withValues(alpha: 0.2),
                               ],
                       ),
                       boxShadow: [
@@ -519,7 +517,7 @@ class _LoginScreenState extends State<LoginScreen>
                               (isDark
                                       ? const Color(0xFF06B6D4)
                                       : const Color(0xFFFB7185))
-                                  .withOpacity(0.3),
+                                  .withValues(alpha: 0.3),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -547,12 +545,12 @@ class _LoginScreenState extends State<LoginScreen>
                       gradient: LinearGradient(
                         colors: isDark
                             ? [
-                                const Color(0xFFF59E0B).withOpacity(0.3),
-                                const Color(0xFF8B5CF6).withOpacity(0.3),
+                                const Color(0xFFF59E0B).withValues(alpha: 0.3),
+                                const Color(0xFF8B5CF6).withValues(alpha: 0.3),
                               ]
                             : [
-                                const Color(0xFFFB923C).withOpacity(0.2),
-                                const Color(0xFFF59E0B).withOpacity(0.2),
+                                const Color(0xFFFB923C).withValues(alpha: 0.2),
+                                const Color(0xFFF59E0B).withValues(alpha: 0.2),
                               ],
                       ),
                       boxShadow: [
@@ -561,7 +559,7 @@ class _LoginScreenState extends State<LoginScreen>
                               (isDark
                                       ? const Color(0xFFF59E0B)
                                       : const Color(0xFFFB923C))
-                                  .withOpacity(0.3),
+                                  .withValues(alpha: 0.3),
                           blurRadius: 15,
                           spreadRadius: 3,
                         ),
@@ -604,7 +602,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   (isDark
                                           ? const Color(0xFF06B6D4)
                                           : const Color(0xFFFB7185))
-                                      .withOpacity(0.4),
+                                      .withValues(alpha: 0.4),
                               blurRadius: 30,
                               spreadRadius: 5,
                               offset: const Offset(0, 8),
@@ -661,7 +659,7 @@ class _LoginScreenState extends State<LoginScreen>
                   Text(
                         '${localeProvider.translate('auth.greeting')} ${authProvider.user?.displayName?.split(' ').first ?? 'User'}!',
                         style: theme.textTheme.headlineSmall?.copyWith(
-                          color: theme.textTheme.bodyLarge?.color?.withOpacity(
+                          color: theme.textTheme.bodyLarge?.color?.withValues(alpha: 
                             0.9,
                           ),
                           fontWeight: FontWeight.w500,
@@ -747,7 +745,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   (isDark
                                           ? const Color(0xFF06B6D4)
                                           : const Color(0xFFFB7185))
-                                      .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                               blurRadius: 20,
                               spreadRadius: 2,
                               offset: const Offset(0, 8),
@@ -835,10 +833,10 @@ class _LoginScreenState extends State<LoginScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.1),
+        color: theme.cardColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.dividerColor.withOpacity(0.2),
+          color: theme.dividerColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -850,7 +848,7 @@ class _LoginScreenState extends State<LoginScreen>
             decoration: BoxDecoration(
               color:
                   (isDark ? const Color(0xFF06B6D4) : const Color(0xFFFB7185))
-                      .withOpacity(0.1),
+                      .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -875,7 +873,7 @@ class _LoginScreenState extends State<LoginScreen>
                 Text(
                   description,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                 ),
@@ -897,10 +895,10 @@ class _LoginScreenState extends State<LoginScreen>
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -927,7 +925,7 @@ class _LoginScreenState extends State<LoginScreen>
             label,
             style: TextStyle(
               fontSize: isSmallScreen ? 12 : 14,
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
@@ -951,7 +949,7 @@ class ParticlePainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.fill
       ..color = (isDark ? const Color(0xFF06B6D4) : const Color(0xFFFB7185))
-          .withOpacity(0.2);
+          .withValues(alpha: 0.2);
 
     final random = Random(42); // Fixed seed for consistent pattern
     for (int i = 0; i < 50; i++) {

@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/locale_provider.dart';
@@ -82,7 +80,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // AppBar equivalent
               Container(
                 height: kToolbarHeight + MediaQuery.of(context).padding.top,
-                color: theme.appBarTheme.backgroundColor?.withOpacity(0.95),
+                color: theme.appBarTheme.backgroundColor?.withValues(alpha: 0.95),
                 child: AppBar(
                   backgroundColor: Colors.transparent,
                   elevation: 0,
@@ -124,8 +122,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: connectivityProvider.isOnline
-                                ? Colors.green.withOpacity(0.1)
-                                : Colors.red.withOpacity(0.1),
+                                ? Colors.green.withValues(alpha: 0.1)
+                                : Colors.red.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: connectivityProvider.isOnline
@@ -171,13 +169,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     // User Menu
                     PopupMenuButton<String>(
-                      color: theme.cardColor.withOpacity(0.95),
+                      color: theme.cardColor.withValues(alpha: 0.95),
                       elevation: 12,
-                      shadowColor: theme.shadowColor.withOpacity(0.3),
+                      shadowColor: theme.shadowColor.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                         side: BorderSide(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),

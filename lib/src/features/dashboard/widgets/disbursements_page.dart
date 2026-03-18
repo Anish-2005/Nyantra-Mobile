@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously, avoid_unnecessary_containers, prefer_final_fields
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers, prefer_final_fields
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -167,7 +167,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                 (isDark
                                         ? const Color(0xFF06B6D4)
                                         : const Color(0xFFFB7185))
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: 2,
                             offset: const Offset(0, 8),
@@ -184,10 +184,10 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
+                                    color: Colors.white.withValues(alpha: 0.3),
                                     width: 1,
                                   ),
                                 ),
@@ -242,7 +242,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                   'dashboard.disbursements.pageSubtitle',
                                 ),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                   height: 1.4,
                                 ),
                               )
@@ -275,7 +275,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                               Icon(
                                 Icons.error_outline,
                                 size: 64,
-                                color: theme.colorScheme.error.withOpacity(0.5),
+                                color: theme.colorScheme.error.withValues(alpha: 0.5),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -313,7 +313,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                 Icons.account_balance_wallet_outlined,
                                 size: 64,
                                 color: theme.textTheme.bodyMedium?.color
-                                    ?.withOpacity(0.3),
+                                    ?.withValues(alpha: 0.3),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -352,7 +352,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                 color: theme.cardColor,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: theme.dividerColor.withOpacity(0.1),
+                                  color: theme.dividerColor.withValues(alpha: 0.1),
                                   width: 1,
                                 ),
                               ),
@@ -409,7 +409,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                             ),
                                             border: Border.all(
                                               color: theme.dividerColor
-                                                  .withOpacity(0.1),
+                                                  .withValues(alpha: 0.1),
                                             ),
                                           ),
                                           child: Row(
@@ -479,7 +479,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                                 .textTheme
                                                                 .bodyMedium
                                                                 ?.color
-                                                                ?.withOpacity(
+                                                                ?.withValues(alpha: 
                                                                   0.7,
                                                                 ),
                                                           ),
@@ -497,7 +497,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                       .textTheme
                                                       .bodyMedium
                                                       ?.color
-                                                      ?.withOpacity(0.5),
+                                                      ?.withValues(alpha: 0.5),
                                                 ),
                                               ),
                                             ],
@@ -518,7 +518,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                   .textTheme
                                                   .bodyMedium
                                                   ?.color
-                                                  ?.withOpacity(0.5),
+                                                  ?.withValues(alpha: 0.5),
                                             ),
                                       ),
                                     ),
@@ -542,7 +542,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                         color: theme.cardColor,
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(
-                                          color: theme.dividerColor.withOpacity(
+                                          color: theme.dividerColor.withValues(alpha: 
                                             0.1,
                                           ),
                                           width: 1,
@@ -550,7 +550,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                         boxShadow: [
                                           BoxShadow(
                                             color: theme.shadowColor
-                                                .withOpacity(0.1),
+                                                .withValues(alpha: 0.1),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
                                           ),
@@ -583,7 +583,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                                   .textTheme
                                                                   .bodyMedium
                                                                   ?.color
-                                                                  ?.withOpacity(
+                                                                  ?.withValues(alpha: 
                                                                     0.7,
                                                                   ),
                                                               fontWeight:
@@ -616,7 +616,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                   decoration: BoxDecoration(
                                                     color: disbursement
                                                         .statusColor
-                                                        .withOpacity(0.1),
+                                                        .withValues(alpha: 0.1),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           20,
@@ -624,7 +624,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                     border: Border.all(
                                                       color: disbursement
                                                           .statusColor
-                                                          .withOpacity(0.2),
+                                                          .withValues(alpha: 0.2),
                                                       width: 1,
                                                     ),
                                                   ),
@@ -642,7 +642,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                                   .textTheme
                                                                   .bodyMedium
                                                                   ?.color
-                                                                  ?.withOpacity(
+                                                                  ?.withValues(alpha: 
                                                                     0.7,
                                                                   ),
                                                               fontWeight:
@@ -884,7 +884,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                           color: theme
                                                               .colorScheme
                                                               .primaryContainer
-                                                              .withOpacity(0.1),
+                                                              .withValues(alpha: 0.1),
                                                           borderRadius:
                                                               BorderRadius.circular(
                                                                 8,
@@ -893,7 +893,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                             color: theme
                                                                 .colorScheme
                                                                 .primary
-                                                                .withOpacity(
+                                                                .withValues(alpha: 
                                                                   0.2,
                                                                 ),
                                                           ),
@@ -949,7 +949,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                                               .textTheme
                                                                               .bodyMedium
                                                                               ?.color
-                                                                              ?.withOpacity(
+                                                                              ?.withValues(alpha: 
                                                                                 0.6,
                                                                               ),
                                                                         ),
@@ -979,7 +979,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                                               .textTheme
                                                                               .bodyMedium
                                                                               ?.color
-                                                                              ?.withOpacity(
+                                                                              ?.withValues(alpha: 
                                                                                 0.6,
                                                                               ),
                                                                         ),
@@ -1089,7 +1089,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
         Icon(
           icon,
           size: 16,
-          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+          color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
         ),
         const SizedBox(width: 6),
         Expanded(
@@ -1099,7 +1099,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
               Text(
                 label,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
                   fontWeight: FontWeight.w500,
                 ),
               ),

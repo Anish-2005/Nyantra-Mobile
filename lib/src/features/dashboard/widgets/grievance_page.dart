@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, curly_braces_in_flow_control_structures, annotate_overrides, avoid_unnecessary_containers
+// ignore_for_file: curly_braces_in_flow_control_structures, annotate_overrides, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -465,7 +465,7 @@ class _GrievancePageState extends State<GrievancePage> {
                                 (isDark
                                         ? const Color(0xFF06B6D4)
                                         : const Color(0xFFFB7185))
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: 2,
                             offset: const Offset(0, 8),
@@ -482,10 +482,10 @@ class _GrievancePageState extends State<GrievancePage> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
+                                    color: Colors.white.withValues(alpha: 0.3),
                                     width: 1,
                                   ),
                                 ),
@@ -552,7 +552,7 @@ class _GrievancePageState extends State<GrievancePage> {
                                   'grievances.pageSubtitle',
                                 ),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                   height: 1.4,
                                 ),
                               )
@@ -576,10 +576,10 @@ class _GrievancePageState extends State<GrievancePage> {
                         Container(
                           margin: const EdgeInsets.only(bottom: 20),
                           decoration: BoxDecoration(
-                            color: theme.cardColor.withOpacity(0.8),
+                            color: theme.cardColor.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: theme.dividerColor.withOpacity(0.1),
+                              color: theme.dividerColor.withValues(alpha: 0.1),
                             ),
                           ),
                           child: TextField(
@@ -590,7 +590,7 @@ class _GrievancePageState extends State<GrievancePage> {
                               prefixIcon: Icon(
                                 Icons.search,
                                 color: theme.textTheme.bodyMedium?.color
-                                    ?.withOpacity(0.6),
+                                    ?.withValues(alpha: 0.6),
                               ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
@@ -625,7 +625,7 @@ class _GrievancePageState extends State<GrievancePage> {
                                         Icons.error_outline,
                                         size: 64,
                                         color: theme.textTheme.bodyMedium?.color
-                                            ?.withOpacity(0.7),
+                                            ?.withValues(alpha: 0.7),
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
@@ -711,13 +711,13 @@ class _GrievancePageState extends State<GrievancePage> {
                                           ),
                                           border: Border.all(
                                             color: theme.dividerColor
-                                                .withOpacity(0.1),
+                                                .withValues(alpha: 0.1),
                                             width: 1,
                                           ),
                                           boxShadow: [
                                             BoxShadow(
                                               color: theme.shadowColor
-                                                  .withOpacity(0.1),
+                                                  .withValues(alpha: 0.1),
                                               blurRadius: 8,
                                               offset: const Offset(0, 2),
                                             ),
@@ -1027,7 +1027,7 @@ class _GrievancePageState extends State<GrievancePage> {
         Icon(
           icon,
           size: 16,
-          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+          color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
         ),
         const SizedBox(width: 6),
         Expanded(
@@ -1345,8 +1345,8 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: isMe
-                                ? theme.primaryColor.withOpacity(0.9)
-                                : theme.cardColor.withOpacity(0.8),
+                                ? theme.primaryColor.withValues(alpha: 0.9)
+                                : theme.cardColor.withValues(alpha: 0.8),
                             borderRadius: isMe
                                 ? const BorderRadius.only(
                                     topLeft: Radius.circular(16),
@@ -1361,7 +1361,7 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
                                     bottomRight: Radius.circular(16),
                                   ),
                             border: Border.all(
-                              color: theme.dividerColor.withOpacity(0.1),
+                              color: theme.dividerColor.withValues(alpha: 0.1),
                             ),
                           ),
                           child: Padding(
@@ -1433,10 +1433,10 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Container(
                 decoration: BoxDecoration(
-                  color: theme.cardColor.withOpacity(0.8),
+                  color: theme.cardColor.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: theme.dividerColor.withOpacity(0.1),
+                    color: theme.dividerColor.withValues(alpha: 0.1),
                   ),
                 ),
                 padding: const EdgeInsets.all(16),
@@ -1473,8 +1473,8 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
                       ),
                       style: IconButton.styleFrom(
                         backgroundColor: _isListening
-                            ? Colors.red.withOpacity(0.1)
-                            : theme.primaryColor.withOpacity(0.1),
+                            ? Colors.red.withValues(alpha: 0.1)
+                            : theme.primaryColor.withValues(alpha: 0.1),
                         padding: const EdgeInsets.all(10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),

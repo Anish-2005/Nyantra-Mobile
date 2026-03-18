@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, avoid_unnecessary_containers
+// ignore_for_file: avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -87,15 +87,15 @@ class _OverviewPageState extends State<OverviewPage> {
     return Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: theme.cardColor.withOpacity(0.9),
+            color: theme.cardColor.withValues(alpha: 0.9),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: theme.dividerColor.withOpacity(0.1),
+              color: theme.dividerColor.withValues(alpha: 0.1),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.1),
+                color: theme.shadowColor.withValues(alpha: 0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -129,7 +129,7 @@ class _OverviewPageState extends State<OverviewPage> {
               Text(
                 label,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -160,15 +160,15 @@ class _OverviewPageState extends State<OverviewPage> {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: theme.cardColor.withOpacity(0.9),
+              color: theme.cardColor.withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: theme.dividerColor.withOpacity(0.1),
+                color: theme.dividerColor.withValues(alpha: 0.1),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: theme.shadowColor.withOpacity(0.1),
+                  color: theme.shadowColor.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -180,7 +180,7 @@ class _OverviewPageState extends State<OverviewPage> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.primaryColor.withOpacity(0.1),
+                    color: theme.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: theme.primaryColor, size: 24),
@@ -198,7 +198,7 @@ class _OverviewPageState extends State<OverviewPage> {
                 Text(
                   subtitle,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
@@ -328,7 +328,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                   (isDark
                                           ? const Color(0xFF06B6D4)
                                           : const Color(0xFFFB7185))
-                                      .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                               blurRadius: 20,
                               spreadRadius: 2,
                               offset: const Offset(0, 8),
@@ -345,10 +345,10 @@ class _OverviewPageState extends State<OverviewPage> {
                                     vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                      color: Colors.white.withOpacity(0.3),
+                                      color: Colors.white.withValues(alpha: 0.3),
                                       width: 1,
                                     ),
                                   ),
@@ -404,7 +404,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                     'dashboard.dashboardSubtitle',
                                   ),
                                   style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                     height: 1.4,
                                   ),
                                 )
@@ -594,15 +594,15 @@ class _OverviewPageState extends State<OverviewPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: theme.cardColor.withOpacity(0.8),
+                      color: theme.cardColor.withValues(alpha: 0.8),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: theme.dividerColor.withOpacity(0.1),
+                        color: theme.dividerColor.withValues(alpha: 0.1),
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.shadowColor.withOpacity(0.1),
+                          color: theme.shadowColor.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -655,7 +655,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                                 .textTheme
                                                 .bodyMedium
                                                 ?.color
-                                                ?.withOpacity(0.6),
+                                                ?.withValues(alpha: 0.6),
                                           ),
                                       textAlign: TextAlign.center,
                                     ),
