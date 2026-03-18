@@ -9,9 +9,22 @@ enum AppLocale { en, hi }
 
 class LocaleProvider extends ChangeNotifier {
   static const String _localeKey = 'nyantra_locale';
+  static const Map<String, String> _enBuiltInFallbacks = {
+    'copy_id': 'Copy ID',
+    'extracted.loading': 'Loading...',
+    'extracted.viewCertificate': 'View Certificate',
+    'grievances.categories.disbursement-delay': 'Disbursement Delay',
+  };
+  static const Map<String, String> _hiBuiltInFallbacks = {
+    'copy_id': 'आईडी कॉपी करें',
+    'extracted.loading': 'लोड हो रहा है...',
+    'extracted.viewCertificate': 'प्रमाणपत्र देखें',
+    'grievances.categories.disbursement-delay': 'वितरण में देरी',
+  };
   AppLocale _locale = AppLocale.hi;
   Map<String, dynamic> _translations = {};
   Map<String, dynamic> _fallbackTranslations = {};
+  bool _translationsLoaded = false;
 
   AppLocale get locale => _locale;
   Locale get flutterLocale =>
@@ -61,11 +74,13 @@ class LocaleProvider extends ChangeNotifier {
   }
 
   Future<void> _loadTranslations() async {
+    _translationsLoaded = false;
     final localeFile = _locale == AppLocale.en ? 'en.json' : 'hi.json';
     _translations = await _loadTranslationFile(localeFile);
     _fallbackTranslations = _locale == AppLocale.en
         ? _translations
         : await _loadTranslationFile('en.json');
+    _translationsLoaded = true;
   }
 
   Future<Map<String, dynamic>> _loadTranslationFile(String localeFile) async {
@@ -112,10 +127,17 @@ class LocaleProvider extends ChangeNotifier {
   }
 
   String translate(String key, [Map<String, dynamic>? args]) {
+    if (!_translationsLoaded) {
+      return key;
+    }
     try {
       dynamic value = _resolveValue(_translations, key);
       value ??= _resolveValue(_fallbackTranslations, key);
       if (value == null) {
+        final builtInValue = _resolveBuiltInFallback(key);
+        if (builtInValue != null) {
+          return args != null ? _interpolate(builtInValue, args) : builtInValue;
+        }
         AppLogger.debug('Missing translation key: $key');
         return key;
       }
@@ -154,7 +176,14 @@ class LocaleProvider extends ChangeNotifier {
     return result;
   }
 
+  String? _resolveBuiltInFallback(String key) {
+    if (_locale == AppLocale.hi) {
+      return _hiBuiltInFallbacks[key] ?? _enBuiltInFallbacks[key];
+    }
+    return _enBuiltInFallbacks[key];
+  }
+
   String Function(String, [Map<String, dynamic>?]) get t => translate;
 
-  bool get hasTranslations => _translations.isNotEmpty;
+  bool get hasTranslations => _translationsLoaded && _translations.isNotEmpty;
 }

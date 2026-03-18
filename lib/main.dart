@@ -77,6 +77,8 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, localeProvider, authProvider, child) {
           final home = initializationError != null
               ? InitializationErrorScreen(error: initializationError!)
+              : !localeProvider.hasTranslations
+              ? const SplashScreen()
               : authProvider.isLoading
               ? const SplashScreen()
               : authProvider.isAuthenticated

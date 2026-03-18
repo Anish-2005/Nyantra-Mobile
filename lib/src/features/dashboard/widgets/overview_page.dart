@@ -193,6 +193,8 @@ class _OverviewPageState extends State<OverviewPage> {
                     color: theme.textTheme.bodyLarge?.color,
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -279,10 +281,28 @@ class _OverviewPageState extends State<OverviewPage> {
     }
   }
 
+  int _gridCrossAxisCount(double width) {
+    if (width < 360) {
+      return 1;
+    }
+    return 2;
+  }
+
+  double _actionGridAspectRatio(double width) {
+    if (width < 360) {
+      return 1.22;
+    }
+    if (width < 460) {
+      return 0.82;
+    }
+    return 0.98;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localeProvider = context.watch<LocaleProvider>();
+    final screenWidth = MediaQuery.of(context).size.width;
     if (_isLoading) {
       return LoadingState(message: localeProvider.translate('common.loading'));
     }
@@ -333,7 +353,8 @@ class _OverviewPageState extends State<OverviewPage> {
 
                       // Stats Grid
                       GridView.count(
-                        crossAxisCount: 2,
+                        crossAxisCount: _gridCrossAxisCount(screenWidth),
+                        childAspectRatio: _actionGridAspectRatio(screenWidth),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         mainAxisSpacing: 16,
@@ -405,7 +426,8 @@ class _OverviewPageState extends State<OverviewPage> {
 
                       // Action Cards
                       GridView.count(
-                        crossAxisCount: 2,
+                        crossAxisCount: _gridCrossAxisCount(screenWidth),
+                        childAspectRatio: _actionGridAspectRatio(screenWidth),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         mainAxisSpacing: 16,
