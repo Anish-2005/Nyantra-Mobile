@@ -132,7 +132,7 @@ class _BeneficiaryFormPageState extends State<BeneficiaryFormPage> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(title: const Text('Add Beneficiary')),
       body: Stack(
         children: [
@@ -400,4 +400,3 @@ class _BeneficiaryFormPageState extends State<BeneficiaryFormPage> {
     );
   }
 }
-

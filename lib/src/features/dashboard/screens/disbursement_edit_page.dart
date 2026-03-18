@@ -139,7 +139,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
     final locale = context.watch<LocaleProvider>();
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           locale.translate('dashboard.disbursements.editDisbursement'),

@@ -124,7 +124,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
     final locale = context.watch<LocaleProvider>();
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(locale.translate('beneficiaries.editBeneficiary')),
         actions: [
