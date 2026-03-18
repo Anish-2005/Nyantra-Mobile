@@ -12,7 +12,6 @@ import '../../../core/services/sync_service.dart';
 import '../../../components/animated_background.dart';
 import '../widgets/sidebar.dart';
 import '../widgets/dashboard_content.dart';
-import '../widgets/sync_status_widget.dart';
 import 'profile_page.dart';
 import 'settings_page.dart';
 
@@ -194,10 +193,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Padding(
                             padding: const EdgeInsets.only(right: 6),
                             child: _buildConnectivityButton(tokens),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(right: 6),
-                            child: SyncStatusWidget(compact: true),
                           ),
                           PopupMenuButton<String>(
                             color: theme.cardColor.withValues(alpha: 0.95),
