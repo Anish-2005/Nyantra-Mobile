@@ -28,6 +28,9 @@ jobs:
       - name: Validate translations
         run: dart run tool/validate_translations.dart
 
+      - name: Audit translation keys
+        run: dart run tool/audit_translation_keys.dart --top=20
+
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed lib test tool
 
@@ -35,4 +38,7 @@ jobs:
         run: flutter analyze
 
       - name: Run tests
-        run: flutter test --reporter expanded
+        run: flutter test --coverage --reporter expanded
+
+      - name: Enforce minimum coverage
+        run: dart run tool/check_coverage.dart --min=1

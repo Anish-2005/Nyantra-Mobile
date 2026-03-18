@@ -10,9 +10,11 @@ Run these before creating a pull request:
 
 ```bash
 dart run tool/validate_translations.dart
-dart format lib test
+dart run tool/audit_translation_keys.dart --top=20
+dart format --output=none --set-exit-if-changed lib test tool
 flutter analyze
-flutter test
+flutter test --coverage
+dart run tool/check_coverage.dart --min=1
 ```
 
 PowerShell shortcut:

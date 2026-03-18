@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 - Shared Firestore query batching helper for safe `whereIn` access.
 - Translation validation script and Windows quality-check script.
 - CI workflow, contribution guide, and security policy.
+- Translation key audit script (`tool/audit_translation_keys.dart`).
+- Coverage threshold script (`tool/check_coverage.dart`).
+- Repository-layer modules for dashboard, applications, beneficiaries, disbursements, grievances, feedback, and users.
+- Sync status provider tests.
 
 ### Changed
 - App startup now includes guarded Firebase initialization and global error logging.
@@ -16,3 +20,4 @@ All notable changes to this project will be documented in this file.
 - Firestore collection usage is standardized through constants.
 - Locale provider now supports fallback translation lookup and logs load/persistence failures.
 - Theme provider now logs persistence/load failures.
+- `DataService` is now a thin facade delegating to repository modules.

@@ -21,6 +21,7 @@ lib/
   src/
     components/
     core/
+      repositories/
       models/
       providers/
       services/
@@ -65,9 +66,11 @@ Run these commands before opening a PR:
 
 ```bash
 dart run tool/validate_translations.dart
-dart format lib test
+dart run tool/audit_translation_keys.dart --top=20
+dart format --output=none --set-exit-if-changed lib test tool
 flutter analyze
-flutter test
+flutter test --coverage
+dart run tool/check_coverage.dart --min=1
 ```
 
 A GitHub Actions pipeline also runs format checks, analyze, and tests on push/PR.

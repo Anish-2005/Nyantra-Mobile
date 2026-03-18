@@ -9,8 +9,9 @@
 ## Core Modules
 - `lib/src/core/models`: domain data models
 - `lib/src/core/constants`: shared app and Firestore constants
+- `lib/src/core/repositories`: domain-level data access and query orchestration
 - `lib/src/core/providers`: app state and user/session context
-- `lib/src/core/services`: Firebase, sync, and data access logic
+- `lib/src/core/services`: sync/integration services and compatibility facades
 - `lib/src/core/utils`: cross-cutting utilities (for example logging)
 - `lib/src/features`: feature-level screens and widgets
 
