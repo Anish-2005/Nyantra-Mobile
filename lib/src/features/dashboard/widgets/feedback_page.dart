@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/models/feedback_model.dart';
 import '../../../core/providers/locale_provider.dart';
+import 'dashboard_hero_header.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -283,7 +284,6 @@ class _FeedbackPageState extends State<FeedbackPage>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localeProvider = context.watch<LocaleProvider>();
-    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       child: Stack(
@@ -292,116 +292,14 @@ class _FeedbackPageState extends State<FeedbackPage>
           SafeArea(
             child: Column(
               children: [
-                // Hero Header Section
-                Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isDark
-                              ? [
-                                  const Color(0xFF06B6D4),
-                                  const Color(0xFF8B5CF6),
-                                ]
-                              : [
-                                  const Color(0xFFFB7185),
-                                  const Color(0xFFFB923C),
-                                ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                (isDark
-                                        ? const Color(0xFF8B5CF6)
-                                        : const Color(0xFFF59E0B))
-                                    .withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Badge
-                          Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.feedback,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      localeProvider.translate('nav.feedback'),
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms)
-                              .slideY(begin: -0.2, end: 0),
-
-                          const SizedBox(height: 16),
-
-                          // Title
-                          Text(
-                                localeProvider.translate('nav.feedback'),
-                                style: theme.textTheme.headlineMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.2,
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms, delay: 200.ms)
-                              .slideY(begin: -0.2, end: 0),
-
-                          const SizedBox(height: 8),
-
-                          // Subtitle
-                          Text(
-                                localeProvider.translate(
-                                  'extracted.feedback.helpImprove',
-                                ),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  height: 1.4,
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms, delay: 400.ms)
-                              .slideY(begin: -0.2, end: 0),
-                        ],
-                      ),
-                    )
-                    .animate()
-                    .fadeIn(duration: 800.ms)
-                    .slideY(begin: -0.1, end: 0),
+                DashboardHeroHeader(
+                  icon: Icons.feedback,
+                  badge: localeProvider.translate('nav.feedback'),
+                  title: localeProvider.translate('nav.feedback'),
+                  subtitle: localeProvider.translate(
+                    'extracted.feedback.helpImprove',
+                  ),
+                ),
 
                 // Feedback Content
                 Expanded(
@@ -423,15 +321,10 @@ class _FeedbackPageState extends State<FeedbackPage>
                             controller: _tabController,
                             indicator: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: isDark
-                                    ? [
-                                        const Color(0xFF06B6D4),
-                                        const Color(0xFF8B5CF6),
-                                      ]
-                                    : [
-                                        const Color(0xFFFB7185),
-                                        const Color(0xFFFB923C),
-                                      ],
+                                colors: [
+                                  theme.colorScheme.primary,
+                                  theme.colorScheme.tertiary,
+                                ],
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),

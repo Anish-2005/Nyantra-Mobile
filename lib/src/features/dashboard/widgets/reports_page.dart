@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
+import 'dashboard_hero_header.dart';
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({super.key});
@@ -35,7 +36,6 @@ class _ReportsPageState extends State<ReportsPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localeProvider = context.watch<LocaleProvider>();
-    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       child: Stack(
@@ -44,118 +44,12 @@ class _ReportsPageState extends State<ReportsPage> {
           SafeArea(
             child: Column(
               children: [
-                // Hero Header Section
-                Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isDark
-                              ? [
-                                  const Color(0xFF06B6D4),
-                                  const Color(0xFF8B5CF6),
-                                ]
-                              : [
-                                  const Color(0xFFFB7185),
-                                  const Color(0xFFFB923C),
-                                ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                (isDark
-                                        ? const Color(0xFF06B6D4)
-                                        : const Color(0xFFFB7185))
-                                    .withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Badge
-                          Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.file_copy,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      localeProvider.translate(
-                                        'reports.pageTitle',
-                                      ),
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms)
-                              .slideY(begin: -0.2, end: 0),
-
-                          const SizedBox(height: 16),
-
-                          // Title
-                          Text(
-                                localeProvider.translate('reports.pageTitle'),
-                                style: theme.textTheme.headlineMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.2,
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms, delay: 200.ms)
-                              .slideY(begin: -0.2, end: 0),
-
-                          const SizedBox(height: 8),
-
-                          // Subtitle
-                          Text(
-                                localeProvider.translate(
-                                  'reports.pageSubtitle',
-                                ),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  height: 1.4,
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms, delay: 400.ms)
-                              .slideY(begin: -0.2, end: 0),
-                        ],
-                      ),
-                    )
-                    .animate()
-                    .fadeIn(duration: 800.ms)
-                    .slideY(begin: -0.1, end: 0),
+                DashboardHeroHeader(
+                  icon: Icons.file_copy,
+                  badge: localeProvider.translate('reports.pageTitle'),
+                  title: localeProvider.translate('reports.pageTitle'),
+                  subtitle: localeProvider.translate('reports.pageSubtitle'),
+                ),
 
                 // Search and Filters
                 Container(
@@ -542,7 +436,6 @@ class _ReportsPageState extends State<ReportsPage> {
                                 report,
                                 localeProvider,
                                 theme,
-                                isDark,
                               );
                             },
                           );
@@ -564,7 +457,6 @@ class _ReportsPageState extends State<ReportsPage> {
     Report report,
     LocaleProvider localeProvider,
     ThemeData theme,
-    bool isDark,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
