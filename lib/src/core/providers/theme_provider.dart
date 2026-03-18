@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../theme/app_theme.dart';
+import '../theme/app_theme.dart' as app_theme;
 import '../utils/app_logger.dart';
 
 enum AppTheme { light, dark }
@@ -34,8 +34,7 @@ class ThemeProvider extends ChangeNotifier {
         // Check system preference
         final brightness =
             WidgetsBinding.instance.platformDispatcher.platformBrightness;
-        _theme =
-            brightness == Brightness.dark ? AppTheme.dark : AppTheme.light;
+        _theme = brightness == Brightness.dark ? AppTheme.dark : AppTheme.light;
       }
     } catch (error, stackTrace) {
       AppLogger.warning(
@@ -69,6 +68,6 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   ThemeData _getThemeData() {
-    return isDark ? AppTheme.dark() : AppTheme.light();
+    return isDark ? app_theme.AppTheme.dark() : app_theme.AppTheme.light();
   }
 }

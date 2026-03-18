@@ -5,6 +5,7 @@ import '../../../core/models/disbursement_model.dart';
 import '../../../core/models/beneficiary_model.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/providers/locale_provider.dart';
+import '../../../components/animated_background.dart';
 
 class DisbursementEditPage extends StatefulWidget {
   final DisbursementModel disbursement;
@@ -138,6 +139,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
     final locale = context.watch<LocaleProvider>();
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
           locale.translate('dashboard.disbursements.editDisbursement'),
@@ -159,13 +161,30 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
             ),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
+      body: Stack(
+        children: [
+          AnimatedBackground(isDark: theme.brightness == Brightness.dark),
+          if (_loading)
+            const Center(child: CircularProgressIndicator())
+          else
+            SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 920),
+                  child: Container(
+                    margin: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: theme.dividerColor.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
                     // Show beneficiary info if available
                     if (_beneficiary != null) ...[
                       Container(
@@ -405,10 +424,16 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
                       labelKey: 'dashboard.disbursements.labels.address',
                       maxLines: 3,
                     ),
-                  ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
+        ],
+      ),
     );
   }
 

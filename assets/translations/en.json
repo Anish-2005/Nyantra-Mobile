@@ -24,6 +24,7 @@
     "save": "Save",
     "na": "N/A"
   },
+  "copy_id": "Copy ID",
   "hero": {
     "badge": "Smart DBT Solution for Social Justice",
     "titleLine1": "Empowering",
@@ -808,6 +809,7 @@
       "documentation": "Documentation",
       "technicalIssue": "Technical Issue",
       "serviceQuality": "Service Quality",
+      "disbursement-delay": "Disbursement Delay",
       "officer-behavior": "Officer Behavior",
       "other": "Other"
     },
@@ -823,6 +825,8 @@
     "contact": "Contact",
     "act": "Act",
     "identification": "Identification",
+    "loading": "Loading...",
+    "viewCertificate": "View Certificate",
     "phone": "Phone",
     "reliefAmountINR": "Relief Amount (₹)",
     "amountRequested": "Amount Requested (₹)",

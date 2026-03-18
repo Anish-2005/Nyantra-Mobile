@@ -24,6 +24,7 @@
     "save": "सहेजें",
     "status": "स्थिति"
   },
+  "copy_id": "आईडी कॉपी करें",
   "hero": {
     "badge": "सामाजिक न्याय के लिए स्मार्ट DBT समाधान",
     "titleLine1": "सशक्त",
@@ -802,6 +803,7 @@
       "documentation": "दस्तावेजीकरण",
       "technicalIssue": "तकनीकी समस्या",
       "serviceQuality": "सेवा गुणवत्ता",
+      "disbursement-delay": "वितरण में देरी",
       "officer-behavior": "अधिकारी व्यवहार",
       "other": "अन्य"
     },
@@ -820,6 +822,8 @@
     "contact": "संपर्क",
     "act": "अधिनियम",
     "identification": "पहचान",
+    "loading": "लोड हो रहा है...",
+    "viewCertificate": "प्रमाणपत्र देखें",
     "phone": "फ़ोन",
     "reliefAmountINR": "राहत राशि (₹)",
     "age": "उम्र",

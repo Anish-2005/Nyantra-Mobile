@@ -6,6 +6,7 @@ import '../../../core/services/data_service.dart';
 import '../../../core/providers/locale_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../widgets/dashboard_hero_header.dart';
 
 // PoA Act Offences Data Structure
 const Map<String, Map<String, dynamic>> poaOffences = {
@@ -359,120 +360,17 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header Section
-                  Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: isDark
-                                ? [
-                                    const Color(0xFF06B6D4),
-                                    const Color(0xFF8B5CF6),
-                                  ]
-                                : [
-                                    const Color(0xFFFB7185),
-                                    const Color(0xFFFB923C),
-                                  ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  (isDark
-                                          ? const Color(0xFF06B6D4)
-                                          : const Color(0xFFFB7185))
-                                      .withValues(alpha: 0.3),
-                              blurRadius: 20,
-                              spreadRadius: 2,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Badge
-                            Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.add_circle_outline,
-                                        color: Colors.white,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        localeProvider.translate(
-                                          'applications.newApplication',
-                                        ),
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms)
-                                .slideY(begin: -0.2, end: 0),
-
-                            const SizedBox(height: 16),
-
-                            // Title
-                            Text(
-                                  localeProvider.translate(
-                                    'applications.createNewApplication',
-                                  ),
-                                  style: theme.textTheme.headlineMedium
-                                      ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1.2,
-                                      ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms, delay: 200.ms)
-                                .slideY(begin: -0.2, end: 0),
-
-                            const SizedBox(height: 8),
-
-                            // Subtitle
-                            Text(
-                                  localeProvider.translate(
-                                    'applications.fillDetailsBelow',
-                                  ),
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.9),
-                                    height: 1.4,
-                                  ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms, delay: 400.ms)
-                                .slideY(begin: -0.2, end: 0),
-                          ],
-                        ),
-                      )
-                      .animate()
-                      .fadeIn(duration: 800.ms)
-                      .slideY(begin: -0.1, end: 0),
+                  DashboardHeroHeader(
+                    margin: EdgeInsets.zero,
+                    icon: Icons.add_circle_outline,
+                    badge: localeProvider.translate('applications.newApplication'),
+                    title: localeProvider.translate(
+                      'applications.createNewApplication',
+                    ),
+                    subtitle: localeProvider.translate(
+                      'applications.fillDetailsBelow',
+                    ),
+                  ),
 
                   const SizedBox(height: 32),
 
