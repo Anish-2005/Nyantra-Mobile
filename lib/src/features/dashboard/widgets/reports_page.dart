@@ -1,8 +1,7 @@
-// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers, directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/widgets/loading_state.dart';
 import '../../../core/models/report_model.dart';
@@ -186,18 +185,17 @@ class _ReportsPageState extends State<ReportsPage> {
                           final filteredReports = reports.where((report) {
                             final matchesSearch =
                                 _searchController.text.isEmpty ||
-                                report.name.toLowerCase().contains(
-                                  _searchController.text.toLowerCase(),
-                                ) ||
-                                report.description.toLowerCase().contains(
-                                  _searchController.text.toLowerCase(),
-                                );
+                                    report.name.toLowerCase().contains(
+                                          _searchController.text.toLowerCase(),
+                                        ) ||
+                                    report.description.toLowerCase().contains(
+                                          _searchController.text.toLowerCase(),
+                                        );
 
                             final matchesCategory =
                                 _selectedCategory == 'all' ||
-                                report.category == _selectedCategory;
-                            final matchesStatus =
-                                _selectedStatus == 'all' ||
+                                    report.category == _selectedCategory;
+                            final matchesStatus = _selectedStatus == 'all' ||
                                 report.status == _selectedStatus;
 
                             AppLogger.debug(
@@ -250,11 +248,12 @@ class _ReportsPageState extends State<ReportsPage> {
                                       horizontal: 32,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: theme.cardColor.withValues(alpha: 0.5),
+                                      color: theme.cardColor
+                                          .withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: theme.dividerColor.withValues(alpha: 
-                                          0.2,
+                                        color: theme.dividerColor.withValues(
+                                          alpha: 0.2,
                                         ),
                                       ),
                                     ),
@@ -264,8 +263,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                           'Debug Info:',
                                           style: theme.textTheme.bodySmall
                                               ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
@@ -344,7 +343,8 @@ class _ReportsPageState extends State<ReportsPage> {
         ),
         filled: true,
         fillColor: theme.inputDecorationTheme.fillColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       items: [
         DropdownMenuItem(
@@ -391,7 +391,8 @@ class _ReportsPageState extends State<ReportsPage> {
         ),
         filled: true,
         fillColor: theme.inputDecorationTheme.fillColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       items: [
         DropdownMenuItem(
@@ -484,7 +485,8 @@ class _ReportsPageState extends State<ReportsPage> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(report.status).withValues(alpha: 0.1),
+                      color:
+                          _getStatusColor(report.status).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
@@ -505,7 +507,8 @@ class _ReportsPageState extends State<ReportsPage> {
               Text(
                 report.description,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
+                  color:
+                      theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -595,7 +598,8 @@ class _ReportsPageState extends State<ReportsPage> {
     Report report,
   ) {
     return ElevatedButton.icon(
-      onPressed: report.status == 'completed' ? () => _downloadReport(report) : null,
+      onPressed:
+          report.status == 'completed' ? () => _downloadReport(report) : null,
       icon: Icon(
         Icons.download,
         size: 16,
@@ -605,8 +609,9 @@ class _ReportsPageState extends State<ReportsPage> {
       ),
       label: Text(localeProvider.translate('reports.download')),
       style: ElevatedButton.styleFrom(
-        backgroundColor:
-            report.status == 'completed' ? theme.primaryColor : theme.disabledColor,
+        backgroundColor: report.status == 'completed'
+            ? theme.primaryColor
+            : theme.disabledColor,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         textStyle: const TextStyle(fontSize: 12),
@@ -781,7 +786,8 @@ class _ReportsPageState extends State<ReportsPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(report.status).withValues(alpha: 0.1),
+                        color: _getStatusColor(report.status)
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: _getStatusColor(
@@ -959,8 +965,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                 'reports.no_description_available',
                               ),
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 
-                            0.8,
+                          color: theme.textTheme.bodyMedium?.color?.withValues(
+                            alpha: 0.8,
                           ),
                           height: 1.5,
                         ),
@@ -1023,7 +1029,8 @@ class _ReportsPageState extends State<ReportsPage> {
               '$label:',
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                color:
+                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -1031,7 +1038,8 @@ class _ReportsPageState extends State<ReportsPage> {
             child: Text(
               value,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.9),
+                color:
+                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.9),
               ),
             ),
           ),
@@ -1072,9 +1080,9 @@ class _ReportsPageState extends State<ReportsPage> {
           .collection('reports')
           .doc(report.id)
           .update({
-            'downloadCount': FieldValue.increment(1),
-            'lastUpdated': FieldValue.serverTimestamp(),
-          });
+        'downloadCount': FieldValue.increment(1),
+        'lastUpdated': FieldValue.serverTimestamp(),
+      });
 
       // Generate beautiful A4 PDF report
       final pdf = pw.Document();

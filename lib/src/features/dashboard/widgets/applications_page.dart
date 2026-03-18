@@ -1,4 +1,4 @@
-// ignore_for_file: curly_braces_in_flow_control_structures, use_build_context_synchronously, avoid_unnecessary_containers, annotate_overrides
+// ignore_for_file: curly_braces_in_flow_control_structures, use_build_context_synchronously, avoid_unnecessary_containers, annotate_overrides, directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -96,7 +96,8 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                   icon: Icons.file_copy,
                   badge: localeProvider.translate('applications.pageTitle'),
                   title: localeProvider.translate('applications.pageTitle'),
-                  subtitle: localeProvider.translate('applications.pageSubtitle'),
+                  subtitle:
+                      localeProvider.translate('applications.pageSubtitle'),
                 ),
 
                 // Applications List
@@ -123,7 +124,6 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                                 ),
                               ),
                               const SizedBox(height: 16),
-
                               Text(
                                 localeProvider.translate(
                                   'extracted.errorLoading',
@@ -184,459 +184,434 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
                         itemBuilder: (context, index) {
                           final application = applications[index];
                           return Container(
-                                margin: const EdgeInsets.only(bottom: 16),
-                                decoration: BoxDecoration(
-                                  color: theme.cardColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: theme.dividerColor.withValues(alpha: 0.1),
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: theme.shadowColor.withValues(alpha: 0.1),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              color: theme.cardColor,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.1),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      theme.shadowColor.withValues(alpha: 0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
                                 ),
-                                child: InkWell(
-                                  onTap: () async {
-                                    final res = await Navigator.of(context)
-                                        .push(
-                                          MaterialPageRoute(
-                                            builder: (_) => ApplicationEditPage(
-                                              application: application,
-                                            ),
-                                          ),
-                                        );
-                                    if (res == true) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            localeProvider.translate(
-                                              'extracted.applicationSaved',
-                                            ),
-                                          ),
+                              ],
+                            ),
+                            child: InkWell(
+                              onTap: () async {
+                                final res = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => ApplicationEditPage(
+                                      application: application,
+                                    ),
+                                  ),
+                                );
+                                if (res == true) {
+                                  ScaffoldMessenger.of(
+                                    context,
+                                  ).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        localeProvider.translate(
+                                          'extracted.applicationSaved',
                                         ),
-                                      );
-                                    }
-                                  },
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Header with status and amount
+                                    Row(
                                       children: [
-                                        // Header with status and amount
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    decoration: BoxDecoration(
-                                                      color: application
-                                                          .statusColor
-                                                          .withValues(
-                                                            alpha: 51,
-                                                          ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.description,
-                                                      color: application
-                                                          .statusColor,
-                                                      size: 16,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          application
-                                                                  .applicantName ??
-                                                              localeProvider
-                                                                  .translate(
-                                                                    'extracted.unknownApplicant',
-                                                                  ),
-                                                          style: theme
-                                                              .textTheme
-                                                              .titleMedium
-                                                              ?.copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 4,
-                                                        ),
-                                                        Text(
-                                                          '${localeProvider.translate('applications.idLabel')} ${application.id}',
-                                                          style: theme
-                                                              .textTheme
-                                                              .bodySmall
-                                                              ?.copyWith(
-                                                                color: theme
-                                                                    .textTheme
-                                                                    .bodyMedium
-                                                                    ?.color
-                                                                    ?.withValues(
-                                                                      alpha:
-                                                                          179,
-                                                                    ),
-                                                              ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                // Edit button shown only when the current user is owner/user
-                                                Builder(
-                                                  builder: (context) {
-                                                    final currentUser =
-                                                        FirebaseAuth
-                                                            .instance
-                                                            .currentUser;
-                                                    final canEdit =
-                                                        currentUser != null &&
-                                                        currentUser.uid ==
-                                                            (application
-                                                                    .ownerId ??
-                                                                application
-                                                                    .userId);
-                                                    if (!canEdit)
-                                                      return const SizedBox();
-                                                    return Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        IconButton(
-                                                          icon: const Icon(
-                                                            Icons.edit,
-                                                            size: 20,
-                                                          ),
-                                                          onPressed: () async {
-                                                            final res =
-                                                                await Navigator.of(
-                                                                  context,
-                                                                ).push(
-                                                                  MaterialPageRoute(
-                                                                    builder: (_) =>
-                                                                        ApplicationEditPage(
-                                                                          application:
-                                                                              application,
-                                                                        ),
-                                                                  ),
-                                                                );
-                                                            if (res == true) {
-                                                              ScaffoldMessenger.of(
-                                                                context,
-                                                              ).showSnackBar(
-                                                                SnackBar(
-                                                                  content: Text(
-                                                                    localeProvider
-                                                                        .translate(
-                                                                          'extracted.applicationSaved',
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            }
-                                                          },
-                                                        ),
-                                                        IconButton(
-                                                          icon: const Icon(
-                                                            Icons.delete,
-                                                            size: 20,
-                                                            color: Colors.red,
-                                                          ),
-                                                          onPressed: () =>
-                                                              _showDeleteConfirmation(
-                                                                application,
-                                                              ),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                ),
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 5,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        application.statusColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          16,
-                                                        ),
-                                                  ),
-                                                  child: Text(
-                                                    application.statusText,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 11,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                                if (application.amount !=
-                                                    null) ...[
-                                                  const SizedBox(height: 8),
-                                                  Text(
-                                                    '?${application.amount!.toStringAsFixed(0)}',
-                                                    style: theme
-                                                        .textTheme
-                                                        .titleMedium
-                                                        ?.copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: theme
-                                                              .primaryColor,
-                                                        ),
-                                                  ),
-                                                ],
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 16),
-
-                                        // Details row
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.category,
-                                                localeProvider.translate(
-                                                  'extracted.act_type',
-                                                ),
-                                                application.actType ??
-                                                    localeProvider.translate(
-                                                      'common.na',
-                                                    ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.priority_high,
-                                                localeProvider.translate(
-                                                  'extracted.priority',
-                                                ),
-                                                application.priority ??
-                                                    localeProvider.translate(
-                                                      'common.na',
-                                                    ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.location_on,
-                                                localeProvider.translate(
-                                                  'extracted.district',
-                                                ),
-                                                application.district ??
-                                                    localeProvider.translate(
-                                                      'common.na',
-                                                    ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.map,
-                                                localeProvider.translate(
-                                                  'extracted.state',
-                                                ),
-                                                application.state ??
-                                                    localeProvider.translate(
-                                                      'common.na',
-                                                    ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.event,
-                                                localeProvider.translate(
-                                                  'extracted.incidentDateHint',
-                                                ),
-                                                application.incidentDate ??
-                                                    localeProvider.translate(
-                                                      'common.na',
-                                                    ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.badge,
-                                                localeProvider.translate(
-                                                  'applications.beneficiaryId',
-                                                ),
-                                                application.beneficiaryId ??
-                                                    localeProvider.translate(
-                                                      'common.na',
-                                                    ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 12),
-
-                                        // Case details row
-                                        if (application.firReport != null ||
-                                            application.medicalReport != null ||
-                                            application.policeStation != null ||
-                                            application.caseNumber != null)
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                        Expanded(
+                                          child: Row(
                                             children: [
-                                              Text(
-                                                localeProvider.translate(
-                                                  'applications.caseDetails',
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color: application.statusColor
+                                                      .withValues(
+                                                    alpha: 51,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    8,
+                                                  ),
                                                 ),
+                                                child: Icon(
+                                                  Icons.description,
+                                                  color:
+                                                      application.statusColor,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      application
+                                                              .applicantName ??
+                                                          localeProvider
+                                                              .translate(
+                                                            'extracted.unknownApplicant',
+                                                          ),
+                                                      style: theme
+                                                          .textTheme.titleMedium
+                                                          ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 4,
+                                                    ),
+                                                    Text(
+                                                      '${localeProvider.translate('applications.idLabel')} ${application.id}',
+                                                      style: theme
+                                                          .textTheme.bodySmall
+                                                          ?.copyWith(
+                                                        color: theme.textTheme
+                                                            .bodyMedium?.color
+                                                            ?.withValues(
+                                                          alpha: 179,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            // Edit button shown only when the current user is owner/user
+                                            Builder(
+                                              builder: (context) {
+                                                final currentUser = FirebaseAuth
+                                                    .instance.currentUser;
+                                                final canEdit = currentUser !=
+                                                        null &&
+                                                    currentUser.uid ==
+                                                        (application.ownerId ??
+                                                            application.userId);
+                                                if (!canEdit)
+                                                  return const SizedBox();
+                                                return Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        Icons.edit,
+                                                        size: 20,
+                                                      ),
+                                                      onPressed: () async {
+                                                        final res =
+                                                            await Navigator.of(
+                                                          context,
+                                                        ).push(
+                                                          MaterialPageRoute(
+                                                            builder: (_) =>
+                                                                ApplicationEditPage(
+                                                              application:
+                                                                  application,
+                                                            ),
+                                                          ),
+                                                        );
+                                                        if (res == true) {
+                                                          ScaffoldMessenger.of(
+                                                            context,
+                                                          ).showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                localeProvider
+                                                                    .translate(
+                                                                  'extracted.applicationSaved',
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        Icons.delete,
+                                                        size: 20,
+                                                        color: Colors.red,
+                                                      ),
+                                                      onPressed: () =>
+                                                          _showDeleteConfirmation(
+                                                        application,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            ),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 5,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: application.statusColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                  16,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                application.statusText,
                                                 style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ),
+                                            if (application.amount != null) ...[
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                '?${application.amount!.toStringAsFixed(0)}',
+                                                style: theme
+                                                    .textTheme.titleMedium
+                                                    ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
                                                   color: theme.primaryColor,
                                                 ),
                                               ),
-                                              const SizedBox(height: 8),
-                                              if (application.firReport !=
-                                                      null &&
-                                                  application
-                                                      .firReport!
-                                                      .isNotEmpty)
-                                                _buildDetailItem(
-                                                  context,
-                                                  Icons.description,
-                                                  localeProvider.translate(
-                                                    'applications.firReport',
-                                                  ),
-                                                  application.firReport!,
-                                                ),
-                                              if (application.medicalReport !=
-                                                      null &&
-                                                  application
-                                                      .medicalReport!
-                                                      .isNotEmpty)
-                                                _buildDetailItem(
-                                                  context,
-                                                  Icons.medical_services,
-                                                  localeProvider.translate(
-                                                    'applications.medicalReport',
-                                                  ),
-                                                  application.medicalReport!,
-                                                ),
-                                              if (application.policeStation !=
-                                                      null &&
-                                                  application
-                                                      .policeStation!
-                                                      .isNotEmpty)
-                                                _buildDetailItem(
-                                                  context,
-                                                  Icons.local_police,
-                                                  localeProvider.translate(
-                                                    'applications.policeStation',
-                                                  ),
-                                                  application.policeStation!,
-                                                ),
-                                              if (application.caseNumber !=
-                                                      null &&
-                                                  application
-                                                      .caseNumber!
-                                                      .isNotEmpty)
-                                                _buildDetailItem(
-                                                  context,
-                                                  Icons.numbers,
-                                                  localeProvider.translate(
-                                                    'applications.caseNumber',
-                                                  ),
-                                                  application.caseNumber!,
-                                                ),
-                                              const SizedBox(height: 12),
                                             ],
-                                          ),
-
-                                        // Additional details: contact, beneficiary, owner, timestamps
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.phone,
-                                                localeProvider.translate(
-                                                  'extracted.phone_number',
-                                                ),
-                                                application.contactNumber ??
-                                                    localeProvider.translate(
-                                                      'common.na',
-                                                    ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.email,
-                                                localeProvider.translate(
-                                                  'extracted.aadhaar',
-                                                ),
-                                                application.aadhaar ??
-                                                    localeProvider.translate(
-                                                      'common.na',
-                                                    ),
-                                              ),
-                                            ),
                                           ],
                                         ),
-
-                                        const SizedBox(height: 12),
                                       ],
                                     ),
-                                  ),
+
+                                    const SizedBox(height: 16),
+
+                                    // Details row
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.category,
+                                            localeProvider.translate(
+                                              'extracted.act_type',
+                                            ),
+                                            application.actType ??
+                                                localeProvider.translate(
+                                                  'common.na',
+                                                ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.priority_high,
+                                            localeProvider.translate(
+                                              'extracted.priority',
+                                            ),
+                                            application.priority ??
+                                                localeProvider.translate(
+                                                  'common.na',
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.location_on,
+                                            localeProvider.translate(
+                                              'extracted.district',
+                                            ),
+                                            application.district ??
+                                                localeProvider.translate(
+                                                  'common.na',
+                                                ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.map,
+                                            localeProvider.translate(
+                                              'extracted.state',
+                                            ),
+                                            application.state ??
+                                                localeProvider.translate(
+                                                  'common.na',
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.event,
+                                            localeProvider.translate(
+                                              'extracted.incidentDateHint',
+                                            ),
+                                            application.incidentDate ??
+                                                localeProvider.translate(
+                                                  'common.na',
+                                                ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.badge,
+                                            localeProvider.translate(
+                                              'applications.beneficiaryId',
+                                            ),
+                                            application.beneficiaryId ??
+                                                localeProvider.translate(
+                                                  'common.na',
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+
+                                    // Case details row
+                                    if (application.firReport != null ||
+                                        application.medicalReport != null ||
+                                        application.policeStation != null ||
+                                        application.caseNumber != null)
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            localeProvider.translate(
+                                              'applications.caseDetails',
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: theme.primaryColor,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          if (application.firReport != null &&
+                                              application.firReport!.isNotEmpty)
+                                            _buildDetailItem(
+                                              context,
+                                              Icons.description,
+                                              localeProvider.translate(
+                                                'applications.firReport',
+                                              ),
+                                              application.firReport!,
+                                            ),
+                                          if (application.medicalReport !=
+                                                  null &&
+                                              application
+                                                  .medicalReport!.isNotEmpty)
+                                            _buildDetailItem(
+                                              context,
+                                              Icons.medical_services,
+                                              localeProvider.translate(
+                                                'applications.medicalReport',
+                                              ),
+                                              application.medicalReport!,
+                                            ),
+                                          if (application.policeStation !=
+                                                  null &&
+                                              application
+                                                  .policeStation!.isNotEmpty)
+                                            _buildDetailItem(
+                                              context,
+                                              Icons.local_police,
+                                              localeProvider.translate(
+                                                'applications.policeStation',
+                                              ),
+                                              application.policeStation!,
+                                            ),
+                                          if (application.caseNumber != null &&
+                                              application
+                                                  .caseNumber!.isNotEmpty)
+                                            _buildDetailItem(
+                                              context,
+                                              Icons.numbers,
+                                              localeProvider.translate(
+                                                'applications.caseNumber',
+                                              ),
+                                              application.caseNumber!,
+                                            ),
+                                          const SizedBox(height: 12),
+                                        ],
+                                      ),
+
+                                    // Additional details: contact, beneficiary, owner, timestamps
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.phone,
+                                            localeProvider.translate(
+                                              'extracted.phone_number',
+                                            ),
+                                            application.contactNumber ??
+                                                localeProvider.translate(
+                                                  'common.na',
+                                                ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.email,
+                                            localeProvider.translate(
+                                              'extracted.aadhaar',
+                                            ),
+                                            application.aadhaar ??
+                                                localeProvider.translate(
+                                                  'common.na',
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+                                  ],
                                 ),
-                              )
+                              ),
+                            ),
+                          )
                               .animate()
                               .fadeIn(
                                 duration: 600.ms,

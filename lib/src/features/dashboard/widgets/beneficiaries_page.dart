@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers, directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +37,8 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                   icon: Icons.people,
                   badge: localeProvider.translate('beneficiaries.pageTitle'),
                   title: localeProvider.translate('beneficiaries.pageTitle'),
-                  subtitle: localeProvider.translate('beneficiaries.pageSubtitle'),
+                  subtitle:
+                      localeProvider.translate('beneficiaries.pageSubtitle'),
                 ),
 
                 // Beneficiaries List
@@ -145,519 +146,491 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                         itemBuilder: (context, index) {
                           final beneficiary = beneficiaries[index];
                           return Container(
-                                margin: const EdgeInsets.only(bottom: 16),
-                                decoration: BoxDecoration(
-                                  color: theme.cardColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: theme.dividerColor.withValues(alpha: 0.1),
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: theme.shadowColor.withValues(alpha: 0.1),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              color: theme.cardColor,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.1),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      theme.shadowColor.withValues(alpha: 0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
                                 ),
-                                child: InkWell(
-                                  onTap: () async {
-                                    final res = await Navigator.of(context)
-                                        .push(
-                                          MaterialPageRoute(
-                                            builder: (_) => BeneficiaryEditPage(
-                                              beneficiary: beneficiary,
-                                            ),
-                                          ),
-                                        );
-                                    if (res == true) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            localeProvider.translate(
-                                              'beneficiaries.savedSuccess',
-                                            ),
-                                          ),
+                              ],
+                            ),
+                            child: InkWell(
+                              onTap: () async {
+                                final res = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => BeneficiaryEditPage(
+                                      beneficiary: beneficiary,
+                                    ),
+                                  ),
+                                );
+                                if (res == true) {
+                                  ScaffoldMessenger.of(
+                                    context,
+                                  ).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        localeProvider.translate(
+                                          'beneficiaries.savedSuccess',
                                         ),
-                                      );
-                                    }
-                                  },
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Beneficiary ID at the top with copy button
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 8,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Beneficiary ID at the top with copy button
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.primary
+                                            .withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(
+                                          8,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.badge,
+                                            size: 16,
+                                            color: theme.colorScheme.primary,
                                           ),
-                                          decoration: BoxDecoration(
-                                            color: theme.colorScheme.primary
-                                                .withValues(alpha: 0.1),
-                                            borderRadius: BorderRadius.circular(
-                                              8,
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            '${localeProvider.translate('extracted.beneficiaryId')}: ${beneficiary.id}',
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                              color: theme.colorScheme.primary,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
+                                          const Spacer(),
+                                          IconButton(
+                                            onPressed: () async {
+                                              await Clipboard.setData(
+                                                ClipboardData(
+                                                  text: beneficiary.id,
+                                                ),
+                                              );
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    localeProvider.translate(
+                                                      'copied_to_clipboard',
+                                                    ),
+                                                  ),
+                                                  duration: const Duration(
+                                                    seconds: 2,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            icon: Icon(
+                                              Icons.copy,
+                                              size: 16,
+                                              color: theme.colorScheme.primary,
+                                            ),
+                                            tooltip: localeProvider
+                                                .translate('copy_id'),
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 16),
+
+                                    // Header with name and bank account indicator
+                                    Row(
+                                      children: [
+                                        Expanded(
                                           child: Row(
                                             children: [
-                                              Icon(
-                                                Icons.badge,
-                                                size: 16,
-                                                color:
-                                                    theme.colorScheme.primary,
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.withValues(
+                                                    alpha: 51,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    8,
+                                                  ),
+                                                ),
+                                                child: Icon(
+                                                  Icons.person,
+                                                  color: Colors.blue,
+                                                  size: 16,
+                                                ),
                                               ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                '${localeProvider.translate('extracted.beneficiaryId')}: ${beneficiary.id}',
-                                                style: theme.textTheme.bodySmall
-                                                    ?.copyWith(
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      beneficiary.name,
+                                                      style: theme
+                                                          .textTheme.titleMedium
+                                                          ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 4,
+                                                    ),
+                                                    if (beneficiary.aadhaar !=
+                                                        null)
+                                                      Text(
+                                                        '${localeProvider.translate('beneficiaries.aadhaarLabel')} ${beneficiary.aadhaar}',
+                                                        style: theme
+                                                            .textTheme.bodySmall
+                                                            ?.copyWith(
+                                                          color: theme.textTheme
+                                                              .bodyMedium?.color
+                                                              ?.withValues(
+                                                            alpha: 179,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 16),
+
+                                    // Details row
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.phone,
+                                            localeProvider.translate(
+                                              'extracted.phone',
+                                            ),
+                                            beneficiary.phone ?? 'N/A',
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.location_on,
+                                            localeProvider.translate(
+                                              'extracted.address',
+                                            ),
+                                            beneficiary.address ?? 'N/A',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.location_city,
+                                            localeProvider.translate(
+                                              'extracted.district',
+                                            ),
+                                            beneficiary.district ?? 'N/A',
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.map,
+                                            localeProvider.translate(
+                                              'extracted.state',
+                                            ),
+                                            beneficiary.state ?? 'N/A',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.event_available,
+                                            localeProvider.translate(
+                                              'extracted.created',
+                                            ),
+                                            beneficiary.createdAt != null
+                                                ? beneficiary.createdAt!
+                                                    .toString()
+                                                    .split(' ')[0]
+                                                : 'N/A',
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.label,
+                                            localeProvider.translate(
+                                              'extracted.category',
+                                            ),
+                                            beneficiary.category ?? 'N/A',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.info,
+                                            localeProvider.translate(
+                                              'extracted.status',
+                                            ),
+                                            beneficiary.status ?? 'N/A',
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.family_restroom,
+                                            localeProvider.translate(
+                                              'applications.fatherName',
+                                            ),
+                                            beneficiary.fatherName ?? 'N/A',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.person,
+                                            localeProvider.translate(
+                                              'extracted.aadhaar',
+                                            ),
+                                            beneficiary.aadhaar ?? 'N/A',
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.cake,
+                                            localeProvider.translate(
+                                              'extracted.age',
+                                            ),
+                                            beneficiary.age?.toString() ??
+                                                'N/A',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.wc,
+                                            localeProvider.translate(
+                                              'extracted.gender',
+                                            ),
+                                            beneficiary.gender ?? 'N/A',
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.favorite,
+                                            localeProvider.translate(
+                                              'applications.maritalStatus',
+                                            ),
+                                            beneficiary.maritalStatus ?? 'N/A',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    const SizedBox(height: 12),
+
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.account_balance,
+                                            localeProvider.translate(
+                                              'applications.bankAccount',
+                                            ),
+                                            beneficiary.bankAccount ?? 'N/A',
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildDetailItem(
+                                            context,
+                                            Icons.code,
+                                            localeProvider.translate(
+                                              'applications.ifsc',
+                                            ),
+                                            beneficiary.ifsc ?? 'N/A',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 12),
+
+                                    // Certificate section
+                                    if (beneficiary.scStCertificate != null &&
+                                        beneficiary.scStCertificate!.isNotEmpty)
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.primary
+                                              .withValues(alpha: 0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: theme.colorScheme.primary
+                                                .withValues(alpha: 0.2),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.description,
+                                              size: 20,
+                                              color: theme.colorScheme.primary,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    localeProvider.translate(
+                                                      'beneficiaries.sc_st_certificate',
+                                                    ),
+                                                    style: theme
+                                                        .textTheme.bodySmall
+                                                        ?.copyWith(
                                                       color: theme
-                                                          .colorScheme
-                                                          .primary,
+                                                          .colorScheme.primary,
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.w500,
                                                     ),
+                                                  ),
+                                                  const SizedBox(height: 2),
+                                                  Text(
+                                                    beneficiary
+                                                        .scStCertificate!,
+                                                    style: theme
+                                                        .textTheme.bodySmall
+                                                        ?.copyWith(
+                                                      color: theme
+                                                          .colorScheme.primary
+                                                          .withValues(
+                                                        alpha: 0.8,
+                                                      ),
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ],
                                               ),
-                                              const Spacer(),
-                                              IconButton(
-                                                onPressed: () async {
-                                                  await Clipboard.setData(
-                                                    ClipboardData(
-                                                      text: beneficiary.id,
-                                                    ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () async {
+                                                final url = beneficiary
+                                                    .scStCertificate!;
+                                                if (await canLaunchUrl(
+                                                  Uri.parse(url),
+                                                )) {
+                                                  await launchUrl(
+                                                    Uri.parse(url),
+                                                    mode: LaunchMode
+                                                        .externalApplication,
                                                   );
+                                                } else {
                                                   ScaffoldMessenger.of(
                                                     context,
                                                   ).showSnackBar(
                                                     SnackBar(
                                                       content: Text(
-                                                        localeProvider.translate(
-                                                          'copied_to_clipboard',
+                                                        localeProvider
+                                                            .translate(
+                                                          'extracted.cannotOpenUrl',
                                                         ),
-                                                      ),
-                                                      duration: const Duration(
-                                                        seconds: 2,
                                                       ),
                                                     ),
                                                   );
-                                                },
-                                                icon: Icon(
-                                                  Icons.copy,
-                                                  size: 16,
-                                                  color:
-                                                      theme.colorScheme.primary,
-                                                ),
-                                                tooltip: localeProvider
-                                                    .translate('copy_id'),
-                                                padding: EdgeInsets.zero,
-                                                constraints:
-                                                    const BoxConstraints(),
+                                                }
+                                              },
+                                              icon: Icon(
+                                                Icons.open_in_new,
+                                                size: 20,
+                                                color:
+                                                    theme.colorScheme.primary,
                                               ),
-                                            ],
-                                          ),
-                                        ),
-
-                                        const SizedBox(height: 16),
-
-                                        // Header with name and bank account indicator
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.blue
-                                                          .withValues(
-                                                            alpha: 51,
-                                                          ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.person,
-                                                      color: Colors.blue,
-                                                      size: 16,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          beneficiary.name,
-                                                          style: theme
-                                                              .textTheme
-                                                              .titleMedium
-                                                              ?.copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 4,
-                                                        ),
-                                                        if (beneficiary
-                                                                .aadhaar !=
-                                                            null)
-                                                          Text(
-                                                            '${localeProvider.translate('beneficiaries.aadhaarLabel')} ${beneficiary.aadhaar}',
-                                                            style: theme
-                                                                .textTheme
-                                                                .bodySmall
-                                                                ?.copyWith(
-                                                                  color: theme
-                                                                      .textTheme
-                                                                      .bodyMedium
-                                                                      ?.color
-                                                                      ?.withValues(
-                                                                        alpha:
-                                                                            179,
-                                                                      ),
-                                                                ),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
+                                              tooltip: localeProvider.translate(
+                                                'extracted.viewCertificate',
                                               ),
                                             ),
                                           ],
                                         ),
-
-                                        const SizedBox(height: 16),
-
-                                        // Details row
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.phone,
-                                                localeProvider.translate(
-                                                  'extracted.phone',
-                                                ),
-                                                beneficiary.phone ?? 'N/A',
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.location_on,
-                                                localeProvider.translate(
-                                                  'extracted.address',
-                                                ),
-                                                beneficiary.address ?? 'N/A',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.location_city,
-                                                localeProvider.translate(
-                                                  'extracted.district',
-                                                ),
-                                                beneficiary.district ?? 'N/A',
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.map,
-                                                localeProvider.translate(
-                                                  'extracted.state',
-                                                ),
-                                                beneficiary.state ?? 'N/A',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.event_available,
-                                                localeProvider.translate(
-                                                  'extracted.created',
-                                                ),
-                                                beneficiary.createdAt != null
-                                                    ? beneficiary.createdAt!
-                                                          .toString()
-                                                          .split(' ')[0]
-                                                    : 'N/A',
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.label,
-                                                localeProvider.translate(
-                                                  'extracted.category',
-                                                ),
-                                                beneficiary.category ?? 'N/A',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.info,
-                                                localeProvider.translate(
-                                                  'extracted.status',
-                                                ),
-                                                beneficiary.status ?? 'N/A',
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.family_restroom,
-                                                localeProvider.translate(
-                                                  'applications.fatherName',
-                                                ),
-                                                beneficiary.fatherName ?? 'N/A',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.person,
-                                                localeProvider.translate(
-                                                  'extracted.aadhaar',
-                                                ),
-                                                beneficiary.aadhaar ?? 'N/A',
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.cake,
-                                                localeProvider.translate(
-                                                  'extracted.age',
-                                                ),
-                                                beneficiary.age?.toString() ??
-                                                    'N/A',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.wc,
-                                                localeProvider.translate(
-                                                  'extracted.gender',
-                                                ),
-                                                beneficiary.gender ?? 'N/A',
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.favorite,
-                                                localeProvider.translate(
-                                                  'applications.maritalStatus',
-                                                ),
-                                                beneficiary.maritalStatus ??
-                                                    'N/A',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 12),
-
-                                        const SizedBox(height: 12),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.account_balance,
-                                                localeProvider.translate(
-                                                  'applications.bankAccount',
-                                                ),
-                                                beneficiary.bankAccount ??
-                                                    'N/A',
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: _buildDetailItem(
-                                                context,
-                                                Icons.code,
-                                                localeProvider.translate(
-                                                  'applications.ifsc',
-                                                ),
-                                                beneficiary.ifsc ?? 'N/A',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 12),
-
-                                        // Certificate section
-                                        if (beneficiary.scStCertificate !=
-                                                null &&
-                                            beneficiary
-                                                .scStCertificate!
-                                                .isNotEmpty)
-                                          Container(
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: theme.colorScheme.primary
-                                                  .withValues(alpha: 0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: theme.colorScheme.primary
-                                                    .withValues(alpha: 0.2),
-                                              ),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.description,
-                                                  size: 20,
-                                                  color:
-                                                      theme.colorScheme.primary,
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        localeProvider.translate(
-                                                          'beneficiaries.sc_st_certificate',
-                                                        ),
-                                                        style: theme
-                                                            .textTheme
-                                                            .bodySmall
-                                                            ?.copyWith(
-                                                              color: theme
-                                                                  .colorScheme
-                                                                  .primary,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                      ),
-                                                      const SizedBox(height: 2),
-                                                      Text(
-                                                        beneficiary
-                                                            .scStCertificate!,
-                                                        style: theme
-                                                            .textTheme
-                                                            .bodySmall
-                                                            ?.copyWith(
-                                                              color: theme
-                                                                  .colorScheme
-                                                                  .primary
-                                                                  .withValues(
-                                                                    alpha: 0.8,
-                                                                  ),
-                                                            ),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () async {
-                                                    final url = beneficiary
-                                                        .scStCertificate!;
-                                                    if (await canLaunchUrl(
-                                                      Uri.parse(url),
-                                                    )) {
-                                                      await launchUrl(
-                                                        Uri.parse(url),
-                                                        mode: LaunchMode
-                                                            .externalApplication,
-                                                      );
-                                                    } else {
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(
-                                                        SnackBar(
-                                                          content: Text(
-                                                            localeProvider
-                                                                .translate(
-                                                                  'extracted.cannotOpenUrl',
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }
-                                                  },
-                                                  icon: Icon(
-                                                    Icons.open_in_new,
-                                                    size: 20,
-                                                    color: theme
-                                                        .colorScheme
-                                                        .primary,
-                                                  ),
-                                                  tooltip: localeProvider.translate(
-                                                    'extracted.viewCertificate',
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
+                                      ),
+                                  ],
                                 ),
-                              )
+                              ),
+                            ),
+                          )
                               .animate()
                               .fadeIn(
                                 duration: 600.ms,

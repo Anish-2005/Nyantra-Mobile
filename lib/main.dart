@@ -1,3 +1,5 @@
+// ignore_for_file: directives_ordering
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -79,12 +81,12 @@ class MyApp extends StatelessWidget {
           final home = initializationError != null
               ? InitializationErrorScreen(error: initializationError!)
               : !localeProvider.hasTranslations
-              ? const SplashScreen()
-              : authProvider.isLoading
-              ? const SplashScreen()
-              : authProvider.isAuthenticated
-              ? const DashboardScreen()
-              : const LoginScreen();
+                  ? const SplashScreen()
+                  : authProvider.isLoading
+                      ? const SplashScreen()
+                      : authProvider.isAuthenticated
+                          ? const DashboardScreen()
+                          : const LoginScreen();
 
           return MaterialApp(
             title: AppConstants.appTitle,

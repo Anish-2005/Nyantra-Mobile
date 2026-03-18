@@ -1,3 +1,5 @@
+// ignore_for_file: directives_ordering
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -188,7 +190,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               )
                             : const SizedBox.shrink(),
                         titleSpacing: isMobile ? 4 : 16,
-                        title: _buildTopBarTitle(theme, localeProvider, isMobile),
+                        title:
+                            _buildTopBarTitle(theme, localeProvider, isMobile),
                         actions: [
                           Padding(
                             padding: const EdgeInsets.only(right: 6),
@@ -197,11 +200,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           PopupMenuButton<String>(
                             color: theme.cardColor.withValues(alpha: 0.95),
                             elevation: 10,
-                            shadowColor: theme.shadowColor.withValues(alpha: 0.3),
+                            shadowColor:
+                                theme.shadowColor.withValues(alpha: 0.3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                               side: BorderSide(
-                                color: theme.dividerColor.withValues(alpha: 0.2),
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.2),
                               ),
                             ),
                             onSelected: (value) {
@@ -289,7 +294,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: theme.dividerColor.withValues(alpha: 0.18),
+                                  color: theme.dividerColor
+                                      .withValues(alpha: 0.18),
                                 ),
                               ),
                               child: Icon(
@@ -369,4 +375,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 }
-

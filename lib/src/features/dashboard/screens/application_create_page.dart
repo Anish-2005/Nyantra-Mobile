@@ -1,3 +1,5 @@
+// ignore_for_file: directives_ordering
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -363,7 +365,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                   DashboardHeroHeader(
                     margin: EdgeInsets.zero,
                     icon: Icons.add_circle_outline,
-                    badge: localeProvider.translate('applications.newApplication'),
+                    badge:
+                        localeProvider.translate('applications.newApplication'),
                     title: localeProvider.translate(
                       'applications.createNewApplication',
                     ),
@@ -405,8 +408,10 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                         displayMapper: (value) => value == 'M'
                             ? localeProvider.translate('applications.male')
                             : value == 'F'
-                            ? localeProvider.translate('applications.female')
-                            : localeProvider.translate('applications.other'),
+                                ? localeProvider
+                                    .translate('applications.female')
+                                : localeProvider
+                                    .translate('applications.other'),
                       ),
                       _buildTextField(
                         _ageCtrl,
@@ -501,8 +506,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                           );
                           if (date != null) {
                             _incidentDateCtrl.text = date.toString().split(
-                              ' ',
-                            )[0];
+                                  ' ',
+                                )[0];
                           }
                         },
                       ),
@@ -598,7 +603,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
         ),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+            color:
+                (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
             blurRadius: 10,
             spreadRadius: 0,
             offset: const Offset(0, 2),
@@ -678,7 +684,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
+            borderSide:
+                BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -723,7 +730,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
+            borderSide:
+                BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -764,10 +772,10 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                       ),
                     )
                   : _beneficiaryValid
-                  ? Icon(Icons.check_circle, color: Colors.green)
-                  : _beneficiaryError != null
-                  ? Icon(Icons.error, color: Colors.red)
-                  : null,
+                      ? Icon(Icons.check_circle, color: Colors.green)
+                      : _beneficiaryError != null
+                          ? Icon(Icons.error, color: Colors.red)
+                          : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: theme.dividerColor),
@@ -778,8 +786,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                   color: _beneficiaryError != null
                       ? Colors.red
                       : _beneficiaryValid
-                      ? Colors.green
-                      : theme.dividerColor.withValues(alpha: 0.5),
+                          ? Colors.green
+                          : theme.dividerColor.withValues(alpha: 0.5),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -844,7 +852,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
+            borderSide:
+                BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -903,7 +912,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
+            borderSide:
+                BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

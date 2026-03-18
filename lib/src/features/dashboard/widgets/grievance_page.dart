@@ -1,4 +1,4 @@
-// ignore_for_file: curly_braces_in_flow_control_structures, annotate_overrides, avoid_unnecessary_containers
+// ignore_for_file: curly_braces_in_flow_control_structures, annotate_overrides, avoid_unnecessary_containers, directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -224,8 +224,9 @@ class _GrievancePageState extends State<GrievancePage> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : _selectedBeneficiary != null
-                          ? const Icon(Icons.check_circle, color: Colors.green)
-                          : null,
+                              ? const Icon(Icons.check_circle,
+                                  color: Colors.green)
+                              : null,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -243,7 +244,6 @@ class _GrievancePageState extends State<GrievancePage> {
                     onChanged: (value) => _validateBeneficiaryId(value),
                   ),
                   const SizedBox(height: 16),
-
                   if (_selectedBeneficiary != null) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
@@ -261,7 +261,9 @@ class _GrievancePageState extends State<GrievancePage> {
                             localeProvider.translate(
                               'grievances.beneficiaryDetails',
                             ),
-                            style: Theme.of(context).textTheme.titleSmall
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
@@ -289,7 +291,6 @@ class _GrievancePageState extends State<GrievancePage> {
                     ),
                     const SizedBox(height: 16),
                   ],
-
                   TextFormField(
                     controller: _titleController,
                     decoration: InputDecoration(
@@ -310,7 +311,6 @@ class _GrievancePageState extends State<GrievancePage> {
                     },
                   ),
                   const SizedBox(height: 16),
-
                   DropdownButtonFormField<String>(
                     value: _selectedCategory,
                     decoration: InputDecoration(
@@ -346,7 +346,6 @@ class _GrievancePageState extends State<GrievancePage> {
                     },
                   ),
                   const SizedBox(height: 16),
-
                   DropdownButtonFormField<String>(
                     value: _selectedPriority,
                     decoration: InputDecoration(
@@ -382,7 +381,6 @@ class _GrievancePageState extends State<GrievancePage> {
                     },
                   ),
                   const SizedBox(height: 16),
-
                   TextFormField(
                     controller: _descriptionController,
                     decoration: InputDecoration(
@@ -537,11 +535,9 @@ class _GrievancePageState extends State<GrievancePage> {
                                         '${snapshot.error}',
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
-                                              color: theme
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.color,
-                                            ),
+                                          color:
+                                              theme.textTheme.bodySmall?.color,
+                                        ),
                                         textAlign: TextAlign.center,
                                       ),
                                     ],
@@ -577,20 +573,18 @@ class _GrievancePageState extends State<GrievancePage> {
                                         ),
                                         style: theme.textTheme.bodyMedium
                                             ?.copyWith(
-                                              color: theme
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.color,
-                                            ),
+                                          color:
+                                              theme.textTheme.bodySmall?.color,
+                                        ),
                                         textAlign: TextAlign.center,
                                       ),
                                       const SizedBox(height: 16),
                                     ],
                                   ),
                                 ).animate().fadeIn(
-                                  duration: 600.ms,
-                                  delay: 300.ms,
-                                );
+                                      duration: 600.ms,
+                                      delay: 300.ms,
+                                    );
                               }
 
                               return ListView.builder(
@@ -599,294 +593,284 @@ class _GrievancePageState extends State<GrievancePage> {
                                 itemBuilder: (context, index) {
                                   final grievance = grievances[index];
                                   return Container(
-                                        margin: const EdgeInsets.only(
-                                          bottom: 16,
+                                    margin: const EdgeInsets.only(
+                                      bottom: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: theme.cardColor,
+                                      borderRadius: BorderRadius.circular(
+                                        16,
+                                      ),
+                                      border: Border.all(
+                                        color: theme.dividerColor
+                                            .withValues(alpha: 0.1),
+                                        width: 1,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: theme.shadowColor
+                                              .withValues(alpha: 0.1),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: theme.cardColor,
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                          border: Border.all(
-                                            color: theme.dividerColor
-                                                .withValues(alpha: 0.1),
-                                            width: 1,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: theme.shadowColor
-                                                  .withValues(alpha: 0.1),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
+                                      ],
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                GrievanceDetailsScreen(
+                                              grievance: grievance,
                                             ),
-                                          ],
-                                        ),
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (_) =>
-                                                    GrievanceDetailsScreen(
-                                                      grievance: grievance,
-                                                    ),
-                                              ),
-                                            );
-                                          },
-                                          borderRadius: BorderRadius.circular(
-                                            16,
                                           ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                        );
+                                      },
+                                      borderRadius: BorderRadius.circular(
+                                        16,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // Header with status
+                                            Row(
                                               children: [
-                                                // Header with status
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Row(
-                                                        children: [
-                                                          Container(
-                                                            padding:
-                                                                const EdgeInsets.all(
-                                                                  8,
-                                                                ),
-                                                            decoration: BoxDecoration(
-                                                              color: grievance
-                                                                  .statusColor
-                                                                  .withValues(
-                                                                    alpha: 51,
-                                                                  ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    8,
-                                                                  ),
-                                                            ),
-                                                            child: Icon(
-                                                              grievance.status ==
+                                                Expanded(
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(
+                                                          8,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: grievance
+                                                              .statusColor
+                                                              .withValues(
+                                                            alpha: 51,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                            8,
+                                                          ),
+                                                        ),
+                                                        child: Icon(
+                                                          grievance.status ==
+                                                                  GrievanceStatus
+                                                                      .resolved
+                                                              ? Icons
+                                                                  .check_circle
+                                                              : grievance.status ==
                                                                       GrievanceStatus
-                                                                          .resolved
+                                                                          .inProgress
                                                                   ? Icons
-                                                                        .check_circle
-                                                                  : grievance
-                                                                            .status ==
-                                                                        GrievanceStatus
-                                                                            .inProgress
-                                                                  ? Icons
-                                                                        .hourglass_top
-                                                                  : grievance
-                                                                            .status ==
-                                                                        GrievanceStatus
-                                                                            .closed
-                                                                  ? Icons.cancel
-                                                                  : Icons
-                                                                        .report_problem,
-                                                              color: grievance
-                                                                  .statusColor,
-                                                              size: 16,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 12,
-                                                          ),
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                  grievance
-                                                                          .title ??
-                                                                      localeProvider
-                                                                          .translate(
-                                                                            'grievances.untitledGrievance',
-                                                                          ),
-                                                                  style: theme
-                                                                      .textTheme
-                                                                      .titleMedium
-                                                                      ?.copyWith(
-                                                                        fontWeight:
-                                                                            FontWeight.w600,
-                                                                      ),
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: 4,
-                                                                ),
-                                                                Text(
-                                                                  '${localeProvider.translate('grievances.idLabel')} ${grievance.id}',
-                                                                  style: theme
-                                                                      .textTheme
-                                                                      .bodySmall
-                                                                      ?.copyWith(
-                                                                        color: theme
-                                                                            .textTheme
-                                                                            .bodyMedium
-                                                                            ?.color
-                                                                            ?.withValues(
-                                                                              alpha: 179,
-                                                                            ),
-                                                                      ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .end,
-                                                      children: [
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets.symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 5,
-                                                              ),
-                                                          decoration: BoxDecoration(
-                                                            color: grievance
-                                                                .statusColor,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  16,
-                                                                ),
-                                                          ),
-                                                          child: Text(
-                                                            grievance
-                                                                .statusText,
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        if (grievance
-                                                                .priority !=
-                                                            null) ...[
-                                                          const SizedBox(
-                                                            height: 8,
-                                                          ),
-                                                          Text(
-                                                            '${localeProvider.translate('grievances.priorityLabel')} ${localeProvider.translate('grievances.priorities.${grievance.priority}')}',
-                                                            style: theme
-                                                                .textTheme
-                                                                .bodySmall
-                                                                ?.copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                          ),
-                                                        ],
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                const SizedBox(height: 16),
-
-                                                // Description
-                                                Text(
-                                                  grievance.description ??
-                                                      localeProvider.translate(
-                                                        'grievances.noDescription',
-                                                      ),
-                                                  style: theme
-                                                      .textTheme
-                                                      .bodyMedium
-                                                      ?.copyWith(height: 1.4),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-
-                                                const SizedBox(height: 16),
-
-                                                // Details row
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: _buildDetailItem(
-                                                        context,
-                                                        Icons.calendar_today,
-                                                        localeProvider
-                                                            .translate(
-                                                              'grievances.date',
-                                                            ),
-                                                        grievance.createdDate
-                                                                ?.toString()
-                                                                .split(
-                                                                  ' ',
-                                                                )[0] ??
-                                                            localeProvider
-                                                                .translate(
-                                                                  'grievances.notAvailable',
-                                                                ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: _buildDetailItem(
-                                                        context,
-                                                        Icons.category,
-                                                        localeProvider.translate(
-                                                          'grievances.category',
-                                                        ),
-                                                        localeProvider.translate(
-                                                          'grievances.categories.${grievance.category ?? 'general'}',
+                                                                      .hourglass_top
+                                                                  : grievance.status ==
+                                                                          GrievanceStatus
+                                                                              .closed
+                                                                      ? Icons
+                                                                          .cancel
+                                                                      : Icons
+                                                                          .report_problem,
+                                                          color: grievance
+                                                              .statusColor,
+                                                          size: 16,
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                const SizedBox(height: 12),
-
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: _buildDetailItem(
-                                                        context,
-                                                        Icons.person,
-                                                        localeProvider.translate(
-                                                          'grievances.userId',
-                                                        ),
-                                                        grievance.userId ??
-                                                            localeProvider
-                                                                .translate(
-                                                                  'grievances.notAvailable',
-                                                                ),
+                                                      const SizedBox(
+                                                        width: 12,
                                                       ),
-                                                    ),
-                                                    if (grievance
-                                                            .resolvedDate !=
-                                                        null)
                                                       Expanded(
-                                                        child: _buildDetailItem(
-                                                          context,
-                                                          Icons.check_circle,
-                                                          localeProvider.translate(
-                                                            'grievances.resolved',
-                                                          ),
-                                                          grievance
-                                                              .resolvedDate!
-                                                              .toString()
-                                                              .split(' ')[0],
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              grievance.title ??
+                                                                  localeProvider
+                                                                      .translate(
+                                                                    'grievances.untitledGrievance',
+                                                                  ),
+                                                              style: theme
+                                                                  .textTheme
+                                                                  .titleMedium
+                                                                  ?.copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 4,
+                                                            ),
+                                                            Text(
+                                                              '${localeProvider.translate('grievances.idLabel')} ${grievance.id}',
+                                                              style: theme
+                                                                  .textTheme
+                                                                  .bodySmall
+                                                                  ?.copyWith(
+                                                                color: theme
+                                                                    .textTheme
+                                                                    .bodyMedium
+                                                                    ?.color
+                                                                    ?.withValues(
+                                                                  alpha: 179,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: grievance
+                                                            .statusColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          16,
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        grievance.statusText,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    if (grievance.priority !=
+                                                        null) ...[
+                                                      const SizedBox(
+                                                        height: 8,
+                                                      ),
+                                                      Text(
+                                                        '${localeProvider.translate('grievances.priorityLabel')} ${localeProvider.translate('grievances.priorities.${grievance.priority}')}',
+                                                        style: theme
+                                                            .textTheme.bodySmall
+                                                            ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ],
                                                 ),
                                               ],
                                             ),
-                                          ),
+
+                                            const SizedBox(height: 16),
+
+                                            // Description
+                                            Text(
+                                              grievance.description ??
+                                                  localeProvider.translate(
+                                                    'grievances.noDescription',
+                                                  ),
+                                              style: theme.textTheme.bodyMedium
+                                                  ?.copyWith(height: 1.4),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+
+                                            const SizedBox(height: 16),
+
+                                            // Details row
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: _buildDetailItem(
+                                                    context,
+                                                    Icons.calendar_today,
+                                                    localeProvider.translate(
+                                                      'grievances.date',
+                                                    ),
+                                                    grievance.createdDate
+                                                            ?.toString()
+                                                            .split(
+                                                              ' ',
+                                                            )[0] ??
+                                                        localeProvider
+                                                            .translate(
+                                                          'grievances.notAvailable',
+                                                        ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: _buildDetailItem(
+                                                    context,
+                                                    Icons.category,
+                                                    localeProvider.translate(
+                                                      'grievances.category',
+                                                    ),
+                                                    localeProvider.translate(
+                                                      'grievances.categories.${grievance.category ?? 'general'}',
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            const SizedBox(height: 12),
+
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: _buildDetailItem(
+                                                    context,
+                                                    Icons.person,
+                                                    localeProvider.translate(
+                                                      'grievances.userId',
+                                                    ),
+                                                    grievance.userId ??
+                                                        localeProvider
+                                                            .translate(
+                                                          'grievances.notAvailable',
+                                                        ),
+                                                  ),
+                                                ),
+                                                if (grievance.resolvedDate !=
+                                                    null)
+                                                  Expanded(
+                                                    child: _buildDetailItem(
+                                                      context,
+                                                      Icons.check_circle,
+                                                      localeProvider.translate(
+                                                        'grievances.resolved',
+                                                      ),
+                                                      grievance.resolvedDate!
+                                                          .toString()
+                                                          .split(' ')[0],
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                      )
+                                      ),
+                                    ),
+                                  )
                                       .animate()
                                       .fadeIn(
                                         duration: 600.ms,
@@ -1206,8 +1190,7 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
                         senderRole = 'officer';
                     }
 
-                    final text =
-                        (msg['text'] ?? msg['message'] ?? msg['body'])
+                    final text = (msg['text'] ?? msg['message'] ?? msg['body'])
                             as String? ??
                         '';
                     final ts = msg['timestamp'] ?? msg['createdAt'];
@@ -1233,9 +1216,8 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
 
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 6),
-                      alignment: isMe
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
+                      alignment:
+                          isMe ? Alignment.centerRight : Alignment.centerLeft,
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.75,
@@ -1276,14 +1258,14 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
                                           'grievances.you',
                                         )
                                       : (senderRole.isNotEmpty
-                                            ? (senderRole == 'officer'
-                                                  ? localeProvider.translate(
-                                                      'grievances.officer',
-                                                    )
-                                                  : senderRole)
-                                            : localeProvider.translate(
-                                                'grievances.officer',
-                                              )),
+                                          ? (senderRole == 'officer'
+                                              ? localeProvider.translate(
+                                                  'grievances.officer',
+                                                )
+                                              : senderRole)
+                                          : localeProvider.translate(
+                                              'grievances.officer',
+                                            )),
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: isMe

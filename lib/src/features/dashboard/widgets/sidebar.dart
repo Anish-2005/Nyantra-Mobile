@@ -1,3 +1,5 @@
+// ignore_for_file: directives_ordering
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/locale_provider.dart';
@@ -111,7 +113,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                 GestureDetector(
                   onTap: () => widget.onToggle?.call(false),
                   child: Container(
-                    color: Colors.black.withValues(alpha: 0.5 * _animation.value),
+                    color:
+                        Colors.black.withValues(alpha: 0.5 * _animation.value),
                   ),
                 ),
 
@@ -148,7 +151,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: theme.dividerColor.withValues(alpha: 0.1),
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.1),
                                 width: 1,
                               ),
                             ),
@@ -178,27 +182,21 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                   children: [
                                     Text(
                                       localeProvider.translate('nav.brandName'),
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: theme
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.color,
-                                          ),
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.textTheme.bodyLarge?.color,
+                                      ),
                                     ),
                                     Text(
                                       localeProvider.translate(
                                         'auth.your_portal',
                                       ),
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: theme
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.color
-                                                ?.withValues(alpha: 0.7),
-                                          ),
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.textTheme.bodyMedium?.color
+                                            ?.withValues(alpha: 0.7),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -232,7 +230,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                  gradient: isSelected ? selectedGradient : null,
+                                  gradient:
+                                      isSelected ? selectedGradient : null,
                                   color: isSelected ? null : Colors.transparent,
                                 ),
                                 child: ListTile(
@@ -277,7 +276,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                           decoration: BoxDecoration(
                             border: Border(
                               top: BorderSide(
-                                color: theme.dividerColor.withValues(alpha: 0.1),
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.1),
                                 width: 1,
                               ),
                             ),
@@ -299,9 +299,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                       color: theme.textTheme.bodyMedium?.color,
                                       size: 20,
                                     ),
-                                    tooltip: isDark
-                                        ? 'Light Mode'
-                                        : 'Dark Mode',
+                                    tooltip:
+                                        isDark ? 'Light Mode' : 'Dark Mode',
                                   ),
                                   // Language Toggle
                                   IconButton(
@@ -333,12 +332,10 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                   ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: theme
-                                        .colorScheme
-                                        .errorContainer
+                                        .colorScheme.errorContainer
                                         .withValues(alpha: 0.45),
-                                    foregroundColor: theme
-                                        .colorScheme
-                                        .onErrorContainer,
+                                    foregroundColor:
+                                        theme.colorScheme.onErrorContainer,
                                     elevation: 0,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
@@ -346,7 +343,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       side: BorderSide(
-                                        color: theme.colorScheme.error.withValues(
+                                        color:
+                                            theme.colorScheme.error.withValues(
                                           alpha: 0.35,
                                         ),
                                       ),
@@ -589,9 +587,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                             localeProvider.translate('auth.sign_out'),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: theme
-                                .colorScheme
-                                .errorContainer
+                            backgroundColor: theme.colorScheme.errorContainer
                                 .withValues(alpha: 0.45),
                             foregroundColor: theme.colorScheme.onErrorContainer,
                             elevation: 0,

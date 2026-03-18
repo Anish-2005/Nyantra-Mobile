@@ -1,9 +1,8 @@
-// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers, directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/models/feedback_model.dart';
 import '../../../core/providers/locale_provider.dart';
@@ -24,19 +23,56 @@ class _FeedbackPageState extends State<FeedbackPage>
   double _rating = 0;
   bool _isSubmitting = false;
   late TabController _tabController;
+  Stream<List<FeedbackModel>>? _myFeedbackStream;
+  String? _feedbackStreamUserId;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    _refreshFeedbackStreamIfNeeded();
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     _subjectController.dispose();
     _feedbackController.dispose();
     super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (!_tabController.indexIsChanging && _tabController.index == 1) {
+      _refreshFeedbackStream(force: true);
+    }
+  }
+
+  void _refreshFeedbackStreamIfNeeded() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _myFeedbackStream = null;
+      _feedbackStreamUserId = null;
+      return;
+    }
+    if (_myFeedbackStream == null || _feedbackStreamUserId != user.uid) {
+      _myFeedbackStream = DataService.getUserFeedbacks(user.uid);
+      _feedbackStreamUserId = user.uid;
+    }
+  }
+
+  void _refreshFeedbackStream({bool force = false}) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    if (force ||
+        _myFeedbackStream == null ||
+        _feedbackStreamUserId != user.uid) {
+      setState(() {
+        _myFeedbackStream = DataService.getUserFeedbacks(user.uid);
+        _feedbackStreamUserId = user.uid;
+      });
+    }
   }
 
   Future<void> _submitFeedback(LocaleProvider localeProvider) async {
@@ -65,6 +101,7 @@ class _FeedbackPageState extends State<FeedbackPage>
       );
 
       if (mounted) {
+        _refreshFeedbackStream(force: true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -116,8 +153,8 @@ class _FeedbackPageState extends State<FeedbackPage>
                 Text(
                   localeProvider.translate('extracted.feedback.rateExperience'),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -188,6 +225,7 @@ class _FeedbackPageState extends State<FeedbackPage>
                   });
 
                   if (mounted) {
+                    _refreshFeedbackStream(force: true);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -258,6 +296,7 @@ class _FeedbackPageState extends State<FeedbackPage>
         await DataService.deleteFeedback(feedbackId);
 
         if (mounted) {
+          _refreshFeedbackStream(force: true);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -364,7 +403,8 @@ class _FeedbackPageState extends State<FeedbackPage>
                               color: theme.cardColor.withValues(alpha: 0.8),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: theme.dividerColor.withValues(alpha: 0.1),
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.1),
                               ),
                             ),
                             child: TabBarView(
@@ -529,8 +569,10 @@ class _FeedbackPageState extends State<FeedbackPage>
       );
     }
 
+    _refreshFeedbackStreamIfNeeded();
+
     return StreamBuilder<List<FeedbackModel>>(
-      stream: DataService.getUserFeedbacks(user.uid),
+      stream: _myFeedbackStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -572,7 +614,8 @@ class _FeedbackPageState extends State<FeedbackPage>
                 Icon(
                   Icons.feedback_outlined,
                   size: 64,
-                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
+                  color:
+                      theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
