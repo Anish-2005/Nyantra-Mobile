@@ -1,4 +1,4 @@
-// ignore_for_file: curly_braces_in_flow_control_structures, annotate_overrides, avoid_unnecessary_containers, directives_ordering
+// ignore_for_file: curly_braces_in_flow_control_structures, annotate_overrides, avoid_unnecessary_containers, directives_ordering, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

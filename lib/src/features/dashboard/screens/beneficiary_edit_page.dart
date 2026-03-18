@@ -1,4 +1,4 @@
-// ignore_for_file: directives_ordering
+// ignore_for_file: directives_ordering, curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -189,7 +189,6 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
                               labelKey: 'beneficiaries.fatherName',
                               validator: (value) {
                                 if (value?.isEmpty ?? true)
-                                  // ignore: curly_braces_in_flow_control_structures
                                   return 'Father\'s name is required';
                                 return null;
                               },

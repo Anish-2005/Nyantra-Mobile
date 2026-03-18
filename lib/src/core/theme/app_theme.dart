@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 @immutable
@@ -372,7 +374,8 @@ class AppTheme {
         style: IconButton.styleFrom(
           minimumSize: const Size(42, 42),
           padding: const EdgeInsets.all(10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
       chipTheme: base.chipTheme.copyWith(

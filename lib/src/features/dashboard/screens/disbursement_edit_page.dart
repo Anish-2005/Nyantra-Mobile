@@ -1,4 +1,4 @@
-// ignore_for_file: directives_ordering
+// ignore_for_file: directives_ordering, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

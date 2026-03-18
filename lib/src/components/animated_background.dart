@@ -1,3 +1,5 @@
+// ignore_for_file: directives_ordering
+
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:ui';
@@ -53,11 +55,11 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
             end: Alignment.bottomRight,
           )
         : tokens?.backgroundGradient ??
-              const LinearGradient(
-                colors: [Color(0xFFFFFFFF), Color(0xFFFFFAF3), Color(0xFFFFF1E1)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              );
+            const LinearGradient(
+              colors: [Color(0xFFFFFFFF), Color(0xFFFFFAF3), Color(0xFFFFF1E1)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            );
     final brandStart = shouldForceDarkPalette
         ? const Color(0xFF0EA5E9)
         : tokens?.brandStart ?? const Color(0xFF155EEF);
@@ -135,11 +137,10 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
   }
 
   bool _isLightBackground(AppThemeTokens tokens) {
-    final averageLuminance =
-        (tokens.backgroundStart.computeLuminance() +
-                tokens.backgroundMid.computeLuminance() +
-                tokens.backgroundEnd.computeLuminance()) /
-            3;
+    final averageLuminance = (tokens.backgroundStart.computeLuminance() +
+            tokens.backgroundMid.computeLuminance() +
+            tokens.backgroundEnd.computeLuminance()) /
+        3;
     return averageLuminance > 0.32;
   }
 
@@ -210,10 +211,10 @@ class _TexturePainter extends CustomPainter {
     for (int i = 0; i < 70; i++) {
       final x =
           (random.nextDouble() * size.width + animation * (45 + i * 0.6)) %
-          size.width;
+              size.width;
       final y =
           (random.nextDouble() * size.height + animation * (24 + i * 0.4)) %
-          size.height;
+              size.height;
       final radius = random.nextDouble() * 1.8 + 0.5;
       canvas.drawCircle(Offset(x, y), radius, particlePaint);
     }
