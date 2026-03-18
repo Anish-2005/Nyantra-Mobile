@@ -16,9 +16,15 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _user != null;
 
-  AuthProvider({SyncStatusProvider? syncStatusProvider}) {
-    _syncStatusProvider = syncStatusProvider;
+  AuthProvider() {
     _init();
+  }
+
+  void setSyncStatusProvider(SyncStatusProvider provider) {
+    _syncStatusProvider = provider;
+    if (_user != null) {
+      SyncService(syncStatusProvider: _syncStatusProvider);
+    }
   }
 
   void _init() {

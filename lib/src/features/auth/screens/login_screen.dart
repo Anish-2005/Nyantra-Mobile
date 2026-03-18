@@ -8,6 +8,7 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../components/animated_background.dart';
+import '../../dashboard/screens/dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -774,10 +775,11 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                         child: ElevatedButton(
                           onPressed: () {
-                            // Navigate to dashboard - this will be handled by the app's navigation
-                            Navigator.of(
-                              context,
-                            ).pushReplacementNamed('/dashboard');
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const DashboardScreen(),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
@@ -952,36 +954,6 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
-}
-
-// Custom Grid Painter for subtle background pattern
-class GridPainter extends CustomPainter {
-  final bool isDark;
-
-  GridPainter({required this.isDark});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5
-      ..color = (isDark ? Colors.white : Colors.black).withOpacity(0.03);
-
-    const double spacing = 30;
-
-    // Draw vertical lines
-    for (double x = 0; x < size.width; x += spacing) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-
-    // Draw horizontal lines
-    for (double y = 0; y < size.height; y += spacing) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // Custom Particle Painter for animated background particles

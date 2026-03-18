@@ -52,9 +52,16 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ConnectivityProvider()),
         ChangeNotifierProvider(create: (_) => SyncStatusProvider()),
+        ChangeNotifierProxyProvider<SyncStatusProvider, AuthProvider>(
+          create: (_) => AuthProvider(),
+          update: (_, syncStatusProvider, authProvider) {
+            final provider = authProvider ?? AuthProvider();
+            provider.setSyncStatusProvider(syncStatusProvider);
+            return provider;
+          },
+        ),
       ],
       child: Consumer3<ThemeProvider, LocaleProvider, AuthProvider>(
         builder: (context, themeProvider, localeProvider, authProvider, child) {
