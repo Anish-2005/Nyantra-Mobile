@@ -75,3 +75,8 @@ A GitHub Actions pipeline also runs format checks, analyze, and tests on push/PR
 - Firestore `whereIn` queries are batched to handle production-scale ID sets safely.
 - Logging is centralized through `AppLogger` for cleaner observability.
 - Placeholder duplicate core files under `lib/src/features/core` were removed to reduce architectural noise.
+
+## Additional Docs
+- Architecture: `docs/ARCHITECTURE.md`
+- Contribution Guide: `CONTRIBUTING.md`
+- Security Policy: `SECURITY.md`

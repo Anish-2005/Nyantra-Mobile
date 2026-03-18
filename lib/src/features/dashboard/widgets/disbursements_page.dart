@@ -592,7 +592,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                             ),
                                                       ),
                                                       Text(
-                                                        '₹${disbursement.reliefAmount.toStringAsFixed(0)}',
+                                                        'Rs. ${disbursement.reliefAmount.toStringAsFixed(0)}',
                                                         style: theme
                                                             .textTheme
                                                             .titleMedium
@@ -985,7 +985,7 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
                                                                         ),
                                                                       ),
                                                                       Text(
-                                                                        '₹${disbursement.disbursedAmount.toStringAsFixed(0)}',
+                                                                        'Rs. ${disbursement.disbursedAmount.toStringAsFixed(0)}',
                                                                         style: theme.textTheme.bodySmall?.copyWith(
                                                                           fontWeight:
                                                                               FontWeight.w600,
@@ -1119,3 +1119,4 @@ class _DisbursementsPageState extends State<DisbursementsPage> {
     );
   }
 }
+

@@ -717,7 +717,7 @@ class _LoginScreenState extends State<LoginScreen>
                             const SizedBox(width: 8),
                             Expanded(
                               child: _buildStatCard(
-                                '₹2.5L',
+                                'Rs. 2.5L',
                                 'Disbursed',
                                 Icons.account_balance_wallet,
                                 isDark,
@@ -986,4 +986,5 @@ class ParticlePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+
 

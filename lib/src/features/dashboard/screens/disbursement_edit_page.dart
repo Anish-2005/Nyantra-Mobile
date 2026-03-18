@@ -350,7 +350,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Disbursed Amount: ₹${_disbursedAmount.toStringAsFixed(2)}',
+                              'Disbursed Amount: Rs. ${_disbursedAmount.toStringAsFixed(2)}',
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: theme.colorScheme.primary,
@@ -437,3 +437,4 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
     );
   }
 }
+

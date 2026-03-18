@@ -324,7 +324,7 @@ class DataService {
               type: ActivityType.disbursementCompleted,
               title: 'Disbursement Completed',
               description:
-                  '₹${amount.toStringAsFixed(2)} disbursed successfully',
+                  'Rs. ${amount.toStringAsFixed(2)} disbursed successfully',
               timestamp: disbursementDate,
               relatedId: doc.id,
             ),
@@ -814,3 +814,4 @@ class DataService {
     }
   }
 }
+

@@ -457,7 +457,7 @@ class _OverviewPageState extends State<OverviewPage> {
                             // Format total disbursed as Indian currency without 'L' suffix
                             NumberFormat.currency(
                               locale: 'en_IN',
-                              symbol: '₹',
+                              symbol: 'Rs. ',
                               decimalDigits: 0,
                             ).format(
                               (_stats['totalDisbursed'] as double?) ?? 0.0,
@@ -695,3 +695,4 @@ class _OverviewPageState extends State<OverviewPage> {
     );
   }
 }
+

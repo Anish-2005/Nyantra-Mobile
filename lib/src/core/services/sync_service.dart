@@ -914,7 +914,7 @@ class SyncService {
         await FirebaseService.firestore.collection('reports').add(reportData);
         AppLogger.info('SyncService: Created sample report: ${reportData['name']}');
       } catch (e) {
-        AppLogger.info(
+        AppLogger.error(
           'SyncService: Error creating sample report ${reportData['name']}: $e',
         );
       }
