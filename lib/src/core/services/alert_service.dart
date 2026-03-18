@@ -1,9 +1,10 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/alert_model.dart';
 import '../models/disbursement_model.dart';
+import '../utils/app_logger.dart';
 import 'email_service.dart';
 
 class AlertService {
@@ -13,7 +14,6 @@ class AlertService {
   static const String _lastViewedTimestampKey =
       'last_viewed_disbursements_timestamp';
 
-  // Get dismissed alerts
   static Future<Set<String>> getDismissedAlerts() async {
     final prefs = await SharedPreferences.getInstance();
     final dismissedJson = prefs.getString(_dismissedAlertsKey);
@@ -24,7 +24,6 @@ class AlertService {
     return {};
   }
 
-  // Save dismissed alerts
   static Future<void> saveDismissedAlerts(Set<String> dismissedAlerts) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
@@ -33,7 +32,6 @@ class AlertService {
     );
   }
 
-  // Get emailed alerts
   static Future<Set<String>> getEmailedAlerts() async {
     final prefs = await SharedPreferences.getInstance();
     final emailedJson = prefs.getString(_emailedAlertsKey);
@@ -44,7 +42,6 @@ class AlertService {
     return {};
   }
 
-  // Save emailed alerts
   static Future<void> saveEmailedAlerts(Set<String> emailedAlerts) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
@@ -53,7 +50,6 @@ class AlertService {
     );
   }
 
-  // Get emailed events
   static Future<Set<String>> getEmailedEvents() async {
     final prefs = await SharedPreferences.getInstance();
     final emailedJson = prefs.getString(_emailedEventsKey);
@@ -64,7 +60,6 @@ class AlertService {
     return {};
   }
 
-  // Save emailed events
   static Future<void> saveEmailedEvents(Set<String> emailedEvents) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
@@ -73,7 +68,6 @@ class AlertService {
     );
   }
 
-  // Get last viewed timestamp
   static Future<DateTime?> getLastViewedTimestamp() async {
     final prefs = await SharedPreferences.getInstance();
     final timestampStr = prefs.getString(_lastViewedTimestampKey);
@@ -83,13 +77,11 @@ class AlertService {
     return null;
   }
 
-  // Save last viewed timestamp
   static Future<void> saveLastViewedTimestamp(DateTime timestamp) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_lastViewedTimestampKey, timestamp.toIso8601String());
   }
 
-  // Generate alerts for disbursements
   static Future<List<DisbursementAlert>> generateAlerts(
     List<DisbursementModel> disbursements,
     Set<String> dismissedAlerts,
@@ -98,7 +90,6 @@ class AlertService {
     final alerts = <DisbursementAlert>[];
 
     for (final disbursement in disbursements) {
-      // New disbursement alert
       if (lastViewedTimestamp != null &&
           disbursement.createdAt != null &&
           disbursement.createdAt!.isAfter(lastViewedTimestamp) &&
@@ -109,14 +100,13 @@ class AlertService {
             type: AlertType.newDisbursement,
             disbursementId: disbursement.id,
             message:
-                'New disbursement of ₹${disbursement.reliefAmount.toStringAsFixed(0)} has been initiated',
+                'New disbursement of Rs. ${disbursement.reliefAmount.toStringAsFixed(0)} has been initiated',
             timestamp: disbursement.createdAt!,
             data: {'disbursement': disbursement.toFirestore()},
           ),
         );
       }
 
-      // Installment completion alert for progressive payments
       if (disbursement.isProgressivePayment &&
           disbursement.completedInstallments > 0) {
         final lastCompletedInstallment = disbursement.completedInstallments;
@@ -124,7 +114,6 @@ class AlertService {
             'installment-${disbursement.id}-$lastCompletedInstallment';
 
         if (!dismissedAlerts.contains(alertId)) {
-          // Calculate installment amount (simplified - you might want to store this in the model)
           final installmentAmount =
               disbursement.reliefAmount / disbursement.totalInstallments;
 
@@ -134,7 +123,7 @@ class AlertService {
               type: AlertType.installmentCompleted,
               disbursementId: disbursement.id,
               message:
-                  'Installment $lastCompletedInstallment of ₹${installmentAmount.toStringAsFixed(0)} has been disbursed',
+                  'Installment $lastCompletedInstallment of Rs. ${installmentAmount.toStringAsFixed(0)} has been disbursed',
               timestamp: DateTime.now(),
               data: {'disbursement': disbursement.toFirestore()},
             ),
@@ -142,7 +131,6 @@ class AlertService {
         }
       }
 
-      // Status change alerts
       if (disbursement.status == DisbursementStatus.completed &&
           !dismissedAlerts.contains('completed-${disbursement.id}')) {
         alerts.add(
@@ -151,7 +139,7 @@ class AlertService {
             type: AlertType.statusCompleted,
             disbursementId: disbursement.id,
             message:
-                'Your disbursement of ₹${disbursement.disbursedAmount.toStringAsFixed(0)} has been completed',
+                'Your disbursement of Rs. ${disbursement.disbursedAmount.toStringAsFixed(0)} has been completed',
             timestamp: disbursement.disbursementDate ?? DateTime.now(),
             data: {'disbursement': disbursement.toFirestore()},
           ),
@@ -162,7 +150,6 @@ class AlertService {
     return alerts;
   }
 
-  // Send email notifications for alerts
   static Future<void> sendEmailNotifications(
     List<DisbursementAlert> alerts,
     String beneficiaryEmail,
@@ -172,12 +159,9 @@ class AlertService {
     if (beneficiaryEmail.isEmpty) return;
 
     for (final alert in alerts) {
-      // Skip if already emailed
       if (emailedAlerts.contains(alert.id)) continue;
 
-      // Create event key to prevent duplicate emails for same event
-      final eventKey =
-          'disbursement-${alert.disbursementId}-${alert.type.name}';
+      final eventKey = 'disbursement-${alert.disbursementId}-${alert.type.name}';
       if (emailedEvents.contains(eventKey)) continue;
 
       try {
@@ -186,34 +170,33 @@ class AlertService {
           beneficiaryEmail: beneficiaryEmail,
         );
 
-        // Mark as emailed
         emailedAlerts.add(alert.id);
         emailedEvents.add(eventKey);
 
-        print(
-          '📧 Email sent for alert: ${alert.type.name} to $beneficiaryEmail',
+        AppLogger.info(
+          'Email sent for alert: ${alert.type.name} to $beneficiaryEmail',
         );
-      } catch (e) {
-        print('❌ Failed to send email for alert ${alert.id}: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Failed to send email for alert ${alert.id}',
+          error: error,
+          stackTrace: stackTrace,
+        );
       }
 
-      // Small delay between emails
       await Future.delayed(const Duration(seconds: 1));
     }
 
-    // Save updated sets
     await saveEmailedAlerts(emailedAlerts);
     await saveEmailedEvents(emailedEvents);
   }
 
-  // Dismiss alert
   static Future<void> dismissAlert(String alertId) async {
     final dismissedAlerts = await getDismissedAlerts();
     dismissedAlerts.add(alertId);
     await saveDismissedAlerts(dismissedAlerts);
   }
 
-  // Dismiss all alerts
   static Future<void> dismissAllAlerts(List<String> alertIds) async {
     final dismissedAlerts = await getDismissedAlerts();
     dismissedAlerts.addAll(alertIds);

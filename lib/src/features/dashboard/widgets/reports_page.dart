@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously, avoid_print, avoid_unnecessary_containers
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +7,7 @@ import '../../../core/providers/locale_provider.dart';
 import '../../../core/widgets/loading_state.dart';
 import '../../../core/models/report_model.dart';
 import '../../../core/services/sync_service.dart';
+import '../../../core/utils/app_logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
@@ -402,7 +403,7 @@ class _ReportsPageState extends State<ReportsPage> {
                           }
 
                           final reports = snapshot.data ?? [];
-                          print(
+                          AppLogger.debug(
                             'ReportsPage: Retrieved ${reports.length} reports from SyncService',
                           );
 
@@ -424,7 +425,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                 _selectedStatus == 'all' ||
                                 report.status == _selectedStatus;
 
-                            print(
+                            AppLogger.debug(
                               'ReportsPage: Report ${report.name} - category: ${report.category}, status: ${report.status}, matches: search=$matchesSearch, category=$matchesCategory, status=$matchesStatus',
                             );
 
@@ -433,7 +434,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                 matchesStatus;
                           }).toList();
 
-                          print(
+                          AppLogger.debug(
                             'ReportsPage: After filtering, ${filteredReports.length} reports remain',
                           );
 

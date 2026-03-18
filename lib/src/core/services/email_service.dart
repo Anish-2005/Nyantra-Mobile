@@ -1,14 +1,16 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import '../models/alert_model.dart';
+import '../utils/app_logger.dart';
 
 class EmailService {
-  // API endpoint for sending emails (same as web app)
-  // Update this to your deployed API URL
-  static const String _apiBaseUrl =
-      'https://your-api-domain.com'; // Replace with your actual API URL
+  // Configure via --dart-define=NYANTRA_API_BASE_URL=https://api.example.com
+  static const String _apiBaseUrl = String.fromEnvironment(
+    'NYANTRA_API_BASE_URL',
+    defaultValue: 'https://your-api-domain.com',
+  );
   static const String _sendEmailEndpoint = '/api/send-email';
 
   static Future<void> sendDisbursementNotification({
@@ -16,6 +18,14 @@ class EmailService {
     required String beneficiaryEmail,
   }) async {
     if (beneficiaryEmail.isEmpty) return;
+
+    if (_apiBaseUrl == 'https://your-api-domain.com') {
+      AppLogger.warning(
+        'Email API base URL is not configured. '
+        'Set NYANTRA_API_BASE_URL via --dart-define.',
+      );
+      return;
+    }
 
     final subject = _getSubjectForAlertType(alert.type);
     final htmlContent = _generateHtmlContent(alert);
@@ -32,13 +42,19 @@ class EmailService {
       );
 
       if (response.statusCode == 200) {
-        print('📧 Email sent successfully to $beneficiaryEmail');
+        AppLogger.info('Email sent successfully to $beneficiaryEmail');
       } else {
-        print('❌ Failed to send email: HTTP ${response.statusCode}');
-        print('Response: ${response.body}');
+        AppLogger.error(
+          'Failed to send email: HTTP ${response.statusCode}',
+          error: response.body,
+        );
       }
-    } catch (e) {
-      print('❌ Failed to send email: $e');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Failed to send email',
+        error: error,
+        stackTrace: stackTrace,
+      );
       rethrow;
     }
   }
@@ -63,20 +79,20 @@ class EmailService {
           <h1 style="color: white; margin: 0; font-size: 28px;">Nyantra</h1>
           <p style="color: white; margin: 5px 0 0 0; opacity: 0.9;">Direct Benefit Transfer System</p>
         </div>
-        
+
         <div style="background: #f8fafc; padding: 30px; border-radius: 10px; border-left: 4px solid #3b82f6;">
           <h2 style="color: #1e40af; margin-top: 0;">
             ${_getTitleForAlertType(alert.type)}
           </h2>
-          
+
           <p style="font-size: 16px; line-height: 1.6; color: #374151;">
             ${alert.message}
           </p>
-          
+
           ${_generateDisbursementDetails(disbursement)}
-          
+
           ${_generateInstallmentNote(alert)}
-          
+
           <div style="text-align: center; margin-top: 30px;">
             <p style="color: #6b7280; font-size: 14px;">
               This is an automated notification from the Nyantra Direct Benefit Transfer System.
@@ -116,7 +132,7 @@ class EmailService {
         <h3 style="margin-top: 0; color: #1e40af;">Disbursement Details:</h3>
         <ul style="list-style: none; padding: 0;">
           <li style="padding: 5px 0;"><strong>Transaction ID:</strong> $transactionId</li>
-          <li style="padding: 5px 0;"><strong>Amount:</strong> ₹${reliefAmount.toStringAsFixed(0)}</li>
+          <li style="padding: 5px 0;"><strong>Amount:</strong> Rs. ${reliefAmount.toStringAsFixed(0)}</li>
           <li style="padding: 5px 0;"><strong>Status:</strong> $status</li>
           ${actType != null ? '<li style="padding: 5px 0;"><strong>Act Type:</strong> $actType</li>' : ''}
         </ul>
@@ -134,7 +150,7 @@ class EmailService {
     return '''
       <div style="background: #ecfdf5; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981; margin: 20px 0;">
         <p style="margin: 0; color: #065f46; font-weight: 500;">
-          ✅ Installment $completedInstallments of $totalInstallments has been successfully disbursed to your account.
+          Installment $completedInstallments of $totalInstallments has been successfully disbursed to your account.
         </p>
       </div>
     ''';

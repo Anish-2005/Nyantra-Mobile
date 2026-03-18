@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, avoid_print, avoid_unnecessary_containers
+// ignore_for_file: deprecated_member_use, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +8,7 @@ import '../../../core/providers/locale_provider.dart';
 import '../../../core/widgets/loading_state.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/models/activity_model.dart';
+import '../../../core/utils/app_logger.dart';
 
 class OverviewPage extends StatefulWidget {
   final Function(int)? onNavigate;
@@ -40,8 +41,12 @@ class _OverviewPageState extends State<OverviewPage> {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      print('Error loading stats: $e');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error loading stats',
+        error: error,
+        stackTrace: stackTrace,
+      );
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -57,8 +62,12 @@ class _OverviewPageState extends State<OverviewPage> {
           _isLoadingActivities = false;
         });
       }
-    } catch (e) {
-      print('Error loading recent activities: $e');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error loading recent activities',
+        error: error,
+        stackTrace: stackTrace,
+      );
       if (mounted) {
         setState(() => _isLoadingActivities = false);
       }

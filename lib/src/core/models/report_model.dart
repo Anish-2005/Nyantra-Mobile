@@ -1,7 +1,6 @@
-// ignore_for_file: avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
+import '../utils/app_logger.dart';
 
 class Report {
   final String id;
@@ -70,8 +69,12 @@ class Report {
         try {
           // Try to decode JSON string
           return jsonDecode(value) as Map<String, dynamic>;
-        } catch (e) {
-          print('Error parsing JSON map: $e');
+        } catch (error, stackTrace) {
+          AppLogger.error(
+            'Error parsing JSON map',
+            error: error,
+            stackTrace: stackTrace,
+          );
           return null;
         }
       }
@@ -90,8 +93,12 @@ class Report {
             return List<String>.from(decoded);
           }
           return [];
-        } catch (e) {
-          print('Error parsing JSON list: $e');
+        } catch (error, stackTrace) {
+          AppLogger.error(
+            'Error parsing JSON list',
+            error: error,
+            stackTrace: stackTrace,
+          );
           return [];
         }
       }
@@ -140,10 +147,14 @@ class Report {
         createdAt: toIsoString(json['createdAt']),
         updatedAt: toIsoString(json['updatedAt']),
       );
-    } catch (e) {
-      print('Error parsing Report with id $id: $e');
-      print('Report data keys: ${json.keys.toList()}');
-      print('Report data: $json');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error parsing report with id $id',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      AppLogger.debug('Report data keys: ${json.keys.toList()}');
+      AppLogger.debug('Report data: $json');
       // Return a basic report to avoid crashes
       return Report(
         id: id,
@@ -152,7 +163,7 @@ class Report {
         category: 'error',
         frequency: 'once',
         status: 'failed',
-        description: 'Error parsing report data: $e',
+        description: 'Error parsing report data: $error',
         downloadCount: 0,
         isScheduled: false,
         recipients: [],

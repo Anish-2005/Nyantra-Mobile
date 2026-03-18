@@ -1,7 +1,6 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'database_helper.dart';
 import 'firebase_service.dart';
 import '../models/user_model.dart';
@@ -12,12 +11,55 @@ import '../models/grievance_model.dart';
 import '../models/feedback_model.dart';
 import '../models/report_model.dart';
 import '../providers/sync_status_provider.dart';
+import '../utils/app_logger.dart';
 
 class SyncService {
   static SyncService? _instance;
   static DatabaseHelper? _dbHelper;
   static Connectivity? _connectivity;
   static SyncStatusProvider? _syncStatusProvider;
+  static const int _whereInLimit = 10;
+
+  Iterable<List<T>> _chunkList<T>(List<T> values, int size) sync* {
+    for (var i = 0; i < values.length; i += size) {
+      final end = (i + size) > values.length ? values.length : i + size;
+      yield values.sublist(i, end);
+    }
+  }
+
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> _dedupeDocsById(
+    Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  ) {
+    final seenIds = <String>{};
+    final uniqueDocs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+    for (final doc in docs) {
+      if (seenIds.add(doc.id)) {
+        uniqueDocs.add(doc);
+      }
+    }
+    return uniqueDocs;
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> _queryByWhereIn({
+    required String collection,
+    required String field,
+    required List<String> values,
+  }) async {
+    if (values.isEmpty) {
+      return [];
+    }
+
+    final docs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+    for (final chunk in _chunkList(values, _whereInLimit)) {
+      final snapshot = await FirebaseService.firestore
+          .collection(collection)
+          .where(field, whereIn: chunk)
+          .get();
+      docs.addAll(snapshot.docs);
+    }
+
+    return _dedupeDocsById(docs);
+  }
 
   factory SyncService({SyncStatusProvider? syncStatusProvider}) {
     _instance ??= SyncService._internal();
@@ -80,14 +122,17 @@ class SyncService {
           .where('ownerId', isEqualTo: currentUser.uid)
           .get();
 
-      List applications = [...applicationsQuery1.docs];
+      final applications = <QueryDocumentSnapshot<Map<String, dynamic>>>[
+        ...applicationsQuery1.docs,
+      ];
 
       if (beneficiaryIds.isNotEmpty) {
-        final applicationsQuery2 = await FirebaseService.firestore
-            .collection('applications')
-            .where('beneficiaryId', whereIn: beneficiaryIds)
-            .get();
-        applications.addAll(applicationsQuery2.docs);
+        final applicationsQuery2 = await _queryByWhereIn(
+          collection: 'applications',
+          field: 'beneficiaryId',
+          values: beneficiaryIds,
+        );
+        applications.addAll(applicationsQuery2);
       }
 
       // Remove duplicates
@@ -105,11 +150,12 @@ class SyncService {
 
       // Sync disbursements for user's applications
       if (applicationIds.isNotEmpty) {
-        final disbursementsSnapshot = await FirebaseService.firestore
-            .collection('disbursements')
-            .where('applicationId', whereIn: applicationIds.toList())
-            .get();
-        for (var doc in disbursementsSnapshot.docs) {
+        final disbursementsSnapshot = await _queryByWhereIn(
+          collection: 'disbursements',
+          field: 'applicationId',
+          values: applicationIds.toList(),
+        );
+        for (var doc in disbursementsSnapshot) {
           final disbursement = DisbursementModel.fromFirestore(
             doc.data(),
             doc.id,
@@ -120,11 +166,12 @@ class SyncService {
 
       // Also sync disbursements directly for user's beneficiaries
       if (beneficiaryIds.isNotEmpty) {
-        final beneficiaryDisbursementsSnapshot = await FirebaseService.firestore
-            .collection('disbursements')
-            .where('beneficiaryId', whereIn: beneficiaryIds.take(10))
-            .get();
-        for (var doc in beneficiaryDisbursementsSnapshot.docs) {
+        final beneficiaryDisbursementsSnapshot = await _queryByWhereIn(
+          collection: 'disbursements',
+          field: 'beneficiaryId',
+          values: beneficiaryIds,
+        );
+        for (var doc in beneficiaryDisbursementsSnapshot) {
           final disbursement = DisbursementModel.fromFirestore(
             doc.data(),
             doc.id,
@@ -139,14 +186,17 @@ class SyncService {
           .where('userId', isEqualTo: currentUser.uid)
           .get();
 
-      List grievances = [...grievancesQuery1.docs];
+      final grievances = <QueryDocumentSnapshot<Map<String, dynamic>>>[
+        ...grievancesQuery1.docs,
+      ];
 
       if (beneficiaryIds.isNotEmpty) {
-        final grievancesQuery2 = await FirebaseService.firestore
-            .collection('grievances')
-            .where('beneficiaryId', whereIn: beneficiaryIds)
-            .get();
-        grievances.addAll(grievancesQuery2.docs);
+        final grievancesQuery2 = await _queryByWhereIn(
+          collection: 'grievances',
+          field: 'beneficiaryId',
+          values: beneficiaryIds,
+        );
+        grievances.addAll(grievancesQuery2);
       }
 
       // Remove duplicates
@@ -173,17 +223,17 @@ class SyncService {
       }
 
       // Sync reports
-      print('SyncService: syncFromFirestore - Syncing reports');
+      AppLogger.info('SyncService: syncFromFirestore - Syncing reports');
       final reportsSnapshot = await FirebaseService.firestore
           .collection('reports')
           .get();
-      print(
+      AppLogger.info(
         'SyncService: syncFromFirestore - Found ${reportsSnapshot.docs.length} reports in Firestore',
       );
 
       // If no reports exist in Firestore, create some sample reports
       if (reportsSnapshot.docs.isEmpty) {
-        print(
+        AppLogger.info(
           'SyncService: No reports found in Firestore, creating sample reports',
         );
 
@@ -209,7 +259,7 @@ class SyncService {
         for (var doc in updatedReportsSnapshot.docs) {
           final report = Report.fromJson(doc.data(), doc.id);
           await _dbHelper!.insertReport(report);
-          print(
+          AppLogger.info(
             'SyncService: syncFromFirestore - Synced sample report: ${report.name}',
           );
         }
@@ -223,14 +273,14 @@ class SyncService {
           if (!localReportIds.contains(doc.id)) {
             final report = Report.fromJson(doc.data(), doc.id);
             await _dbHelper!.insertReport(report);
-            print(
+            AppLogger.info(
               'SyncService: syncFromFirestore - Synced new report: ${report.name}',
             );
           }
         }
       }
     } catch (e) {
-      print('Error syncing from Firestore: $e');
+      AppLogger.error('Error syncing from Firestore: $e');
     }
   }
 
@@ -249,7 +299,7 @@ class SyncService {
       try {
         await syncToFirestore();
       } catch (e) {
-        print('Error syncing beneficiary immediately: $e');
+        AppLogger.error('Error syncing beneficiary immediately: $e');
       }
     }
   }
@@ -269,7 +319,7 @@ class SyncService {
       try {
         await syncToFirestore();
       } catch (e) {
-        print('Error syncing application immediately: $e');
+        AppLogger.error('Error syncing application immediately: $e');
       }
     }
   }
@@ -289,7 +339,7 @@ class SyncService {
       try {
         await syncToFirestore();
       } catch (e) {
-        print('Error syncing grievance immediately: $e');
+        AppLogger.error('Error syncing grievance immediately: $e');
       }
     }
   }
@@ -309,7 +359,7 @@ class SyncService {
       try {
         await syncToFirestore();
       } catch (e) {
-        print('Error syncing feedback immediately: $e');
+        AppLogger.error('Error syncing feedback immediately: $e');
       }
     }
   }
@@ -363,12 +413,12 @@ class SyncService {
                 .set(beneficiary.toJson());
             await _dbHelper!.markAsSynced('beneficiaries', beneficiary.id);
             _syncStatusProvider?.decrementPendingSync();
-            print(
+            AppLogger.info(
               'SyncService: syncToFirestore - Synced beneficiary: ${beneficiary.name}',
             );
           }
         } catch (e) {
-          print('Error syncing beneficiary ${beneficiaryData['id']}: $e');
+          AppLogger.error('Error syncing beneficiary ${beneficiaryData['id']}: $e');
         }
       }
 
@@ -383,12 +433,12 @@ class SyncService {
                 .set(application.toJson());
             await _dbHelper!.markAsSynced('applications', application.id);
             _syncStatusProvider?.decrementPendingSync();
-            print(
+            AppLogger.info(
               'SyncService: syncToFirestore - Synced application: ${application.id}',
             );
           }
         } catch (e) {
-          print('Error syncing application ${applicationData['id']}: $e');
+          AppLogger.error('Error syncing application ${applicationData['id']}: $e');
         }
       }
 
@@ -403,12 +453,12 @@ class SyncService {
                 .set(grievance.toJson());
             await _dbHelper!.markAsSynced('grievances', grievance.id);
             _syncStatusProvider?.decrementPendingSync();
-            print(
+            AppLogger.info(
               'SyncService: syncToFirestore - Synced grievance: ${grievance.title}',
             );
           }
         } catch (e) {
-          print('Error syncing grievance ${grievanceData['id']}: $e');
+          AppLogger.error('Error syncing grievance ${grievanceData['id']}: $e');
         }
       }
 
@@ -426,20 +476,20 @@ class SyncService {
                 .set(feedback.toMap());
             await _dbHelper!.markAsSynced('feedback', feedback.id);
             _syncStatusProvider?.decrementPendingSync();
-            print(
+            AppLogger.info(
               'SyncService: syncToFirestore - Synced feedback: ${feedback.id}',
             );
           }
         } catch (e) {
-          print('Error syncing feedback ${feedbackData['id']}: $e');
+          AppLogger.error('Error syncing feedback ${feedbackData['id']}: $e');
         }
       }
 
       _syncStatusProvider?.setStatus(SyncStatus.success);
-      print('SyncService: syncToFirestore - Upload sync completed');
+      AppLogger.info('SyncService: syncToFirestore - Upload sync completed');
     } catch (e) {
       _syncStatusProvider?.setStatus(SyncStatus.error, error: e.toString());
-      print('Error syncing to Firestore: $e');
+      AppLogger.error('Error syncing to Firestore: $e');
     }
   }
 
@@ -459,7 +509,7 @@ class SyncService {
         }
         return [];
       } catch (e) {
-        print('Error fetching users from Firebase: $e');
+        AppLogger.error('Error fetching users from Firebase: $e');
         return [];
       }
     }
@@ -483,7 +533,7 @@ class SyncService {
             .map((doc) => ApplicationModel.fromFirestore(doc.data(), doc.id))
             .toList();
       } catch (e) {
-        print('Error fetching applications from Firebase: $e');
+        AppLogger.error('Error fetching applications from Firebase: $e');
         return [];
       }
     }
@@ -507,7 +557,7 @@ class SyncService {
             .map((doc) => BeneficiaryModel.fromFirestore(doc.data(), doc.id))
             .toList();
       } catch (e) {
-        print('Error fetching beneficiaries from Firebase: $e');
+        AppLogger.error('Error fetching beneficiaries from Firebase: $e');
         return [];
       }
     }
@@ -537,16 +587,17 @@ class SyncService {
             .toList();
 
         // Then get disbursements for these applications
-        final disbursementsSnapshot = await FirebaseService.firestore
-            .collection('disbursements')
-            .where('applicationId', whereIn: applicationIds)
-            .get();
+        final disbursementsSnapshot = await _queryByWhereIn(
+          collection: 'disbursements',
+          field: 'applicationId',
+          values: applicationIds,
+        );
 
-        return disbursementsSnapshot.docs
+        return disbursementsSnapshot
             .map((doc) => DisbursementModel.fromFirestore(doc.data(), doc.id))
             .toList();
       } catch (e) {
-        print('Error fetching disbursements from Firebase: $e');
+        AppLogger.error('Error fetching disbursements from Firebase: $e');
         return [];
       }
     }
@@ -569,7 +620,9 @@ class SyncService {
             .where('userId', isEqualTo: currentUser.uid)
             .get();
 
-        List grievances = [...grievancesQuery1.docs];
+        final grievances = <QueryDocumentSnapshot<Map<String, dynamic>>>[
+          ...grievancesQuery1.docs,
+        ];
 
         // Get user's beneficiaries to get beneficiary IDs
         final beneficiariesSnapshot = await FirebaseService.firestore
@@ -583,12 +636,13 @@ class SyncService {
               .toList();
 
           // Get grievances related to user's beneficiaries
-          final grievancesQuery2 = await FirebaseService.firestore
-              .collection('grievances')
-              .where('beneficiaryId', whereIn: beneficiaryIds)
-              .get();
+          final grievancesQuery2 = await _queryByWhereIn(
+            collection: 'grievances',
+            field: 'beneficiaryId',
+            values: beneficiaryIds,
+          );
 
-          grievances.addAll(grievancesQuery2.docs);
+          grievances.addAll(grievancesQuery2);
         }
 
         // Remove duplicates
@@ -603,7 +657,7 @@ class SyncService {
             .map((doc) => GrievanceModel.fromFirestore(doc.data(), doc.id))
             .toList();
       } catch (e) {
-        print('Error fetching grievances from Firebase: $e');
+        AppLogger.error('Error fetching grievances from Firebase: $e');
         return [];
       }
     }
@@ -627,7 +681,7 @@ class SyncService {
             .map((doc) => FeedbackModel.fromMap(doc.id, doc.data()))
             .toList();
       } catch (e) {
-        print('Error fetching feedback from Firebase: $e');
+        AppLogger.error('Error fetching feedback from Firebase: $e');
         return [];
       }
     }
@@ -648,30 +702,30 @@ class SyncService {
             .map((doc) => Report.fromJson(doc.data(), doc.id))
             .toList();
       } catch (e) {
-        print('Error fetching reports from Firebase: $e');
+        AppLogger.error('Error fetching reports from Firebase: $e');
         return [];
       }
     }
 
     // First try to get from local DB
     final localReports = await _dbHelper!.getReports();
-    print(
+    AppLogger.info(
       'SyncService: getReports - Retrieved ${localReports.length} reports from local DB',
     );
 
     // If we have local reports, try to sync in background but return local data immediately
     if (localReports.isNotEmpty) {
       final online = await isOnline();
-      print('SyncService: getReports - Online status: $online');
+      AppLogger.info('SyncService: getReports - Online status: $online');
       if (online) {
-        print(
+        AppLogger.info(
           'SyncService: getReports - Starting background sync from Firestore',
         );
         try {
           await syncFromFirestore();
-          print('SyncService: getReports - Background sync completed');
+          AppLogger.info('SyncService: getReports - Background sync completed');
         } catch (e) {
-          print('SyncService: getReports - Background sync failed: $e');
+          AppLogger.info('SyncService: getReports - Background sync failed: $e');
         }
       }
       return localReports;
@@ -679,17 +733,17 @@ class SyncService {
 
     // If no local reports, try to fetch from Firebase directly
     final online = await isOnline();
-    print('SyncService: getReports - No local reports, online status: $online');
+    AppLogger.info('SyncService: getReports - No local reports, online status: $online');
 
     if (online) {
       try {
-        print(
+        AppLogger.info(
           'SyncService: getReports - Fetching reports directly from Firestore',
         );
         final reportsSnapshot = await FirebaseService.firestore
             .collection('reports')
             .get();
-        print(
+        AppLogger.info(
           'SyncService: getReports - Found ${reportsSnapshot.docs.length} reports in Firestore',
         );
 
@@ -702,16 +756,16 @@ class SyncService {
           await _dbHelper!.insertReport(report);
         }
 
-        print(
+        AppLogger.info(
           'SyncService: getReports - Saved ${reports.length} reports to local DB',
         );
         return reports;
       } catch (e) {
-        print('SyncService: getReports - Error fetching from Firestore: $e');
+        AppLogger.info('SyncService: getReports - Error fetching from Firestore: $e');
         return [];
       }
     } else {
-      print('SyncService: getReports - Offline and no local reports available');
+      AppLogger.info('SyncService: getReports - Offline and no local reports available');
       return [];
     }
   }
@@ -858,12 +912,14 @@ class SyncService {
     for (final reportData in sampleReports) {
       try {
         await FirebaseService.firestore.collection('reports').add(reportData);
-        print('SyncService: Created sample report: ${reportData['name']}');
+        AppLogger.info('SyncService: Created sample report: ${reportData['name']}');
       } catch (e) {
-        print(
+        AppLogger.info(
           'SyncService: Error creating sample report ${reportData['name']}: $e',
         );
       }
     }
   }
 }
+
+
