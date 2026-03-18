@@ -20,6 +20,16 @@ class LocaleProvider extends ChangeNotifier {
     _loadLocale();
   }
 
+  LocaleProvider.forTest({
+    AppLocale locale = AppLocale.en,
+    Map<String, dynamic>? translations,
+    Map<String, dynamic>? fallbackTranslations,
+  }) {
+    _locale = locale;
+    _translations = translations ?? {};
+    _fallbackTranslations = fallbackTranslations ?? {};
+  }
+
   Future<void> _loadLocale() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -104,18 +114,17 @@ class LocaleProvider extends ChangeNotifier {
     try {
       dynamic value = _resolveValue(_translations, key);
       value ??= _resolveValue(_fallbackTranslations, key);
-      if (value == null) return key;
+      if (value == null) {
+        AppLogger.debug('Missing translation key: $key');
+        return key;
+      }
 
       if (value is String && args != null) {
-        String result = value;
-        args.forEach((argKey, argValue) {
-          result = result.replaceAll('{$argKey}', argValue.toString());
-        });
-        return result;
+        return _interpolate(value, args);
       }
 
       return value?.toString() ?? key;
-    } catch (e) {
+    } catch (_) {
       return key;
     }
   }
@@ -131,6 +140,17 @@ class LocaleProvider extends ChangeNotifier {
       }
     }
     return value;
+  }
+
+  String _interpolate(String template, Map<String, dynamic> args) {
+    var result = template;
+    for (final entry in args.entries) {
+      final value = entry.value.toString();
+      result = result
+          .replaceAll('{${entry.key}}', value)
+          .replaceAll('{{${entry.key}}}', value);
+    }
+    return result;
   }
 
   String Function(String, [Map<String, dynamic>?]) get t => translate;

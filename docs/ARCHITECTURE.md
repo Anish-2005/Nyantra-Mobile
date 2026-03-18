@@ -19,3 +19,4 @@
 - Shared Firestore batching and de-duplication logic lives in `FirestoreQueryHelper`.
 - Sync status is surfaced through `SyncStatusProvider`.
 - Logging is centralized via `AppLogger` for cleaner diagnostics.
+- Localization resolves missing keys through English fallback mappings.
