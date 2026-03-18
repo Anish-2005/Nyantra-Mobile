@@ -486,6 +486,7 @@
     },
     "common": {
       "loading": "Loading...",
+      "save": "Save",
       "viewFull": "View Full",
       "exploreTab": "Explore {{tab}}",
       "tabManagement": "{{tab}} Management",
@@ -2498,6 +2499,7 @@
       "charts_and_visualizations": "{/* Charts and Visualizations */}",
       "monthly_trends_chart": "{/* Monthly Trends Chart */}",
       "monthly_trends": "Monthly Trends",
+      "incidentDateHint": "Incident Date (dd-mm-yyyy)",
       "applications": "applications",
       "month": "{month}",
       "actwise_breakdown": "{/* Act-wise Breakdown */}",
@@ -2505,6 +2507,7 @@
       "pcr_act_vs_poa_act": "PCR Act vs PoA Act",
       "mathroundfiltereddataactwisebreakdownpcrapplications_filtere": "{Math.round((filteredData.actWiseBreakdown.pcr.applications / filteredData.overview.totalApplications) * 100)}%",
       "pcr_act": "PCR Act",
+      "relief": "Relief",
       "formatnumberfiltereddataactwisebreakdownpcrapplications_appl": "{formatNumber(filteredData.actWiseBreakdown.pcr.applications)} Applications",
       "filtereddataactwisebreakdownpcrsuccessrate_success": "{filteredData.actWiseBreakdown.pcr.successRate}% Success",
       "mathroundfiltereddataactwisebreakdownpoaapplications_filtere": "{Math.round((filteredData.actWiseBreakdown.poa.applications / filteredData.overview.totalApplications) * 100)}%",
