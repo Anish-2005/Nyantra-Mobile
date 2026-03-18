@@ -205,7 +205,7 @@ class DashboardRepository {
         );
 
         final remainingSlots =
-            (limit - activities.length).clamp(0, limit) as int;
+            (limit - activities.length).clamp(0, limit);
         for (final doc in disbursementDocs.take(remainingSlots)) {
           final data = doc.data();
           final amount = (data['reliefAmount'] as num?)?.toDouble() ?? 0.0;

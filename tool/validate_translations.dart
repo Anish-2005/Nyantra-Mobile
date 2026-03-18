@@ -3,8 +3,8 @@ import 'dart:io';
 
 const _enPath = 'assets/translations/en.json';
 const _hiPath = 'assets/translations/hi.json';
-const _singleBracePlaceholderRegex = RegExp(r'\{([a-zA-Z0-9_.]+)\}');
-const _doubleBracePlaceholderRegex = RegExp(r'\{\{([a-zA-Z0-9_.]+)\}\}');
+final _singleBracePlaceholderRegex = RegExp(r'\{([a-zA-Z0-9_.]+)\}');
+final _doubleBracePlaceholderRegex = RegExp(r'\{\{([a-zA-Z0-9_.]+)\}\}');
 
 void main() {
   final enFile = File(_enPath);

@@ -662,7 +662,7 @@ class _GrievancePageState extends State<GrievancePage> {
                                         Icons.report_problem_outlined,
                                         size: 64,
                                         color: theme.textTheme.bodyMedium?.color
-                                            ?.withValues(alpha: 77),
+                                            ?.withValues(alpha: 0.3),
                                       ),
                                       const SizedBox(height: 16),
                                       Text(

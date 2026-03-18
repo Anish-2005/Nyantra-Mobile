@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/application_model.dart';
@@ -70,9 +68,6 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     _beneficiaryIdCtrl = TextEditingController(
       text: widget.application.beneficiaryId,
     );
-    _beneficiaryIdCtrl = TextEditingController(
-      text: widget.application.beneficiaryId,
-    );
     _fatherNameCtrl = TextEditingController(
       text: widget.application.fatherName,
     );
@@ -126,7 +121,6 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     _maritalStatusCtrl.dispose();
     _bankAccountCtrl.dispose();
     _ifscCtrl.dispose();
-    _beneficiaryIdCtrl.dispose();
     super.dispose();
   }
 
@@ -159,8 +153,10 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       updates['ifsc'] = _ifscCtrl.text.trim();
 
       await DataService.updateApplication(widget.application.id, updates);
-      if (mounted) Navigator.of(context).pop(true);
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error saving: $e')));
@@ -607,9 +603,6 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
     _beneficiaryIdCtrl = TextEditingController(
       text: widget.application.beneficiaryId,
     );
-    _beneficiaryIdCtrl = TextEditingController(
-      text: widget.application.beneficiaryId,
-    );
     _fatherNameCtrl = TextEditingController(
       text: widget.application.fatherName,
     );
@@ -663,7 +656,6 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
     _maritalStatusCtrl.dispose();
     _bankAccountCtrl.dispose();
     _ifscCtrl.dispose();
-    _beneficiaryIdCtrl.dispose();
     super.dispose();
   }
 
@@ -695,8 +687,10 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
       updates['ifsc'] = _ifscCtrl.text.trim();
 
       await DataService.updateApplication(widget.application.id, updates);
-      if (mounted) Navigator.of(context).pop(true);
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error saving: $e')));

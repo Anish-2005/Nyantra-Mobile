@@ -204,7 +204,7 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                                 Icons.people_outline,
                                 size: 64,
                                 color: theme.textTheme.bodyMedium?.color
-                                    ?.withValues(alpha: 77),
+                                    ?.withValues(alpha: 0.3),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -804,7 +804,7 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
         Icon(
           icon,
           size: 16,
-          color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 153),
+          color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
         ),
         const SizedBox(width: 6),
         Expanded(
