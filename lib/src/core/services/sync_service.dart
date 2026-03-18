@@ -10,56 +10,16 @@ import '../models/disbursement_model.dart';
 import '../models/grievance_model.dart';
 import '../models/feedback_model.dart';
 import '../models/report_model.dart';
+import '../constants/firestore_collections.dart';
 import '../providers/sync_status_provider.dart';
 import '../utils/app_logger.dart';
+import '../utils/firestore_query_helper.dart';
 
 class SyncService {
   static SyncService? _instance;
   static DatabaseHelper? _dbHelper;
   static Connectivity? _connectivity;
   static SyncStatusProvider? _syncStatusProvider;
-  static const int _whereInLimit = 10;
-
-  Iterable<List<T>> _chunkList<T>(List<T> values, int size) sync* {
-    for (var i = 0; i < values.length; i += size) {
-      final end = (i + size) > values.length ? values.length : i + size;
-      yield values.sublist(i, end);
-    }
-  }
-
-  List<QueryDocumentSnapshot<Map<String, dynamic>>> _dedupeDocsById(
-    Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
-  ) {
-    final seenIds = <String>{};
-    final uniqueDocs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
-    for (final doc in docs) {
-      if (seenIds.add(doc.id)) {
-        uniqueDocs.add(doc);
-      }
-    }
-    return uniqueDocs;
-  }
-
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> _queryByWhereIn({
-    required String collection,
-    required String field,
-    required List<String> values,
-  }) async {
-    if (values.isEmpty) {
-      return [];
-    }
-
-    final docs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
-    for (final chunk in _chunkList(values, _whereInLimit)) {
-      final snapshot = await FirebaseService.firestore
-          .collection(collection)
-          .where(field, whereIn: chunk)
-          .get();
-      docs.addAll(snapshot.docs);
-    }
-
-    return _dedupeDocsById(docs);
-  }
 
   factory SyncService({SyncStatusProvider? syncStatusProvider}) {
     _instance ??= SyncService._internal();
@@ -94,7 +54,7 @@ class SyncService {
     try {
       // Sync current user's profile
       final userDoc = await FirebaseService.firestore
-          .collection('users')
+          .collection(FirestoreCollections.users)
           .doc(currentUser.uid)
           .get();
       if (userDoc.exists) {
@@ -104,7 +64,7 @@ class SyncService {
 
       // Sync user's beneficiaries
       final beneficiariesSnapshot = await FirebaseService.firestore
-          .collection('beneficiaries')
+          .collection(FirestoreCollections.beneficiaries)
           .where('ownerId', isEqualTo: currentUser.uid)
           .get();
       for (var doc in beneficiariesSnapshot.docs) {
@@ -118,7 +78,7 @@ class SyncService {
 
       // Sync applications owned by user or related to user's beneficiaries
       final applicationsQuery1 = await FirebaseService.firestore
-          .collection('applications')
+          .collection(FirestoreCollections.applications)
           .where('ownerId', isEqualTo: currentUser.uid)
           .get();
 
@@ -127,8 +87,9 @@ class SyncService {
       ];
 
       if (beneficiaryIds.isNotEmpty) {
-        final applicationsQuery2 = await _queryByWhereIn(
-          collection: 'applications',
+        final applicationsQuery2 = await FirestoreQueryHelper.queryByWhereIn(
+          firestore: FirebaseService.firestore,
+          collection: FirestoreCollections.applications,
           field: 'beneficiaryId',
           values: beneficiaryIds,
         );
@@ -150,8 +111,9 @@ class SyncService {
 
       // Sync disbursements for user's applications
       if (applicationIds.isNotEmpty) {
-        final disbursementsSnapshot = await _queryByWhereIn(
-          collection: 'disbursements',
+        final disbursementsSnapshot = await FirestoreQueryHelper.queryByWhereIn(
+          firestore: FirebaseService.firestore,
+          collection: FirestoreCollections.disbursements,
           field: 'applicationId',
           values: applicationIds.toList(),
         );
@@ -166,8 +128,9 @@ class SyncService {
 
       // Also sync disbursements directly for user's beneficiaries
       if (beneficiaryIds.isNotEmpty) {
-        final beneficiaryDisbursementsSnapshot = await _queryByWhereIn(
-          collection: 'disbursements',
+        final beneficiaryDisbursementsSnapshot = await FirestoreQueryHelper.queryByWhereIn(
+          firestore: FirebaseService.firestore,
+          collection: FirestoreCollections.disbursements,
           field: 'beneficiaryId',
           values: beneficiaryIds,
         );
@@ -182,7 +145,7 @@ class SyncService {
 
       // Sync grievances created by user or related to user's beneficiaries
       final grievancesQuery1 = await FirebaseService.firestore
-          .collection('grievances')
+          .collection(FirestoreCollections.grievances)
           .where('userId', isEqualTo: currentUser.uid)
           .get();
 
@@ -191,8 +154,9 @@ class SyncService {
       ];
 
       if (beneficiaryIds.isNotEmpty) {
-        final grievancesQuery2 = await _queryByWhereIn(
-          collection: 'grievances',
+        final grievancesQuery2 = await FirestoreQueryHelper.queryByWhereIn(
+          firestore: FirebaseService.firestore,
+          collection: FirestoreCollections.grievances,
           field: 'beneficiaryId',
           values: beneficiaryIds,
         );
@@ -214,7 +178,7 @@ class SyncService {
 
       // Sync user's feedback
       final feedbackSnapshot = await FirebaseService.firestore
-          .collection('feedback')
+          .collection(FirestoreCollections.feedback)
           .where('userId', isEqualTo: currentUser.uid)
           .get();
       for (var doc in feedbackSnapshot.docs) {
@@ -225,7 +189,7 @@ class SyncService {
       // Sync reports
       AppLogger.info('SyncService: syncFromFirestore - Syncing reports');
       final reportsSnapshot = await FirebaseService.firestore
-          .collection('reports')
+          .collection(FirestoreCollections.reports)
           .get();
       AppLogger.info(
         'SyncService: syncFromFirestore - Found ${reportsSnapshot.docs.length} reports in Firestore',
@@ -254,7 +218,7 @@ class SyncService {
 
         // Re-fetch after creating samples (or if they already exist)
         final updatedReportsSnapshot = await FirebaseService.firestore
-            .collection('reports')
+            .collection(FirestoreCollections.reports)
             .get();
         for (var doc in updatedReportsSnapshot.docs) {
           final report = Report.fromJson(doc.data(), doc.id);
@@ -408,7 +372,7 @@ class SyncService {
           final beneficiary = BeneficiaryModel.fromJson(beneficiaryData);
           if (beneficiary.ownerId == currentUser.uid) {
             await FirebaseService.firestore
-                .collection('beneficiaries')
+                .collection(FirestoreCollections.beneficiaries)
                 .doc(beneficiary.id)
                 .set(beneficiary.toJson());
             await _dbHelper!.markAsSynced('beneficiaries', beneficiary.id);
@@ -428,7 +392,7 @@ class SyncService {
           final application = ApplicationModel.fromJson(applicationData);
           if (application.ownerId == currentUser.uid) {
             await FirebaseService.firestore
-                .collection('applications')
+                .collection(FirestoreCollections.applications)
                 .doc(application.id)
                 .set(application.toJson());
             await _dbHelper!.markAsSynced('applications', application.id);
@@ -448,7 +412,7 @@ class SyncService {
           final grievance = GrievanceModel.fromJson(grievanceData);
           if (grievance.userId == currentUser.uid) {
             await FirebaseService.firestore
-                .collection('grievances')
+                .collection(FirestoreCollections.grievances)
                 .doc(grievance.id)
                 .set(grievance.toJson());
             await _dbHelper!.markAsSynced('grievances', grievance.id);
@@ -471,7 +435,7 @@ class SyncService {
           );
           if (feedback.userId == currentUser.uid) {
             await FirebaseService.firestore
-                .collection('feedback')
+                .collection(FirestoreCollections.feedback)
                 .doc(feedback.id)
                 .set(feedback.toMap());
             await _dbHelper!.markAsSynced('feedback', feedback.id);
@@ -501,7 +465,7 @@ class SyncService {
         final currentUser = FirebaseService.auth.currentUser;
         if (currentUser == null) return [];
         final userDoc = await FirebaseService.firestore
-            .collection('users')
+            .collection(FirestoreCollections.users)
             .doc(currentUser.uid)
             .get();
         if (userDoc.exists) {
@@ -526,7 +490,7 @@ class SyncService {
         final currentUser = FirebaseService.auth.currentUser;
         if (currentUser == null) return [];
         final applicationsSnapshot = await FirebaseService.firestore
-            .collection('applications')
+            .collection(FirestoreCollections.applications)
             .where('ownerId', isEqualTo: currentUser.uid)
             .get();
         return applicationsSnapshot.docs
@@ -550,7 +514,7 @@ class SyncService {
         final currentUser = FirebaseService.auth.currentUser;
         if (currentUser == null) return [];
         final beneficiariesSnapshot = await FirebaseService.firestore
-            .collection('beneficiaries')
+            .collection(FirestoreCollections.beneficiaries)
             .where('ownerId', isEqualTo: currentUser.uid)
             .get();
         return beneficiariesSnapshot.docs
@@ -576,7 +540,7 @@ class SyncService {
 
         // First get user's applications to get application IDs
         final applicationsSnapshot = await FirebaseService.firestore
-            .collection('applications')
+            .collection(FirestoreCollections.applications)
             .where('ownerId', isEqualTo: currentUser.uid)
             .get();
 
@@ -587,8 +551,9 @@ class SyncService {
             .toList();
 
         // Then get disbursements for these applications
-        final disbursementsSnapshot = await _queryByWhereIn(
-          collection: 'disbursements',
+        final disbursementsSnapshot = await FirestoreQueryHelper.queryByWhereIn(
+          firestore: FirebaseService.firestore,
+          collection: FirestoreCollections.disbursements,
           field: 'applicationId',
           values: applicationIds,
         );
@@ -616,7 +581,7 @@ class SyncService {
 
         // Get grievances created by user
         final grievancesQuery1 = await FirebaseService.firestore
-            .collection('grievances')
+            .collection(FirestoreCollections.grievances)
             .where('userId', isEqualTo: currentUser.uid)
             .get();
 
@@ -626,7 +591,7 @@ class SyncService {
 
         // Get user's beneficiaries to get beneficiary IDs
         final beneficiariesSnapshot = await FirebaseService.firestore
-            .collection('beneficiaries')
+            .collection(FirestoreCollections.beneficiaries)
             .where('ownerId', isEqualTo: currentUser.uid)
             .get();
 
@@ -636,8 +601,9 @@ class SyncService {
               .toList();
 
           // Get grievances related to user's beneficiaries
-          final grievancesQuery2 = await _queryByWhereIn(
-            collection: 'grievances',
+          final grievancesQuery2 = await FirestoreQueryHelper.queryByWhereIn(
+            firestore: FirebaseService.firestore,
+            collection: FirestoreCollections.grievances,
             field: 'beneficiaryId',
             values: beneficiaryIds,
           );
@@ -674,7 +640,7 @@ class SyncService {
         final currentUser = FirebaseService.auth.currentUser;
         if (currentUser == null) return [];
         final feedbackSnapshot = await FirebaseService.firestore
-            .collection('feedback')
+            .collection(FirestoreCollections.feedback)
             .where('userId', isEqualTo: currentUser.uid)
             .get();
         return feedbackSnapshot.docs
@@ -696,7 +662,7 @@ class SyncService {
       // On web, fetch directly from Firebase
       try {
         final reportsSnapshot = await FirebaseService.firestore
-            .collection('reports')
+            .collection(FirestoreCollections.reports)
             .get();
         return reportsSnapshot.docs
             .map((doc) => Report.fromJson(doc.data(), doc.id))
@@ -741,7 +707,7 @@ class SyncService {
           'SyncService: getReports - Fetching reports directly from Firestore',
         );
         final reportsSnapshot = await FirebaseService.firestore
-            .collection('reports')
+            .collection(FirestoreCollections.reports)
             .get();
         AppLogger.info(
           'SyncService: getReports - Found ${reportsSnapshot.docs.length} reports in Firestore',
@@ -911,7 +877,7 @@ class SyncService {
 
     for (final reportData in sampleReports) {
       try {
-        await FirebaseService.firestore.collection('reports').add(reportData);
+        await FirebaseService.firestore.collection(FirestoreCollections.reports).add(reportData);
         AppLogger.info('SyncService: Created sample report: ${reportData['name']}');
       } catch (e) {
         AppLogger.error(
@@ -921,6 +887,8 @@ class SyncService {
     }
   }
 }
+
+
 
 
 

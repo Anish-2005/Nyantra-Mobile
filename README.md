@@ -64,12 +64,18 @@ If `NYANTRA_API_BASE_URL` is not provided, email sending is skipped with a warni
 Run these commands before opening a PR:
 
 ```bash
+dart run tool/validate_translations.dart
 dart format lib test
 flutter analyze
 flutter test
 ```
 
 A GitHub Actions pipeline also runs format checks, analyze, and tests on push/PR.
+On Windows PowerShell, you can run all checks via:
+
+```powershell
+./tool/quality_check.ps1
+```
 
 ## Notes
 - Firestore `whereIn` queries are batched to handle production-scale ID sets safely.

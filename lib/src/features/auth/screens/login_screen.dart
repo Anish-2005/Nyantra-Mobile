@@ -69,7 +69,6 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localeProvider = context.watch<LocaleProvider>();
-    final themeProvider = context.watch<ThemeProvider>();
     final authProvider = context.watch<AuthProvider>();
     final isDark = theme.brightness == Brightness.dark;
 
@@ -79,7 +78,6 @@ class _LoginScreenState extends State<LoginScreen>
         context,
         theme,
         localeProvider,
-        themeProvider,
         authProvider,
         isDark,
       );
@@ -90,7 +88,6 @@ class _LoginScreenState extends State<LoginScreen>
       context,
       theme,
       localeProvider,
-      themeProvider,
       isDark,
     );
   }
@@ -99,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen>
     BuildContext context,
     ThemeData theme,
     LocaleProvider localeProvider,
-    ThemeProvider themeProvider,
     bool isDark,
   ) {
     return Scaffold(
@@ -305,31 +301,15 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(2),
-                                        child: Image.network(
-                                          'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png',
-                                          fit: BoxFit.contain,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                                // Fallback to the original "G" if image fails to load
-                                                return Container(
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                        color: Colors.blue,
-                                                        shape: BoxShape.circle,
-                                                      ),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      'G',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
+                                        child: const Center(
+                                          child: Text(
+                                            'G',
+                                            style: TextStyle(
+                                              color: Color(0xFF1A73E8),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -438,7 +418,6 @@ class _LoginScreenState extends State<LoginScreen>
     BuildContext context,
     ThemeData theme,
     LocaleProvider localeProvider,
-    ThemeProvider themeProvider,
     AuthProvider authProvider,
     bool isDark,
   ) {
@@ -663,7 +642,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 ],
                         ).createShader(bounds),
                         child: Text(
-                          localeProvider.translate('welcomeBack'),
+                          localeProvider.translate('auth.welcomeBack'),
                           style: theme.textTheme.displayMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -680,7 +659,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                   // User Greeting
                   Text(
-                        '${localeProvider.translate('welcome.greeting')} ${authProvider.user?.displayName?.split(' ').first ?? 'User'}!',
+                        '${localeProvider.translate('auth.greeting')} ${authProvider.user?.displayName?.split(' ').first ?? 'User'}!',
                         style: theme.textTheme.headlineSmall?.copyWith(
                           color: theme.textTheme.bodyLarge?.color?.withOpacity(
                             0.9,
@@ -708,7 +687,9 @@ class _LoginScreenState extends State<LoginScreen>
                             Expanded(
                               child: _buildStatCard(
                                 '12',
-                                'Applications',
+                                localeProvider.translate(
+                                  'auth.stats.applications',
+                                ),
                                 Icons.assignment,
                                 isDark,
                                 MediaQuery.of(context).size.width < 400,
@@ -718,7 +699,7 @@ class _LoginScreenState extends State<LoginScreen>
                             Expanded(
                               child: _buildStatCard(
                                 'Rs. 2.5L',
-                                'Disbursed',
+                                localeProvider.translate('auth.stats.disbursed'),
                                 Icons.account_balance_wallet,
                                 isDark,
                                 MediaQuery.of(context).size.width < 400,
@@ -728,7 +709,7 @@ class _LoginScreenState extends State<LoginScreen>
                             Expanded(
                               child: _buildStatCard(
                                 '3',
-                                'Pending',
+                                localeProvider.translate('auth.stats.pending'),
                                 Icons.pending,
                                 isDark,
                                 MediaQuery.of(context).size.width < 400,
@@ -792,7 +773,9 @@ class _LoginScreenState extends State<LoginScreen>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Continue to Dashboard',
+                                localeProvider.translate(
+                                  'auth.continueToDashboard',
+                                ),
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
@@ -820,7 +803,7 @@ class _LoginScreenState extends State<LoginScreen>
                           await authProvider.signOut();
                         },
                         child: Text(
-                          'Sign Out',
+                          localeProvider.translate('auth.signOut'),
                           style: TextStyle(
                             color: theme.primaryColor,
                             fontSize: 16,

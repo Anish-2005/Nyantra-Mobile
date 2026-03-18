@@ -15,5 +15,6 @@
 
 ## Reliability Notes
 - Firestore `whereIn` access is batched to respect query limits.
+- Shared Firestore batching and de-duplication logic lives in `FirestoreQueryHelper`.
 - Sync status is surfaced through `SyncStatusProvider`.
 - Logging is centralized via `AppLogger` for cleaner diagnostics.

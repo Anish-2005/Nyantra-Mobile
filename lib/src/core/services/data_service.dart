@@ -8,80 +8,32 @@ import '../models/disbursement_model.dart';
 import '../models/grievance_model.dart';
 import '../models/feedback_model.dart';
 import '../models/activity_model.dart';
+import '../constants/firestore_collections.dart';
 import '../utils/app_logger.dart';
+import '../utils/firestore_query_helper.dart';
 
 class DataService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
-  static const int _whereInLimit = 10;
-
-  static Iterable<List<T>> _chunkList<T>(List<T> values, int size) sync* {
-    for (var i = 0; i < values.length; i += size) {
-      final end = (i + size) > values.length ? values.length : i + size;
-      yield values.sublist(i, end);
-    }
-  }
-
-  static List<QueryDocumentSnapshot<Map<String, dynamic>>> _dedupeDocsById(
-    Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
-  ) {
-    final seenIds = <String>{};
-    final uniqueDocs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
-    for (final doc in docs) {
-      if (seenIds.add(doc.id)) {
-        uniqueDocs.add(doc);
-      }
-    }
-    return uniqueDocs;
-  }
-
-  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-  _queryCollectionByIds({
-    required String collection,
-    required String whereInField,
-    required List<String> ids,
-    String? equalsField,
-    Object? equalsValue,
-  }) async {
-    if (ids.isEmpty) {
-      return [];
-    }
-
-    final docs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
-
-    for (final chunk in _chunkList(ids, _whereInLimit)) {
-      Query<Map<String, dynamic>> query = _firestore
-          .collection(collection)
-          .where(whereInField, whereIn: chunk);
-
-      if (equalsField != null) {
-        query = query.where(equalsField, isEqualTo: equalsValue);
-      }
-
-      final snapshot = await query.get();
-      docs.addAll(snapshot.docs);
-    }
-
-    return _dedupeDocsById(docs);
-  }
+  static const Map<String, Object> _emptyDashboardStats = {
+    'totalApplications': 0,
+    'approvedApplications': 0,
+    'pendingApplications': 0,
+    'totalDisbursed': 0.0,
+    'beneficiariesCount': 0,
+  };
 
   // Dashboard Stats - filtered by current user
   static Future<Map<String, dynamic>> getDashboardStats() async {
     try {
       final currentUser = _auth.currentUser;
       if (currentUser == null) {
-        return {
-          'totalApplications': 0,
-          'approvedApplications': 0,
-          'pendingApplications': 0,
-          'totalDisbursed': 0.0,
-          'beneficiariesCount': 0,
-        };
+        return Map<String, dynamic>.from(_emptyDashboardStats);
       }
 
       // Get user's beneficiaries first
       final beneficiariesQuery = await _firestore
-          .collection('beneficiaries')
+          .collection(FirestoreCollections.beneficiaries)
           .where('ownerId', isEqualTo: currentUser.uid)
           .get();
 
@@ -91,14 +43,15 @@ class DataService {
 
       // Get applications by user (ownerId) or by beneficiary
       final applicationsQuery1 = await _firestore
-          .collection('applications')
+          .collection(FirestoreCollections.applications)
           .where('ownerId', isEqualTo: currentUser.uid)
           .get();
 
-      final applicationsQuery2 = await _queryCollectionByIds(
-        collection: 'applications',
-        whereInField: 'beneficiaryId',
-        ids: beneficiaryIds,
+      final applicationsQuery2 = await FirestoreQueryHelper.queryByWhereIn(
+        firestore: _firestore,
+        collection: FirestoreCollections.applications,
+        field: 'beneficiaryId',
+        values: beneficiaryIds,
       );
 
       final allApplicationDocs = [
@@ -148,13 +101,7 @@ class DataService {
         error: error,
         stackTrace: stackTrace,
       );
-      return {
-        'totalApplications': 0,
-        'approvedApplications': 0,
-        'pendingApplications': 0,
-        'totalDisbursed': 0.0,
-        'beneficiariesCount': 0,
-      };
+      return Map<String, dynamic>.from(_emptyDashboardStats);
     }
   }
 
@@ -172,7 +119,7 @@ class DataService {
 
       // Get user's beneficiaries first
       final beneficiariesQuery = await _firestore
-          .collection('beneficiaries')
+          .collection(FirestoreCollections.beneficiaries)
           .where('ownerId', isEqualTo: currentUser.uid)
           .get();
 
@@ -182,16 +129,17 @@ class DataService {
 
       // Get recent applications
       final applicationsQuery1 = await _firestore
-          .collection('applications')
+          .collection(FirestoreCollections.applications)
           .where('ownerId', isEqualTo: currentUser.uid)
           .orderBy('applicationDate', descending: true)
           .limit(limit)
           .get();
 
-      final applicationsQuery2 = await _queryCollectionByIds(
-        collection: 'applications',
-        whereInField: 'beneficiaryId',
-        ids: beneficiaryIds,
+      final applicationsQuery2 = await FirestoreQueryHelper.queryByWhereIn(
+        firestore: _firestore,
+        collection: FirestoreCollections.applications,
+        field: 'beneficiaryId',
+        values: beneficiaryIds,
       );
 
       final allApplicationDocs = [
@@ -254,7 +202,7 @@ class DataService {
 
       // Get recent grievances
       final grievancesQuery = await _firestore
-          .collection('grievances')
+          .collection(FirestoreCollections.grievances)
           .where('userId', isEqualTo: currentUser.uid)
           .orderBy('createdDate', descending: true)
           .limit(limit)
@@ -298,10 +246,11 @@ class DataService {
           .map((doc) => doc.id)
           .toList();
       if (applicationIdsList.isNotEmpty) {
-        final disbursementDocs = await _queryCollectionByIds(
-          collection: 'disbursements',
-          whereInField: 'applicationId',
-          ids: applicationIdsList,
+        final disbursementDocs = await FirestoreQueryHelper.queryByWhereIn(
+          firestore: _firestore,
+          collection: FirestoreCollections.disbursements,
+          field: 'applicationId',
+          values: applicationIdsList,
           equalsField: 'status',
           equalsValue: 'completed',
         );
@@ -355,7 +304,7 @@ class DataService {
 
     // First get user's beneficiaries to get beneficiary IDs
     return _firestore
-        .collection('beneficiaries')
+        .collection(FirestoreCollections.beneficiaries)
         .where('ownerId', isEqualTo: currentUser.uid)
         .snapshots()
         .asyncMap((beneficiariesSnapshot) async {
@@ -365,15 +314,16 @@ class DataService {
 
           // Get applications where ownerId is current user
           final applicationsQuery1 = await _firestore
-              .collection('applications')
+              .collection(FirestoreCollections.applications)
               .where('ownerId', isEqualTo: currentUser.uid)
               .get();
 
           // Get applications where beneficiaryId is in user's beneficiaries
-          final applicationsQuery2 = await _queryCollectionByIds(
-            collection: 'applications',
-            whereInField: 'beneficiaryId',
-            ids: beneficiaryIds,
+          final applicationsQuery2 = await FirestoreQueryHelper.queryByWhereIn(
+            firestore: _firestore,
+            collection: FirestoreCollections.applications,
+            field: 'beneficiaryId',
+            values: beneficiaryIds,
           );
 
           final allApplicationDocs = [
@@ -397,7 +347,7 @@ class DataService {
 
   static Future<void> createApplication(ApplicationModel application) async {
     await _firestore
-        .collection('applications')
+        .collection(FirestoreCollections.applications)
         .doc(application.id)
         .set(application.toFirestore());
   }
@@ -407,11 +357,11 @@ class DataService {
     Map<String, dynamic> data,
   ) async {
     data['updatedAt'] = FieldValue.serverTimestamp();
-    await _firestore.collection('applications').doc(id).update(data);
+    await _firestore.collection(FirestoreCollections.applications).doc(id).update(data);
   }
 
   static Future<void> deleteApplication(String id) async {
-    await _firestore.collection('applications').doc(id).delete();
+    await _firestore.collection(FirestoreCollections.applications).doc(id).delete();
   }
 
   // Beneficiaries - filtered by current user
@@ -422,7 +372,7 @@ class DataService {
     }
 
     return _firestore
-        .collection('beneficiaries')
+        .collection(FirestoreCollections.beneficiaries)
         .where('ownerId', isEqualTo: currentUser.uid)
         .snapshots()
         .map((snapshot) {
@@ -434,7 +384,7 @@ class DataService {
 
   static Future<void> createBeneficiary(BeneficiaryModel beneficiary) async {
     await _firestore
-        .collection('beneficiaries')
+        .collection(FirestoreCollections.beneficiaries)
         .doc(beneficiary.id)
         .set(beneficiary.toFirestore());
   }
@@ -444,7 +394,7 @@ class DataService {
     Map<String, dynamic> data,
   ) async {
     data['updatedAt'] = FieldValue.serverTimestamp();
-    await _firestore.collection('beneficiaries').doc(id).update(data);
+    await _firestore.collection(FirestoreCollections.beneficiaries).doc(id).update(data);
   }
 
   // Disbursements - filtered by current user's applications or user's beneficiaries
@@ -456,7 +406,7 @@ class DataService {
 
     // First get user's beneficiaries and applications
     return _firestore
-        .collection('beneficiaries')
+        .collection(FirestoreCollections.beneficiaries)
         .where('ownerId', isEqualTo: currentUser.uid)
         .snapshots()
         .asyncMap((beneficiariesSnapshot) async {
@@ -466,15 +416,16 @@ class DataService {
 
           // Get applications where ownerId is current user
           final applicationsQuery1 = await _firestore
-              .collection('applications')
+              .collection(FirestoreCollections.applications)
               .where('ownerId', isEqualTo: currentUser.uid)
               .get();
 
           // Get applications where beneficiaryId is in user's beneficiaries
-          final applicationsQuery2 = await _queryCollectionByIds(
-            collection: 'applications',
-            whereInField: 'beneficiaryId',
-            ids: beneficiaryIds,
+          final applicationsQuery2 = await FirestoreQueryHelper.queryByWhereIn(
+            firestore: _firestore,
+            collection: FirestoreCollections.applications,
+            field: 'beneficiaryId',
+            values: beneficiaryIds,
           );
 
           final allApplicationDocs = [
@@ -501,10 +452,11 @@ class DataService {
 
           // Get disbursements for applications
           if (uniqueApplicationIds.isNotEmpty) {
-            final disbursementsSnapshot = await _queryCollectionByIds(
-              collection: 'disbursements',
-              whereInField: 'applicationId',
-              ids: uniqueApplicationIds,
+            final disbursementsSnapshot = await FirestoreQueryHelper.queryByWhereIn(
+              firestore: _firestore,
+              collection: FirestoreCollections.disbursements,
+              field: 'applicationId',
+              values: uniqueApplicationIds,
             );
 
             allDisbursements.addAll(
@@ -516,10 +468,11 @@ class DataService {
 
           // Get disbursements directly for beneficiaries
           if (beneficiaryIds.isNotEmpty) {
-            final beneficiaryDisbursementsSnapshot = await _queryCollectionByIds(
-              collection: 'disbursements',
-              whereInField: 'beneficiaryId',
-              ids: beneficiaryIds,
+            final beneficiaryDisbursementsSnapshot = await FirestoreQueryHelper.queryByWhereIn(
+              firestore: _firestore,
+              collection: FirestoreCollections.disbursements,
+              field: 'beneficiaryId',
+              values: beneficiaryIds,
             );
 
             allDisbursements.addAll(
@@ -543,7 +496,7 @@ class DataService {
 
   static Future<void> createDisbursement(DisbursementModel disbursement) async {
     await _firestore
-        .collection('disbursements')
+        .collection(FirestoreCollections.disbursements)
         .add(disbursement.toFirestore());
   }
 
@@ -552,7 +505,7 @@ class DataService {
     Map<String, dynamic> data,
   ) async {
     data['updatedAt'] = FieldValue.serverTimestamp();
-    await _firestore.collection('disbursements').doc(id).update(data);
+    await _firestore.collection(FirestoreCollections.disbursements).doc(id).update(data);
   }
 
   // Sum completed disbursements for a list of application IDs. Handles Firestore
@@ -563,14 +516,9 @@ class DataService {
     if (applicationIds.isEmpty) return 0.0;
 
     double total = 0.0;
-    for (var i = 0; i < applicationIds.length; i += _whereInLimit) {
-      final end = (i + _whereInLimit) < applicationIds.length
-          ? i + _whereInLimit
-          : applicationIds.length;
-      final chunk = applicationIds.sublist(i, end);
-
+    for (final chunk in FirestoreQueryHelper.chunkList(applicationIds)) {
       final snapshot = await _firestore
-          .collection('disbursements')
+          .collection(FirestoreCollections.disbursements)
           .where('applicationId', whereIn: chunk)
           .where('status', isEqualTo: 'completed')
           .get();
@@ -600,7 +548,7 @@ class DataService {
 
     // Query for grievances by userId
     final userQuery = _firestore
-        .collection('grievances')
+        .collection(FirestoreCollections.grievances)
         .where('userId', isEqualTo: currentUser.uid);
 
     final userUnsub = userQuery.snapshots().listen((snapshot) {
@@ -624,7 +572,7 @@ class DataService {
 
     // Query for beneficiaries owned by user
     final beneficiariesQuery = _firestore
-        .collection('beneficiaries')
+        .collection(FirestoreCollections.beneficiaries)
         .where('ownerId', isEqualTo: currentUser.uid);
 
     final beneficiariesUnsub = beneficiariesQuery.snapshots().listen((
@@ -642,7 +590,7 @@ class DataService {
       // Create listeners for each beneficiary's grievances
       for (final beneficiaryId in beneficiaryIds) {
         final beneficiaryQuery = _firestore
-            .collection('grievances')
+            .collection(FirestoreCollections.grievances)
             .where('beneficiaryId', isEqualTo: beneficiaryId);
 
         final unsub = beneficiaryQuery.snapshots().listen((snapshot) {
@@ -698,7 +646,7 @@ class DataService {
 
   static Future<void> createGrievance(GrievanceModel grievance) async {
     await _firestore
-        .collection('grievances')
+        .collection(FirestoreCollections.grievances)
         .doc(grievance.id)
         .set(grievance.toFirestore());
   }
@@ -708,7 +656,7 @@ class DataService {
     String grievanceId,
     Map<String, dynamic> message,
   ) async {
-    await _firestore.collection('grievances').doc(grievanceId).update({
+    await _firestore.collection(FirestoreCollections.grievances).doc(grievanceId).update({
       'communication': FieldValue.arrayUnion([message]),
       'lastUpdated': FieldValue.serverTimestamp(),
     });
@@ -717,7 +665,7 @@ class DataService {
   // User Profile
   static Future<UserModel?> getUserProfile(String userId) async {
     try {
-      final doc = await _firestore.collection('users').doc(userId).get();
+      final doc = await _firestore.collection(FirestoreCollections.users).doc(userId).get();
       if (doc.exists) {
         return UserModel.fromFirestore(doc.data()!, doc.id);
       }
@@ -733,11 +681,11 @@ class DataService {
   }
 
   static Future<void> updateUserProfile(String userId, UserModel user) async {
-    await _firestore.collection('users').doc(userId).update(user.toFirestore());
+    await _firestore.collection(FirestoreCollections.users).doc(userId).update(user.toFirestore());
   }
 
   static Future<void> createUserProfile(UserModel user) async {
-    await _firestore.collection('users').doc(user.id).set(user.toFirestore());
+    await _firestore.collection(FirestoreCollections.users).doc(user.id).set(user.toFirestore());
   }
 
   // Feedback Methods
@@ -758,7 +706,7 @@ class DataService {
         'updatedAt': FieldValue.serverTimestamp(),
       };
 
-      await _firestore.collection('feedback').add(feedbackData);
+      await _firestore.collection(FirestoreCollections.feedback).add(feedbackData);
     } catch (error, stackTrace) {
       AppLogger.error(
         'Error submitting feedback',
@@ -771,7 +719,7 @@ class DataService {
 
   static Stream<List<FeedbackModel>> getUserFeedbacks(String userId) {
     return _firestore
-        .collection('feedback')
+        .collection(FirestoreCollections.feedback)
         .where('userId', isEqualTo: userId)
         .snapshots()
         .map((snapshot) {
@@ -790,7 +738,7 @@ class DataService {
   ) async {
     try {
       updates['updatedAt'] = FieldValue.serverTimestamp();
-      await _firestore.collection('feedback').doc(feedbackId).update(updates);
+      await _firestore.collection(FirestoreCollections.feedback).doc(feedbackId).update(updates);
     } catch (error, stackTrace) {
       AppLogger.error(
         'Error updating feedback',
@@ -803,7 +751,7 @@ class DataService {
 
   static Future<void> deleteFeedback(String feedbackId) async {
     try {
-      await _firestore.collection('feedback').doc(feedbackId).delete();
+      await _firestore.collection(FirestoreCollections.feedback).doc(feedbackId).delete();
     } catch (error, stackTrace) {
       AppLogger.error(
         'Error deleting feedback',
@@ -814,4 +762,6 @@ class DataService {
     }
   }
 }
+
+
 

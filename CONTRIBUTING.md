@@ -9,9 +9,16 @@
 Run these before creating a pull request:
 
 ```bash
+dart run tool/validate_translations.dart
 dart format lib test
 flutter analyze
 flutter test
+```
+
+PowerShell shortcut:
+
+```powershell
+./tool/quality_check.ps1
 ```
 
 ## Pull Request Guidelines
