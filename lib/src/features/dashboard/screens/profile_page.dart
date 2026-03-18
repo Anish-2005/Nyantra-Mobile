@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/locale_provider.dart';
 import '../../../core/theme/app_theme.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -13,24 +14,30 @@ class ProfilePage extends StatelessWidget {
     final theme = Theme.of(context);
     final tokens = theme.extension<AppThemeTokens>();
     final authProvider = context.watch<AuthProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
     final user = authProvider.user;
+    final hasUid = (user?.uid ?? '').trim().isNotEmpty;
+    final hasEmail = (user?.email ?? '').trim().isNotEmpty;
+    final hasPhone = (user?.phoneNumber ?? '').trim().isNotEmpty;
 
     final displayName = (user?.displayName ?? '').trim().isNotEmpty
         ? user!.displayName!.trim()
-        : 'Nyantra User';
-    final email = (user?.email ?? '').trim().isNotEmpty
+        : localeProvider.translate('profilePage.defaultName');
+    final email = hasEmail
         ? user!.email!.trim()
-        : 'No email linked';
-    final phone = (user?.phoneNumber ?? '').trim().isNotEmpty
+        : localeProvider.translate('profilePage.noEmail');
+    final phone = hasPhone
         ? user!.phoneNumber!.trim()
-        : 'Not provided';
-    final uid = (user?.uid ?? '').trim().isNotEmpty
+        : localeProvider.translate('profilePage.noPhone');
+    final uid = hasUid
         ? user!.uid
-        : 'Not available';
+        : localeProvider.translate('profilePage.notAvailable');
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: Text(localeProvider.translate('profilePage.title')),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
@@ -95,15 +102,18 @@ class ProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               _SectionCard(
-                title: 'Account Details',
+                title: localeProvider.translate('profilePage.accountDetails'),
                 children: [
-                  _InfoRow(label: 'User ID', value: uid),
+                  _InfoRow(
+                    label: localeProvider.translate('profilePage.labels.userId'),
+                    value: uid,
+                  ),
                   const SizedBox(height: 12),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: OutlinedButton.icon(
                       onPressed: () async {
-                        if (uid == 'Not available') {
+                        if (!hasUid) {
                           return;
                         }
                         await Clipboard.setData(ClipboardData(text: uid));
@@ -111,36 +121,60 @@ class ProfilePage extends StatelessWidget {
                           return;
                         }
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('User ID copied')),
+                          SnackBar(
+                            content: Text(
+                              localeProvider.translate(
+                                'profilePage.userIdCopied',
+                              ),
+                            ),
+                          ),
                         );
                       },
                       icon: const Icon(Icons.copy_rounded, size: 16),
-                      label: const Text('Copy User ID'),
+                      label: Text(
+                        localeProvider.translate('profilePage.copyUserId'),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  _InfoRow(label: 'Email', value: email),
+                  _InfoRow(
+                    label: localeProvider.translate('profilePage.labels.email'),
+                    value: email,
+                  ),
                   const SizedBox(height: 8),
-                  _InfoRow(label: 'Phone', value: phone),
+                  _InfoRow(
+                    label: localeProvider.translate('profilePage.labels.phone'),
+                    value: phone,
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
               _SectionCard(
-                title: 'Security & Access',
+                title: localeProvider.translate('profilePage.securityAccess'),
                 children: [
                   _InfoRow(
-                    label: 'Joined',
-                    value: _formatDate(user?.metadata.creationTime),
+                    label: localeProvider.translate('profilePage.labels.joined'),
+                    value: _formatDate(
+                      user?.metadata.creationTime,
+                      localeProvider,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   _InfoRow(
-                    label: 'Last Sign-in',
-                    value: _formatDate(user?.metadata.lastSignInTime),
+                    label: localeProvider.translate(
+                      'profilePage.labels.lastSignIn',
+                    ),
+                    value: _formatDate(
+                      user?.metadata.lastSignInTime,
+                      localeProvider,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   _InfoRow(
-                    label: 'Provider',
-                    value: _providerName(user?.providerData),
+                    label: localeProvider.translate(
+                      'profilePage.labels.provider',
+                    ),
+                    value: _providerName(user?.providerData, localeProvider),
                   ),
                 ],
               ),
@@ -159,7 +193,7 @@ class ProfilePage extends StatelessWidget {
                     backgroundColor: theme.colorScheme.errorContainer,
                     foregroundColor: theme.colorScheme.onErrorContainer,
                   ),
-                  label: const Text('Sign Out'),
+                  label: Text(localeProvider.translate('auth.sign_out')),
                 ),
               ),
             ],
@@ -177,30 +211,33 @@ class ProfilePage extends StatelessWidget {
     return trimmed.substring(0, 1).toUpperCase();
   }
 
-  String _formatDate(DateTime? dateTime) {
+  String _formatDate(DateTime? dateTime, LocaleProvider localeProvider) {
     if (dateTime == null) {
-      return 'Not available';
+      return localeProvider.translate('profilePage.notAvailable');
     }
     return '${dateTime.day.toString().padLeft(2, '0')}/'
         '${dateTime.month.toString().padLeft(2, '0')}/'
         '${dateTime.year}';
   }
 
-  String _providerName(List<Object?>? providerData) {
+  String _providerName(
+    List<dynamic>? providerData,
+    LocaleProvider localeProvider,
+  ) {
     if (providerData == null || providerData.isEmpty) {
-      return 'Unknown';
+      return localeProvider.translate('profilePage.provider.unknown');
     }
     final raw = providerData.first.toString().toLowerCase();
     if (raw.contains('google')) {
-      return 'Google';
+      return localeProvider.translate('profilePage.provider.google');
     }
     if (raw.contains('phone')) {
-      return 'Phone';
+      return localeProvider.translate('profilePage.provider.phone');
     }
     if (raw.contains('password')) {
-      return 'Email / Password';
+      return localeProvider.translate('profilePage.provider.emailPassword');
     }
-    return 'Connected';
+    return localeProvider.translate('profilePage.provider.connected');
   }
 }
 

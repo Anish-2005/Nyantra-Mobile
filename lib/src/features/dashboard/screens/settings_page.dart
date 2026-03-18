@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/providers/sync_status_provider.dart';
@@ -24,6 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     final syncProvider = context.read<SyncStatusProvider>();
+    final localeProvider = context.read<LocaleProvider>();
     final syncService = SyncService(syncStatusProvider: syncProvider);
 
     setState(() => _isSyncing = true);
@@ -34,13 +34,17 @@ class _SettingsPageState extends State<SettingsPage> {
       if (!isOnline) {
         syncProvider.setStatus(
           SyncStatus.error,
-          error: 'No internet connection available',
+          error: localeProvider.translate('settingsPage.sync.noInternetError'),
         );
         if (!mounted) {
           return;
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You are offline. Try again later.')),
+          SnackBar(
+            content: Text(
+              localeProvider.translate('settingsPage.sync.offlineSnack'),
+            ),
+          ),
         );
         return;
       }
@@ -51,7 +55,11 @@ class _SettingsPageState extends State<SettingsPage> {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sync completed successfully')),
+        SnackBar(
+          content: Text(
+            localeProvider.translate('settingsPage.sync.successSnack'),
+          ),
+        ),
       );
     } catch (error) {
       syncProvider.setStatus(SyncStatus.error, error: error.toString());
@@ -59,7 +67,14 @@ class _SettingsPageState extends State<SettingsPage> {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sync failed: $error')),
+        SnackBar(
+          content: Text(
+            localeProvider.translate(
+              'settingsPage.sync.failedSnack',
+              {'error': error.toString()},
+            ),
+          ),
+        ),
       );
     } finally {
       if (mounted) {
@@ -74,10 +89,11 @@ class _SettingsPageState extends State<SettingsPage> {
     final themeProvider = context.watch<pref_theme.ThemeProvider>();
     final localeProvider = context.watch<LocaleProvider>();
     final syncProvider = context.watch<SyncStatusProvider>();
+    final t = localeProvider.translate;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(t('settingsPage.title'))),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
@@ -85,8 +101,8 @@ class _SettingsPageState extends State<SettingsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _SettingsSection(
-                title: 'Appearance',
-                subtitle: 'Switch between orange light mode and blue dark mode',
+                title: t('settingsPage.appearance.title'),
+                subtitle: t('settingsPage.appearance.subtitle'),
                 child: SwitchListTile.adaptive(
                   value: themeProvider.isDark,
                   onChanged: (value) {
@@ -96,8 +112,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           : pref_theme.AppTheme.light,
                     );
                   },
-                  title: Text(themeProvider.isDark ? 'Dark Theme' : 'Light Theme'),
-                  subtitle: const Text('Apply across the app instantly'),
+                  title: Text(
+                    themeProvider.isDark
+                        ? t('settingsPage.appearance.darkTheme')
+                        : t('settingsPage.appearance.lightTheme'),
+                  ),
+                  subtitle: Text(t('settingsPage.appearance.applyInstantly')),
                   secondary: Icon(
                     themeProvider.isDark
                         ? Icons.dark_mode_rounded
@@ -107,19 +127,19 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               const SizedBox(height: 16),
               _SettingsSection(
-                title: 'Language',
-                subtitle: 'Choose your preferred app language',
+                title: t('settingsPage.language.title'),
+                subtitle: t('settingsPage.language.subtitle'),
                 child: Wrap(
                   spacing: 10,
                   runSpacing: 10,
                   children: [
                     ChoiceChip(
-                      label: const Text('English'),
+                      label: Text(t('settingsPage.language.english')),
                       selected: localeProvider.locale == AppLocale.en,
                       onSelected: (_) => localeProvider.setLocale(AppLocale.en),
                     ),
                     ChoiceChip(
-                      label: const Text('Hindi'),
+                      label: Text(t('settingsPage.language.hindi')),
                       selected: localeProvider.locale == AppLocale.hi,
                       onSelected: (_) => localeProvider.setLocale(AppLocale.hi),
                     ),
@@ -128,8 +148,8 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               const SizedBox(height: 16),
               _SettingsSection(
-                title: 'Data & Sync',
-                subtitle: 'Monitor status and trigger manual cloud sync',
+                title: t('settingsPage.dataSync.title'),
+                subtitle: t('settingsPage.dataSync.subtitle'),
                 child: Column(
                   children: [
                     Row(
@@ -155,7 +175,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Row(
                       children: [
                         Text(
-                          'Last sync:',
+                          t('settingsPage.dataSync.lastSync'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -163,7 +183,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            _formatSyncTime(syncProvider.lastSyncTime),
+                            _formatSyncTime(
+                              syncProvider.lastSyncTime,
+                              t('settingsPage.dataSync.notSyncedYet'),
+                            ),
                             style: theme.textTheme.bodySmall,
                             textAlign: TextAlign.right,
                           ),
@@ -184,7 +207,11 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                               )
                             : const Icon(Icons.sync_rounded),
-                        label: Text(_isSyncing ? 'Syncing...' : 'Sync Now'),
+                        label: Text(
+                          _isSyncing
+                              ? t('settingsPage.dataSync.syncing')
+                              : t('settingsPage.dataSync.syncNow'),
+                        ),
                       ),
                     ),
                   ],
@@ -192,8 +219,8 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               const SizedBox(height: 16),
               _SettingsSection(
-                title: 'Session',
-                subtitle: 'Manage your active account',
+                title: t('settingsPage.session.title'),
+                subtitle: t('settingsPage.session.subtitle'),
                 child: SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -210,26 +237,26 @@ class _SettingsPageState extends State<SettingsPage> {
                         color: theme.colorScheme.error.withValues(alpha: 0.35),
                       ),
                     ),
-                    label: const Text('Sign Out'),
+                    label: Text(t('auth.sign_out')),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               _SettingsSection(
-                title: 'About',
-                subtitle: 'App information',
+                title: t('settingsPage.about.title'),
+                subtitle: t('settingsPage.about.subtitle'),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppConstants.appTitle,
+                      t('settingsPage.about.appName'),
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Version 1.0.0',
+                      '${t('settingsPage.about.version')} 1.0.0',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -244,9 +271,9 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  String _formatSyncTime(DateTime? dateTime) {
+  String _formatSyncTime(DateTime? dateTime, String fallbackText) {
     if (dateTime == null) {
-      return 'Not synced yet';
+      return fallbackText;
     }
     return '${dateTime.day.toString().padLeft(2, '0')}/'
         '${dateTime.month.toString().padLeft(2, '0')}/'

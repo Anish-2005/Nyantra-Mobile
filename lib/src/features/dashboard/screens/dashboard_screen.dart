@@ -267,7 +267,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
-                                      localeProvider.translate('logout'),
+                                      localeProvider.translate('auth.sign_out'),
                                       style: TextStyle(
                                         color: theme.colorScheme.error,
                                         fontWeight: FontWeight.w600,

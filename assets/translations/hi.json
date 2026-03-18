@@ -3671,6 +3671,72 @@
     "advanced_search": "एडवांस्ड सर्च"
   },
   "beneficiary_lowercase": "लाभार्थी",
+  "profilePage": {
+    "title": "Profile",
+    "defaultName": "Nyantra User",
+    "noEmail": "No email linked",
+    "noPhone": "Not provided",
+    "notAvailable": "Not available",
+    "accountDetails": "Account Details",
+    "securityAccess": "Security & Access",
+    "copyUserId": "Copy User ID",
+    "userIdCopied": "User ID copied",
+    "labels": {
+      "userId": "User ID",
+      "email": "Email",
+      "phone": "Phone",
+      "joined": "Joined",
+      "lastSignIn": "Last Sign-in",
+      "provider": "Provider"
+    },
+    "provider": {
+      "unknown": "Unknown",
+      "google": "Google",
+      "phone": "Phone",
+      "emailPassword": "Email / Password",
+      "connected": "Connected"
+    }
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "subtitle": "Switch between orange light mode and blue dark mode",
+      "darkTheme": "Dark Theme",
+      "lightTheme": "Light Theme",
+      "applyInstantly": "Apply across the app instantly"
+    },
+    "language": {
+      "title": "Language",
+      "subtitle": "Choose your preferred app language",
+      "english": "English",
+      "hindi": "Hindi"
+    },
+    "dataSync": {
+      "title": "Data & Sync",
+      "subtitle": "Monitor status and trigger manual cloud sync",
+      "lastSync": "Last sync:",
+      "notSyncedYet": "Not synced yet",
+      "syncing": "Syncing...",
+      "syncNow": "Sync Now"
+    },
+    "session": {
+      "title": "Session",
+      "subtitle": "Manage your active account"
+    },
+    "about": {
+      "title": "About",
+      "subtitle": "App information",
+      "appName": "Nyantra User Dashboard",
+      "version": "Version"
+    },
+    "sync": {
+      "noInternetError": "No internet connection available",
+      "offlineSnack": "You are offline. Try again later.",
+      "successSnack": "Sync completed successfully",
+      "failedSnack": "Sync failed: {error}"
+    }
+  },
   "ui": {
     "lightMode": "लाइट मोड",
     "darkMode": "डार्क मोड",
