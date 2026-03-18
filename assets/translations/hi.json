@@ -3672,71 +3672,71 @@
   },
   "beneficiary_lowercase": "लाभार्थी",
   "profilePage": {
-    "title": "Profile",
-    "defaultName": "Nyantra User",
-    "noEmail": "No email linked",
-    "noPhone": "Not provided",
-    "notAvailable": "Not available",
-    "accountDetails": "Account Details",
-    "securityAccess": "Security & Access",
-    "copyUserId": "Copy User ID",
-    "userIdCopied": "User ID copied",
-    "labels": {
-      "userId": "User ID",
-      "email": "Email",
-      "phone": "Phone",
-      "joined": "Joined",
-      "lastSignIn": "Last Sign-in",
-      "provider": "Provider"
-    },
-    "provider": {
-      "unknown": "Unknown",
-      "google": "Google",
-      "phone": "Phone",
-      "emailPassword": "Email / Password",
-      "connected": "Connected"
-    }
+  "title": "प्रोफ़ाइल",
+  "defaultName": "न्यंत्रा उपयोगकर्ता",
+  "noEmail": "कोई ईमेल लिंक नहीं है",
+  "noPhone": "प्रदान नहीं किया गया",
+  "notAvailable": "उपलब्ध नहीं",
+  "accountDetails": "खाता विवरण",
+  "securityAccess": "सुरक्षा और एक्सेस",
+  "copyUserId": "यूज़र आईडी कॉपी करें",
+  "userIdCopied": "यूज़र आईडी कॉपी हो गई",
+  "labels": {
+    "userId": "यूज़र आईडी",
+    "email": "ईमेल",
+    "phone": "फ़ोन",
+    "joined": "जुड़े",
+    "lastSignIn": "आखिरी साइन-इन",
+    "provider": "प्रदाता"
   },
-  "settingsPage": {
-    "title": "Settings",
-    "appearance": {
-      "title": "Appearance",
-      "subtitle": "Switch between orange light mode and blue dark mode",
-      "darkTheme": "Dark Theme",
-      "lightTheme": "Light Theme",
-      "applyInstantly": "Apply across the app instantly"
-    },
-    "language": {
-      "title": "Language",
-      "subtitle": "Choose your preferred app language",
-      "english": "English",
-      "hindi": "Hindi"
-    },
-    "dataSync": {
-      "title": "Data & Sync",
-      "subtitle": "Monitor status and trigger manual cloud sync",
-      "lastSync": "Last sync:",
-      "notSyncedYet": "Not synced yet",
-      "syncing": "Syncing...",
-      "syncNow": "Sync Now"
-    },
-    "session": {
-      "title": "Session",
-      "subtitle": "Manage your active account"
-    },
-    "about": {
-      "title": "About",
-      "subtitle": "App information",
-      "appName": "Nyantra User Dashboard",
-      "version": "Version"
-    },
-    "sync": {
-      "noInternetError": "No internet connection available",
-      "offlineSnack": "You are offline. Try again later.",
-      "successSnack": "Sync completed successfully",
-      "failedSnack": "Sync failed: {error}"
-    }
+  "provider": {
+    "unknown": "अज्ञात",
+    "google": "गूगल",
+    "phone": "फ़ोन",
+    "emailPassword": "ईमेल / पासवर्ड",
+    "connected": "कनेक्टेड"
+  }
+},
+"settingsPage": {
+  "title": "सेटिंग्स",
+  "appearance": {
+    "title": "दिखावट",
+    "subtitle": "ऑरेंज लाइट मोड और ब्लू डार्क मोड के बीच स्विच करें",
+    "darkTheme": "डार्क थीम",
+    "lightTheme": "लाइट थीम",
+    "applyInstantly": "पूरे ऐप में तुरंत लागू करें"
   },
+  "language": {
+    "title": "भाषा",
+    "subtitle": "अपनी पसंदीदा ऐप भाषा चुनें",
+    "english": "अंग्रेज़ी",
+    "hindi": "हिंदी"
+  },
+  "dataSync": {
+    "title": "डेटा और सिंक",
+    "subtitle": "स्थिति मॉनिटर करें और मैन्युअल क्लाउड सिंक ट्रिगर करें",
+    "lastSync": "आखिरी सिंक:",
+    "notSyncedYet": "अभी तक सिंक नहीं हुआ",
+    "syncing": "सिंक हो रहा है...",
+    "syncNow": "अभी सिंक करें"
+  },
+  "session": {
+    "title": "सेशन",
+    "subtitle": "अपने सक्रिय खाते को प्रबंधित करें"
+  },
+  "about": {
+    "title": "ऐप के बारे में",
+    "subtitle": "ऐप की जानकारी",
+    "appName": "न्यंत्रा यूज़र डैशबोर्ड",
+    "version": "संस्करण"
+  },
+  "sync": {
+    "noInternetError": "कोई इंटरनेट कनेक्शन उपलब्ध नहीं है",
+    "offlineSnack": "आप ऑफलाइन हैं। बाद में फिर प्रयास करें।",
+    "successSnack": "सिंक सफलतापूर्वक पूरा हुआ",
+    "failedSnack": "सिंक विफल: {error}"
+  }
+},
   "ui": {
     "lightMode": "लाइट मोड",
     "darkMode": "डार्क मोड",

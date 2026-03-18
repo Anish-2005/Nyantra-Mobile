@@ -237,7 +237,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       size: 20,
                                     ),
                                     const SizedBox(width: 12),
-                                    Text(localeProvider.translate('profile')),
+                                    Text(
+                                      localeProvider.translate(
+                                        'profilePage.title',
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -251,7 +255,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       size: 20,
                                     ),
                                     const SizedBox(width: 12),
-                                    Text(localeProvider.translate('settings')),
+                                    Text(
+                                      localeProvider.translate(
+                                        'settingsPage.title',
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
