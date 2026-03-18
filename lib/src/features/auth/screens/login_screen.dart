@@ -7,7 +7,7 @@ import 'dart:math';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/providers/theme_provider.dart';
-import '../../../components/AnimatedBackground.dart';
+import '../../../components/animated_background.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -1014,3 +1014,4 @@ class ParticlePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+

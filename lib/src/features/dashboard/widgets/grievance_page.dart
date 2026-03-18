@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, curly_braces_in_flow_control_structures, annotate_overrides, avoid_unnecessary_containers, avoid_print
+// ignore_for_file: deprecated_member_use, curly_braces_in_flow_control_structures, annotate_overrides, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +13,7 @@ import '../../../core/widgets/loading_state.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/models/grievance_model.dart';
 import '../../../core/models/beneficiary_model.dart';
+import '../../../core/utils/app_logger.dart';
 
 class GrievancePage extends StatefulWidget {
   const GrievancePage({super.key});
@@ -1141,8 +1142,8 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
       }
 
       bool available = await _speech.initialize(
-        onStatus: (val) => print('onStatus: $val'),
-        onError: (val) => print('onError: $val'),
+        onStatus: (val) => AppLogger.debug('onStatus: $val'),
+        onError: (val) => AppLogger.error('onError: $val'),
       );
       if (available) {
         setState(() => _isListening = true);

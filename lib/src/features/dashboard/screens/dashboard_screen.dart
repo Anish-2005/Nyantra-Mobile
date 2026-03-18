@@ -7,7 +7,7 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/connectivity_provider.dart';
 import '../../../core/providers/sync_status_provider.dart';
 import '../../../core/services/sync_service.dart';
-import '../../../components/AnimatedBackground.dart';
+import '../../../components/animated_background.dart';
 import '../widgets/sidebar.dart';
 import '../widgets/dashboard_content.dart';
 import '../widgets/sync_status_widget.dart';
@@ -317,3 +317,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 }
+

@@ -725,7 +725,7 @@ class SyncService {
           await syncFromFirestore();
           AppLogger.info('SyncService: getReports - Background sync completed');
         } catch (e) {
-          AppLogger.info('SyncService: getReports - Background sync failed: $e');
+          AppLogger.warning('SyncService: getReports - Background sync failed: $e');
         }
       }
       return localReports;
@@ -761,11 +761,11 @@ class SyncService {
         );
         return reports;
       } catch (e) {
-        AppLogger.info('SyncService: getReports - Error fetching from Firestore: $e');
+        AppLogger.error('SyncService: getReports - Error fetching from Firestore: $e');
         return [];
       }
     } else {
-      AppLogger.info('SyncService: getReports - Offline and no local reports available');
+      AppLogger.warning('SyncService: getReports - Offline and no local reports available');
       return [];
     }
   }
@@ -921,5 +921,6 @@ class SyncService {
     }
   }
 }
+
 
 

@@ -563,10 +563,9 @@ class DataService {
     if (applicationIds.isEmpty) return 0.0;
 
     double total = 0.0;
-    const int batchSize = 10;
-    for (var i = 0; i < applicationIds.length; i += batchSize) {
-      final end = (i + batchSize) < applicationIds.length
-          ? i + batchSize
+    for (var i = 0; i < applicationIds.length; i += _whereInLimit) {
+      final end = (i + _whereInLimit) < applicationIds.length
+          ? i + _whereInLimit
           : applicationIds.length;
       final chunk = applicationIds.sublist(i, end);
 
