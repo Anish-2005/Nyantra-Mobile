@@ -1,12 +1,12 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use, avoid_unnecessary_containers
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers, directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/models/feedback_model.dart';
 import '../../../core/providers/locale_provider.dart';
+import 'dashboard_hero_header.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -23,19 +23,56 @@ class _FeedbackPageState extends State<FeedbackPage>
   double _rating = 0;
   bool _isSubmitting = false;
   late TabController _tabController;
+  Stream<List<FeedbackModel>>? _myFeedbackStream;
+  String? _feedbackStreamUserId;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    _refreshFeedbackStreamIfNeeded();
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     _subjectController.dispose();
     _feedbackController.dispose();
     super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (!_tabController.indexIsChanging && _tabController.index == 1) {
+      _refreshFeedbackStream(force: true);
+    }
+  }
+
+  void _refreshFeedbackStreamIfNeeded() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      _myFeedbackStream = null;
+      _feedbackStreamUserId = null;
+      return;
+    }
+    if (_myFeedbackStream == null || _feedbackStreamUserId != user.uid) {
+      _myFeedbackStream = DataService.getUserFeedbacks(user.uid);
+      _feedbackStreamUserId = user.uid;
+    }
+  }
+
+  void _refreshFeedbackStream({bool force = false}) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    if (force ||
+        _myFeedbackStream == null ||
+        _feedbackStreamUserId != user.uid) {
+      setState(() {
+        _myFeedbackStream = DataService.getUserFeedbacks(user.uid);
+        _feedbackStreamUserId = user.uid;
+      });
+    }
   }
 
   Future<void> _submitFeedback(LocaleProvider localeProvider) async {
@@ -64,6 +101,7 @@ class _FeedbackPageState extends State<FeedbackPage>
       );
 
       if (mounted) {
+        _refreshFeedbackStream(force: true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -115,8 +153,8 @@ class _FeedbackPageState extends State<FeedbackPage>
                 Text(
                   localeProvider.translate('extracted.feedback.rateExperience'),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -187,6 +225,7 @@ class _FeedbackPageState extends State<FeedbackPage>
                   });
 
                   if (mounted) {
+                    _refreshFeedbackStream(force: true);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -257,6 +296,7 @@ class _FeedbackPageState extends State<FeedbackPage>
         await DataService.deleteFeedback(feedbackId);
 
         if (mounted) {
+          _refreshFeedbackStream(force: true);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -283,7 +323,6 @@ class _FeedbackPageState extends State<FeedbackPage>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localeProvider = context.watch<LocaleProvider>();
-    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       child: Stack(
@@ -292,116 +331,14 @@ class _FeedbackPageState extends State<FeedbackPage>
           SafeArea(
             child: Column(
               children: [
-                // Hero Header Section
-                Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isDark
-                              ? [
-                                  const Color(0xFF06B6D4),
-                                  const Color(0xFF8B5CF6),
-                                ]
-                              : [
-                                  const Color(0xFFFB7185),
-                                  const Color(0xFFFB923C),
-                                ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                (isDark
-                                        ? const Color(0xFF8B5CF6)
-                                        : const Color(0xFFF59E0B))
-                                    .withOpacity(0.3),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Badge
-                          Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.feedback,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      localeProvider.translate('nav.feedback'),
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms)
-                              .slideY(begin: -0.2, end: 0),
-
-                          const SizedBox(height: 16),
-
-                          // Title
-                          Text(
-                                localeProvider.translate('nav.feedback'),
-                                style: theme.textTheme.headlineMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.2,
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms, delay: 200.ms)
-                              .slideY(begin: -0.2, end: 0),
-
-                          const SizedBox(height: 8),
-
-                          // Subtitle
-                          Text(
-                                localeProvider.translate(
-                                  'extracted.feedback.helpImprove',
-                                ),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
-                                  height: 1.4,
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms, delay: 400.ms)
-                              .slideY(begin: -0.2, end: 0),
-                        ],
-                      ),
-                    )
-                    .animate()
-                    .fadeIn(duration: 800.ms)
-                    .slideY(begin: -0.1, end: 0),
+                DashboardHeroHeader(
+                  icon: Icons.feedback,
+                  badge: localeProvider.translate('nav.feedback'),
+                  title: localeProvider.translate('nav.feedback'),
+                  subtitle: localeProvider.translate(
+                    'extracted.feedback.helpImprove',
+                  ),
+                ),
 
                 // Feedback Content
                 Expanded(
@@ -413,25 +350,20 @@ class _FeedbackPageState extends State<FeedbackPage>
                         Container(
                           margin: const EdgeInsets.only(bottom: 20),
                           decoration: BoxDecoration(
-                            color: theme.cardColor.withOpacity(0.8),
+                            color: theme.cardColor.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: theme.dividerColor.withOpacity(0.1),
+                              color: theme.dividerColor.withValues(alpha: 0.1),
                             ),
                           ),
                           child: TabBar(
                             controller: _tabController,
                             indicator: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: isDark
-                                    ? [
-                                        const Color(0xFF06B6D4),
-                                        const Color(0xFF8B5CF6),
-                                      ]
-                                    : [
-                                        const Color(0xFFFB7185),
-                                        const Color(0xFFFB923C),
-                                      ],
+                                colors: [
+                                  theme.colorScheme.primary,
+                                  theme.colorScheme.tertiary,
+                                ],
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -468,10 +400,11 @@ class _FeedbackPageState extends State<FeedbackPage>
                         Expanded(
                           child: Container(
                             decoration: BoxDecoration(
-                              color: theme.cardColor.withOpacity(0.8),
+                              color: theme.cardColor.withValues(alpha: 0.8),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: theme.dividerColor.withOpacity(0.1),
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.1),
                               ),
                             ),
                             child: TabBarView(
@@ -623,7 +556,7 @@ class _FeedbackPageState extends State<FeedbackPage>
             Icon(
               Icons.account_circle,
               size: 64,
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -636,8 +569,10 @@ class _FeedbackPageState extends State<FeedbackPage>
       );
     }
 
+    _refreshFeedbackStreamIfNeeded();
+
     return StreamBuilder<List<FeedbackModel>>(
-      stream: DataService.getUserFeedbacks(user.uid),
+      stream: _myFeedbackStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -679,7 +614,8 @@ class _FeedbackPageState extends State<FeedbackPage>
                 Icon(
                   Icons.feedback_outlined,
                   size: 64,
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+                  color:
+                      theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -726,7 +662,7 @@ class _FeedbackPageState extends State<FeedbackPage>
                           decoration: BoxDecoration(
                             color: _getStatusColor(
                               feedback.status,
-                            ).withOpacity(0.1),
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: _getStatusColor(feedback.status),

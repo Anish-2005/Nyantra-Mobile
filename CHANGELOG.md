@@ -21,3 +21,7 @@ All notable changes to this project will be documented in this file.
 - Locale provider now supports fallback translation lookup and logs load/persistence failures.
 - Theme provider now logs persistence/load failures.
 - `DataService` is now a thin facade delegating to repository modules.
+- Deprecated color opacity usage has been migrated to `withValues(alpha: ...)`.
+- Duplicate beneficiary controller init/dispose in application edit flows has been fixed.
+- Async context handling in application edit save flows now checks widget mount state before UI calls.
+- `path` is now an explicit direct dependency (removing `depend_on_referenced_packages` suppression).

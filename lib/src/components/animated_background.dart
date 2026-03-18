@@ -1,7 +1,10 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: directives_ordering
 
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'dart:ui';
+
+import '../core/theme/app_theme.dart';
 
 class AnimatedBackground extends StatefulWidget {
   final bool isDark;
@@ -14,248 +17,214 @@ class AnimatedBackground extends StatefulWidget {
 
 class _AnimatedBackgroundState extends State<AnimatedBackground>
     with TickerProviderStateMixin {
-  late AnimationController _particleController;
-  late AnimationController _backgroundController;
+  late final AnimationController _textureController;
+  late final AnimationController _orbController;
 
   @override
   void initState() {
     super.initState();
-    _particleController = AnimationController(
-      duration: const Duration(seconds: 20),
+    _textureController = AnimationController(
+      duration: const Duration(seconds: 24),
       vsync: this,
     )..repeat();
 
-    _backgroundController = AnimationController(
-      duration: const Duration(seconds: 10),
+    _orbController = AnimationController(
+      duration: const Duration(seconds: 14),
       vsync: this,
     )..repeat(reverse: true);
   }
 
   @override
   void dispose() {
-    _particleController.dispose();
-    _backgroundController.dispose();
+    _textureController.dispose();
+    _orbController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Animated Background
-        AnimatedBuilder(
-          animation: _backgroundController,
-          builder: (context, child) {
-            return Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: widget.isDark
-                      ? [
-                          Color.lerp(
-                            const Color(0xFF0F172A),
-                            const Color(0xFF1E1B4B),
-                            _backgroundController.value,
-                          )!,
-                          Color.lerp(
-                            const Color(0xFF1E293B),
-                            const Color(0xFF312E81),
-                            _backgroundController.value,
-                          )!,
-                          Color.lerp(
-                            const Color(0xFF334155),
-                            const Color(0xFF4338CA),
-                            _backgroundController.value,
-                          )!,
-                        ]
-                      : [
-                          Color.lerp(
-                            const Color(0xFFF8FAFC),
-                            const Color(0xFFF0F9FF),
-                            _backgroundController.value,
-                          )!,
-                          Color.lerp(
-                            const Color(0xFFF1F5F9),
-                            const Color(0xFFE0F2FE),
-                            _backgroundController.value,
-                          )!,
-                          Color.lerp(
-                            const Color(0xFFE2E8F0),
-                            const Color(0xFFBAE6FD),
-                            _backgroundController.value,
-                          )!,
-                        ],
-                ),
-              ),
+    final theme = Theme.of(context);
+    final tokens = theme.extension<AppThemeTokens>();
+    final isDarkTheme = widget.isDark || theme.brightness == Brightness.dark;
+    final shouldForceDarkPalette =
+        isDarkTheme && (tokens == null || _isLightBackground(tokens));
+    final backgroundGradient = shouldForceDarkPalette
+        ? const LinearGradient(
+            colors: [Color(0xFF030B1A), Color(0xFF08203D), Color(0xFF0B2A4F)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          )
+        : tokens?.backgroundGradient ??
+            const LinearGradient(
+              colors: [Color(0xFFFFFFFF), Color(0xFFFFFAF3), Color(0xFFFFF1E1)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             );
-          },
-        ),
+    final brandStart = shouldForceDarkPalette
+        ? const Color(0xFF0EA5E9)
+        : tokens?.brandStart ?? const Color(0xFF155EEF);
+    final brandEnd = shouldForceDarkPalette
+        ? const Color(0xFF7DD3FC)
+        : tokens?.brandEnd ?? const Color(0xFF0E9384);
+    final tertiaryColor = shouldForceDarkPalette
+        ? const Color(0xFF60A5FA)
+        : theme.colorScheme.tertiary;
+    final textureGridColor = shouldForceDarkPalette
+        ? const Color(0xFF2C4D72)
+        : tokens?.borderSubtle ?? const Color(0xFFE7E5E4);
 
-        // Background decorative gradients (dark mode only)
-        if (widget.isDark) ...[
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.1,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.topLeft,
-                    radius: 1.5,
-                    colors: [const Color(0xFF06B6D4), Colors.transparent],
-                  ),
-                ),
-              ),
-            ),
+    return SizedBox.expand(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(gradient: backgroundGradient),
+            child: const SizedBox.expand(),
           ),
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.1,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.bottomRight,
-                    radius: 1.5,
-                    colors: [const Color(0xFF8B5CF6), Colors.transparent],
+          AnimatedBuilder(
+            animation: _orbController,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  _floatingOrb(
+                    alignment: const Alignment(-0.9, -0.85),
+                    color: brandStart,
+                    size: 280,
+                    glow: 58,
+                    t: _orbController.value,
+                    dxAmplitude: 40,
+                    dyAmplitude: 28,
                   ),
+                  _floatingOrb(
+                    alignment: const Alignment(0.85, -0.55),
+                    color: brandEnd,
+                    size: 220,
+                    glow: 52,
+                    t: 1 - _orbController.value,
+                    dxAmplitude: 35,
+                    dyAmplitude: 18,
+                  ),
+                  _floatingOrb(
+                    alignment: const Alignment(0.9, 0.92),
+                    color: tertiaryColor,
+                    size: 320,
+                    glow: 64,
+                    t: _orbController.value * 0.8,
+                    dxAmplitude: 26,
+                    dyAmplitude: 34,
+                  ),
+                ],
+              );
+            },
+          ),
+          AnimatedBuilder(
+            animation: _textureController,
+            builder: (context, child) {
+              return CustomPaint(
+                painter: _TexturePainter(
+                  animation: _textureController.value,
+                  tokenColor: brandStart,
+                  gridColor: textureGridColor,
+                  isDarkPalette: isDarkTheme,
                 ),
-              ),
-            ),
+                child: const SizedBox.expand(),
+              );
+            },
           ),
         ],
+      ),
+    );
+  }
 
-        // Animated Particles Background
-        AnimatedBuilder(
-          animation: _particleController,
-          builder: (context, child) {
-            return CustomPaint(
-              painter: ParticlePainter(
-                animation: _particleController,
-                isDark: widget.isDark,
-              ),
-              size: MediaQuery.of(context).size,
-            );
-          },
-        ),
+  bool _isLightBackground(AppThemeTokens tokens) {
+    final averageLuminance = (tokens.backgroundStart.computeLuminance() +
+            tokens.backgroundMid.computeLuminance() +
+            tokens.backgroundEnd.computeLuminance()) /
+        3;
+    return averageLuminance > 0.32;
+  }
 
-        // Floating Decorative Elements
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.1,
-          left: MediaQuery.of(context).size.width * 0.1,
-          child: AnimatedBuilder(
-            animation: _backgroundController,
-            builder: (context, child) {
-              return Transform.rotate(
-                angle: _backgroundController.value * 2 * pi,
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: widget.isDark
-                          ? [
-                              const Color(0xFF06B6D4).withOpacity(0.3),
-                              const Color(0xFF8B5CF6).withOpacity(0.3),
-                            ]
-                          : [
-                              const Color(0xFFFB7185).withOpacity(0.2),
-                              const Color(0xFFFB923C).withOpacity(0.2),
-                            ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            (widget.isDark
-                                    ? const Color(0xFF06B6D4)
-                                    : const Color(0xFFFB7185))
-                                .withOpacity(0.3),
-                        blurRadius: 20,
-                        spreadRadius: 5,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+  Widget _floatingOrb({
+    required Alignment alignment,
+    required Color color,
+    required double size,
+    required double glow,
+    required double t,
+    required double dxAmplitude,
+    required double dyAmplitude,
+  }) {
+    final wave = sin(t * 2 * pi);
+    final drift = cos(t * 2 * pi);
+
+    return Align(
+      alignment: alignment,
+      child: Transform.translate(
+        offset: Offset(wave * dxAmplitude, drift * dyAmplitude),
+        child: ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: glow, sigmaY: glow),
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color.withValues(alpha: 0.22),
+            ),
           ),
         ),
-
-        // Additional floating element
-        Positioned(
-          bottom: MediaQuery.of(context).size.height * 0.15,
-          right: MediaQuery.of(context).size.width * 0.15,
-          child: AnimatedBuilder(
-            animation: _backgroundController,
-            builder: (context, child) {
-              return Transform.rotate(
-                angle: -_backgroundController.value * 2 * pi,
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: widget.isDark
-                          ? [
-                              const Color(0xFF8B5CF6).withOpacity(0.3),
-                              const Color(0xFF06B6D4).withOpacity(0.3),
-                            ]
-                          : [
-                              const Color(0xFFFB923C).withOpacity(0.2),
-                              const Color(0xFFFB7185).withOpacity(0.2),
-                            ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            (widget.isDark
-                                    ? const Color(0xFF8B5CF6)
-                                    : const Color(0xFFFB923C))
-                                .withOpacity(0.3),
-                        blurRadius: 15,
-                        spreadRadius: 3,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
 
-class ParticlePainter extends CustomPainter {
-  final Animation<double> animation;
-  final bool isDark;
+class _TexturePainter extends CustomPainter {
+  final double animation;
+  final Color tokenColor;
+  final Color gridColor;
+  final bool isDarkPalette;
 
-  ParticlePainter({required this.animation, required this.isDark});
+  const _TexturePainter({
+    required this.animation,
+    required this.tokenColor,
+    required this.gridColor,
+    required this.isDarkPalette,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final particlePaint = Paint()
       ..style = PaintingStyle.fill
-      ..color = (isDark ? const Color(0xFF06B6D4) : const Color(0xFFFB7185))
-          .withOpacity(0.1);
+      ..color = tokenColor.withValues(alpha: 0.09);
+    final linePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = gridColor.withValues(alpha: isDarkPalette ? 0.09 : 0.16);
+    final random = Random(17);
 
-    final random = Random(42); // Fixed seed for consistent pattern
+    const spacing = 58.0;
+    final lineShift = animation * spacing;
 
-    for (int i = 0; i < 50; i++) {
+    for (double x = -spacing; x <= size.width + spacing; x += spacing) {
+      final dx = x + lineShift;
+      canvas.drawLine(Offset(dx, 0), Offset(dx - 28, size.height), linePaint);
+    }
+
+    for (int i = 0; i < 70; i++) {
       final x =
-          (random.nextDouble() * size.width + animation.value * 100) %
-          size.width;
+          (random.nextDouble() * size.width + animation * (45 + i * 0.6)) %
+              size.width;
       final y =
-          (random.nextDouble() * size.height + animation.value * 50) %
-          size.height;
-      final radius = random.nextDouble() * 3 + 1;
-
-      canvas.drawCircle(Offset(x, y), radius, paint);
+          (random.nextDouble() * size.height + animation * (24 + i * 0.4)) %
+              size.height;
+      final radius = random.nextDouble() * 1.8 + 0.5;
+      canvas.drawCircle(Offset(x, y), radius, particlePaint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant _TexturePainter oldDelegate) {
+    return oldDelegate.animation != animation ||
+        oldDelegate.tokenColor != tokenColor ||
+        oldDelegate.gridColor != gridColor ||
+        oldDelegate.isDarkPalette != isDarkPalette;
+  }
 }

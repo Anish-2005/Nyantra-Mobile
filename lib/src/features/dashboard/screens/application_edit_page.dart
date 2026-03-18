@@ -1,10 +1,11 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/application_model.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/providers/locale_provider.dart';
+import '../../../components/animated_background.dart';
 
 class ApplicationEditPage extends StatefulWidget {
   final ApplicationModel application;
@@ -70,9 +71,6 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     _beneficiaryIdCtrl = TextEditingController(
       text: widget.application.beneficiaryId,
     );
-    _beneficiaryIdCtrl = TextEditingController(
-      text: widget.application.beneficiaryId,
-    );
     _fatherNameCtrl = TextEditingController(
       text: widget.application.fatherName,
     );
@@ -126,7 +124,6 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     _maritalStatusCtrl.dispose();
     _bankAccountCtrl.dispose();
     _ifscCtrl.dispose();
-    _beneficiaryIdCtrl.dispose();
     super.dispose();
   }
 
@@ -159,8 +156,10 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       updates['ifsc'] = _ifscCtrl.text.trim();
 
       await DataService.updateApplication(widget.application.id, updates);
-      if (mounted) Navigator.of(context).pop(true);
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error saving: $e')));
@@ -175,6 +174,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     final locale = context.watch<LocaleProvider>();
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(locale.translate('applications.editANewReliefApplication')),
         actions: [
@@ -193,217 +193,240 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 12),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _nameCtrl,
-                  labelKey: 'applications.applicant_name',
-                  keyboardType: TextInputType.name,
-                  validator: (value) => value?.isEmpty ?? true
-                      ? locale.translate('common.required')
-                      : null,
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _contactNumberCtrl,
-                  labelKey: 'applications.phone_number',
-                  keyboardType: TextInputType.phone,
-                  validator: (value) => value?.isEmpty ?? true
-                      ? locale.translate('common.required')
-                      : null,
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _aadhaarCtrl,
-                  labelKey: 'applications.aadhaar',
-                  validator: (value) => value?.isEmpty ?? true
-                      ? locale.translate('common.required')
-                      : null,
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _beneficiaryIdCtrl,
-                  labelKey: 'applications.beneficiaryId',
-                  validator: (value) => value?.isEmpty ?? true
-                      ? locale.translate('common.required')
-                      : null,
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildInput(
-                        theme,
-                        locale,
-                        controller: _districtCtrl,
-                        labelKey: 'applications.district',
-                        validator: (value) => value?.isEmpty ?? true
-                            ? locale.translate('common.required')
-                            : null,
-                      ),
+      body: Stack(
+        children: [
+          AnimatedBackground(isDark: theme.brightness == Brightness.dark),
+          SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 980),
+                child: Container(
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: theme.dividerColor.withValues(alpha: 0.22),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildInput(
-                        theme,
-                        locale,
-                        controller: _stateCtrl,
-                        labelKey: 'applications.state',
-                        validator: (value) => value?.isEmpty ?? true
-                            ? locale.translate('common.required')
-                            : null,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 12),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _nameCtrl,
+                              labelKey: 'applications.applicant_name',
+                              keyboardType: TextInputType.name,
+                              validator: (value) => value?.isEmpty ?? true
+                                  ? locale.translate('common.required')
+                                  : null,
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _contactNumberCtrl,
+                              labelKey: 'applications.phone_number',
+                              keyboardType: TextInputType.phone,
+                              validator: (value) => value?.isEmpty ?? true
+                                  ? locale.translate('common.required')
+                                  : null,
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _aadhaarCtrl,
+                              labelKey: 'applications.aadhaar',
+                              validator: (value) => value?.isEmpty ?? true
+                                  ? locale.translate('common.required')
+                                  : null,
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _beneficiaryIdCtrl,
+                              labelKey: 'applications.beneficiaryId',
+                              validator: (value) => value?.isEmpty ?? true
+                                  ? locale.translate('common.required')
+                                  : null,
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildInput(
+                                    theme,
+                                    locale,
+                                    controller: _districtCtrl,
+                                    labelKey: 'applications.district',
+                                    validator: (value) => value?.isEmpty ?? true
+                                        ? locale.translate('common.required')
+                                        : null,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: _buildInput(
+                                    theme,
+                                    locale,
+                                    controller: _stateCtrl,
+                                    labelKey: 'applications.state',
+                                    validator: (value) => value?.isEmpty ?? true
+                                        ? locale.translate('common.required')
+                                        : null,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            _buildActTypeDropdown(
+                              theme,
+                              locale,
+                              labelKey: 'applications.act_type',
+                            ),
+                            const SizedBox(height: 8),
+                            _buildDateInput(
+                              theme,
+                              locale,
+                              controller: _incidentDateCtrl,
+                              labelKey: 'applications.incidentDateHint',
+                              validator: (value) => value?.isEmpty ?? true
+                                  ? locale.translate('common.required')
+                                  : null,
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _amountCtrl,
+                              labelKey: 'applications.reliefAmountINR',
+                              keyboardType: TextInputType.number,
+                              validator: (value) => value?.isEmpty ?? true
+                                  ? locale.translate('common.required')
+                                  : null,
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _priorityCtrl,
+                              labelKey: 'applications.priorityLevel',
+                              readOnly: true,
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _emailCtrl,
+                              labelKey: 'extracted.email',
+                              keyboardType: TextInputType.emailAddress,
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _fatherNameCtrl,
+                              labelKey: 'applications.fatherName',
+                            ),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: _addressCtrl,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                labelText:
+                                    locale.translate('extracted.address'),
+                                filled: true,
+                                fillColor:
+                                    theme.cardColor.withValues(alpha: 0.03),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildInput(
+                                    theme,
+                                    locale,
+                                    controller: _ageCtrl,
+                                    labelKey: 'extracted.age',
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: _buildGenderDropdown(
+                                    theme,
+                                    locale,
+                                    labelKey: 'extracted.gender',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildInput(
+                                    theme,
+                                    locale,
+                                    controller: _bankAccountCtrl,
+                                    labelKey: 'applications.bankAccount',
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: _buildInput(
+                                    theme,
+                                    locale,
+                                    controller: _ifscCtrl,
+                                    labelKey: 'applications.ifsc',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _firReportCtrl,
+                              labelKey: 'applications.firReport',
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _medicalReportCtrl,
+                              labelKey: 'applications.medicalReport',
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _policeStationCtrl,
+                              labelKey: 'applications.policeStation',
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                _buildActTypeDropdown(
-                  theme,
-                  locale,
-                  labelKey: 'applications.act_type',
-                ),
-                const SizedBox(height: 8),
-                _buildDateInput(
-                  theme,
-                  locale,
-                  controller: _incidentDateCtrl,
-                  labelKey: 'applications.incidentDateHint',
-                  validator: (value) => value?.isEmpty ?? true
-                      ? locale.translate('common.required')
-                      : null,
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _amountCtrl,
-                  labelKey: 'applications.reliefAmountINR',
-                  keyboardType: TextInputType.number,
-                  validator: (value) => value?.isEmpty ?? true
-                      ? locale.translate('common.required')
-                      : null,
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _priorityCtrl,
-                  labelKey: 'applications.priorityLevel',
-                  readOnly: true,
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _emailCtrl,
-                  labelKey: 'extracted.email',
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _fatherNameCtrl,
-                  labelKey: 'applications.fatherName',
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _addressCtrl,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    labelText: locale.translate('extracted.address'),
-                    filled: true,
-                    fillColor: theme.cardColor.withOpacity(0.03),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildInput(
-                        theme,
-                        locale,
-                        controller: _ageCtrl,
-                        labelKey: 'extracted.age',
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildGenderDropdown(
-                        theme,
-                        locale,
-                        labelKey: 'extracted.gender',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildInput(
-                        theme,
-                        locale,
-                        controller: _bankAccountCtrl,
-                        labelKey: 'applications.bankAccount',
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildInput(
-                        theme,
-                        locale,
-                        controller: _ifscCtrl,
-                        labelKey: 'applications.ifsc',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _firReportCtrl,
-                  labelKey: 'applications.firReport',
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _medicalReportCtrl,
-                  labelKey: 'applications.medicalReport',
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _policeStationCtrl,
-                  labelKey: 'applications.policeStation',
-                ),
-
-                const SizedBox(height: 16),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -417,8 +440,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     bool readOnly = false,
     String? Function(String?)? validator,
   }) {
-    final label =
-        labelKey.startsWith('applications.') ||
+    final label = labelKey.startsWith('applications.') ||
             labelKey.startsWith('extracted.')
         ? locale.translate(labelKey)
         : labelKey;
@@ -431,7 +453,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -444,8 +466,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     required String labelKey,
     String? Function(String?)? validator,
   }) {
-    final label =
-        labelKey.startsWith('applications.') ||
+    final label = labelKey.startsWith('applications.') ||
             labelKey.startsWith('extracted.')
         ? locale.translate(labelKey)
         : labelKey;
@@ -463,14 +484,14 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
         );
         if (picked != null) {
           controller.text = picked.toIso8601String().split(
-            'T',
-          )[0]; // Format as YYYY-MM-DD
+                'T',
+              )[0]; // Format as YYYY-MM-DD
         }
       },
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         suffixIcon: Icon(Icons.calendar_today),
       ),
@@ -482,8 +503,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     LocaleProvider locale, {
     required String labelKey,
   }) {
-    final label =
-        labelKey.startsWith('applications.') ||
+    final label = labelKey.startsWith('applications.') ||
             labelKey.startsWith('extracted.')
         ? locale.translate(labelKey)
         : labelKey;
@@ -505,7 +525,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -516,8 +536,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     LocaleProvider locale, {
     required String labelKey,
   }) {
-    final label =
-        labelKey.startsWith('applications.') ||
+    final label = labelKey.startsWith('applications.') ||
             labelKey.startsWith('extracted.')
         ? locale.translate(labelKey)
         : labelKey;
@@ -537,7 +556,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -607,9 +626,6 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
     _beneficiaryIdCtrl = TextEditingController(
       text: widget.application.beneficiaryId,
     );
-    _beneficiaryIdCtrl = TextEditingController(
-      text: widget.application.beneficiaryId,
-    );
     _fatherNameCtrl = TextEditingController(
       text: widget.application.fatherName,
     );
@@ -663,7 +679,6 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
     _maritalStatusCtrl.dispose();
     _bankAccountCtrl.dispose();
     _ifscCtrl.dispose();
-    _beneficiaryIdCtrl.dispose();
     super.dispose();
   }
 
@@ -695,8 +710,10 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
       updates['ifsc'] = _ifscCtrl.text.trim();
 
       await DataService.updateApplication(widget.application.id, updates);
-      if (mounted) Navigator.of(context).pop(true);
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error saving: $e')));
@@ -779,16 +796,15 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
               onTap: () async {
                 final DateTime? picked = await showDatePicker(
                   context: context,
-                  initialDate:
-                      DateTime.tryParse(_incidentDateCtrl.text) ??
+                  initialDate: DateTime.tryParse(_incidentDateCtrl.text) ??
                       DateTime.now(),
                   firstDate: DateTime(2000),
                   lastDate: DateTime.now(),
                 );
                 if (picked != null) {
                   _incidentDateCtrl.text = picked.toIso8601String().split(
-                    'T',
-                  )[0]; // Format as YYYY-MM-DD
+                        'T',
+                      )[0]; // Format as YYYY-MM-DD
                 }
               },
               decoration: const InputDecoration(

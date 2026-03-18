@@ -1,7 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../theme/app_theme.dart';
 
 class LoadingState extends StatelessWidget {
   final String? message;
@@ -18,27 +17,40 @@ class LoadingState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final tokens = theme.extension<AppThemeTokens>();
+    final spinnerGradient =
+        tokens?.brandGradient ??
+        const LinearGradient(
+          colors: [Color(0xFF155EEF), Color(0xFF0E9384)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
 
     final loadingWidget = Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Animated loading spinner
           Container(
             width: size ?? 60,
             height: size ?? 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: isDark
-                    ? [const Color(0xFF06B6D4), const Color(0xFF8B5CF6)]
-                    : [const Color(0xFFFB7185), const Color(0xFFFB923C)],
-              ),
+              gradient: spinnerGradient,
+              boxShadow: [
+                BoxShadow(
+                  color: (tokens?.shadowSoft ?? Colors.black26).withValues(
+                    alpha: 0.35,
+                  ),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-            child: const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              strokeWidth: 3,
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                theme.colorScheme.onPrimary,
+              ),
+              strokeWidth: 2.8,
             ),
           ).animate(
             effects: [
@@ -60,7 +72,8 @@ class LoadingState extends StatelessWidget {
             Text(
               message!,
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.textTheme.bodyLarge?.color?.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
+                fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
             ).animate(

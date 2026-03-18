@@ -6,8 +6,12 @@ const _hiPath = 'assets/translations/hi.json';
 const _defaultTop = 25;
 
 final _translationCallPatterns = <RegExp>[
-  RegExp(r"(?:\btranslate|\bt)\(\s*'([^']+)'"),
-  RegExp(r'(?:\btranslate|\bt)\(\s*"([^"]+)"'),
+  RegExp(r"\.translate\(\s*'([^']+)'"),
+  RegExp(r'\.translate\(\s*"([^"]+)"'),
+  RegExp(r"\btranslate\(\s*'([^']+)'"),
+  RegExp(r'\btranslate\(\s*"([^"]+)"'),
+  RegExp(r"\.t\(\s*'([^']+)'"),
+  RegExp(r'\.t\(\s*"([^"]+)"'),
 ];
 
 void main(List<String> args) {
@@ -22,8 +26,13 @@ void main(List<String> args) {
     return;
   }
 
-  final enJson = jsonDecode(enFile.readAsStringSync()) as Map<String, dynamic>;
-  final hiJson = jsonDecode(hiFile.readAsStringSync()) as Map<String, dynamic>;
+  final enJson = _loadLocaleMap(_enPath);
+  final hiJson = _loadLocaleMap(_hiPath);
+  if (enJson == null || hiJson == null) {
+    exitCode = 1;
+    return;
+  }
+
   final enLeaves = <String>{};
   final hiLeaves = <String>{};
   _collectLeaves(enJson, '', enLeaves);
@@ -53,6 +62,24 @@ void main(List<String> args) {
   if (strict && (missingInEn.isNotEmpty || missingInHi.isNotEmpty)) {
     stderr.writeln('Translation audit failed in strict mode.');
     exitCode = 1;
+  }
+}
+
+Map<String, dynamic>? _loadLocaleMap(String path) {
+  final file = File(path);
+  try {
+    final decoded = jsonDecode(file.readAsStringSync());
+    if (decoded is! Map<String, dynamic>) {
+      stderr.writeln('Invalid locale root in $path: expected JSON object.');
+      return null;
+    }
+    return decoded;
+  } on FormatException catch (error) {
+    stderr.writeln('Invalid JSON in $path: ${error.message}');
+    return null;
+  } catch (error) {
+    stderr.writeln('Failed to read $path: $error');
+    return null;
   }
 }
 

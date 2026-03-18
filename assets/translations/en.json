@@ -24,6 +24,7 @@
     "save": "Save",
     "na": "N/A"
   },
+  "copy_id": "Copy ID",
   "hero": {
     "badge": "Smart DBT Solution for Social Justice",
     "titleLine1": "Empowering",
@@ -485,6 +486,7 @@
     },
     "common": {
       "loading": "Loading...",
+      "save": "Save",
       "viewFull": "View Full",
       "exploreTab": "Explore {{tab}}",
       "tabManagement": "{{tab}} Management",
@@ -808,6 +810,7 @@
       "documentation": "Documentation",
       "technicalIssue": "Technical Issue",
       "serviceQuality": "Service Quality",
+      "disbursement-delay": "Disbursement Delay",
       "officer-behavior": "Officer Behavior",
       "other": "Other"
     },
@@ -823,6 +826,8 @@
     "contact": "Contact",
     "act": "Act",
     "identification": "Identification",
+    "loading": "Loading...",
+    "viewCertificate": "View Certificate",
     "phone": "Phone",
     "reliefAmountINR": "Relief Amount (₹)",
     "amountRequested": "Amount Requested (₹)",
@@ -2494,6 +2499,7 @@
       "charts_and_visualizations": "{/* Charts and Visualizations */}",
       "monthly_trends_chart": "{/* Monthly Trends Chart */}",
       "monthly_trends": "Monthly Trends",
+      "incidentDateHint": "Incident Date (dd-mm-yyyy)",
       "applications": "applications",
       "month": "{month}",
       "actwise_breakdown": "{/* Act-wise Breakdown */}",
@@ -2501,6 +2507,7 @@
       "pcr_act_vs_poa_act": "PCR Act vs PoA Act",
       "mathroundfiltereddataactwisebreakdownpcrapplications_filtere": "{Math.round((filteredData.actWiseBreakdown.pcr.applications / filteredData.overview.totalApplications) * 100)}%",
       "pcr_act": "PCR Act",
+      "relief": "Relief",
       "formatnumberfiltereddataactwisebreakdownpcrapplications_appl": "{formatNumber(filteredData.actWiseBreakdown.pcr.applications)} Applications",
       "filtereddataactwisebreakdownpcrsuccessrate_success": "{filteredData.actWiseBreakdown.pcr.successRate}% Success",
       "mathroundfiltereddataactwisebreakdownpoaapplications_filtere": "{Math.round((filteredData.actWiseBreakdown.poa.applications / filteredData.overview.totalApplications) * 100)}%",
@@ -3690,6 +3697,72 @@
     "find_beneficiaries_by_name_id_or_location": "Find beneficiaries by name, ID, or location"
   },
   "beneficiary_lowercase": "Beneficiary Lowercase",
+  "profilePage": {
+    "title": "Profile",
+    "defaultName": "Nyantra User",
+    "noEmail": "No email linked",
+    "noPhone": "Not provided",
+    "notAvailable": "Not available",
+    "accountDetails": "Account Details",
+    "securityAccess": "Security & Access",
+    "copyUserId": "Copy User ID",
+    "userIdCopied": "User ID copied",
+    "labels": {
+      "userId": "User ID",
+      "email": "Email",
+      "phone": "Phone",
+      "joined": "Joined",
+      "lastSignIn": "Last Sign-in",
+      "provider": "Provider"
+    },
+    "provider": {
+      "unknown": "Unknown",
+      "google": "Google",
+      "phone": "Phone",
+      "emailPassword": "Email / Password",
+      "connected": "Connected"
+    }
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "subtitle": "Switch between orange light mode and blue dark mode",
+      "darkTheme": "Dark Theme",
+      "lightTheme": "Light Theme",
+      "applyInstantly": "Apply across the app instantly"
+    },
+    "language": {
+      "title": "Language",
+      "subtitle": "Choose your preferred app language",
+      "english": "English",
+      "hindi": "Hindi"
+    },
+    "dataSync": {
+      "title": "Data & Sync",
+      "subtitle": "Monitor status and trigger manual cloud sync",
+      "lastSync": "Last sync:",
+      "notSyncedYet": "Not synced yet",
+      "syncing": "Syncing...",
+      "syncNow": "Sync Now"
+    },
+    "session": {
+      "title": "Session",
+      "subtitle": "Manage your active account"
+    },
+    "about": {
+      "title": "About",
+      "subtitle": "App information",
+      "appName": "Nyantra User Dashboard",
+      "version": "Version"
+    },
+    "sync": {
+      "noInternetError": "No internet connection available",
+      "offlineSnack": "You are offline. Try again later.",
+      "successSnack": "Sync completed successfully",
+      "failedSnack": "Sync failed: {error}"
+    }
+  },
   "ui": {
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",

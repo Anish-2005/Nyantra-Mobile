@@ -1,16 +1,21 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: directives_ordering
+
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/connectivity_provider.dart';
 import '../../../core/providers/sync_status_provider.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../../core/services/sync_service.dart';
 import '../../../components/animated_background.dart';
 import '../widgets/sidebar.dart';
 import '../widgets/dashboard_content.dart';
-import '../widgets/sync_status_widget.dart';
+import 'profile_page.dart';
+import 'settings_page.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -62,16 +67,88 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  Widget _buildTopBarTitle(
+    ThemeData theme,
+    LocaleProvider localeProvider,
+    bool isMobile,
+  ) {
+    final pageTitle = _getPageTitle(localeProvider);
+
+    if (isMobile) {
+      return Text(
+        pageTitle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.2,
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          pageTitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.2,
+          ),
+        ),
+        Text(
+          localeProvider.translate('nav.brandName'),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectivityButton(AppThemeTokens? tokens) {
+    return Consumer<ConnectivityProvider>(
+      builder: (context, connectivityProvider, child) {
+        final isOnline = connectivityProvider.isOnline;
+        final statusColor = isOnline
+            ? (tokens?.online ?? Colors.green)
+            : (tokens?.offline ?? Colors.red);
+
+        return Tooltip(
+          message: isOnline ? 'Online' : 'Offline',
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+            ),
+            child: Icon(
+              isOnline ? Icons.wifi_rounded : Icons.wifi_off_rounded,
+              size: 18,
+              color: statusColor,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = theme.extension<AppThemeTokens>();
+    final themeProvider = context.watch<ThemeProvider>();
     final localeProvider = context.watch<LocaleProvider>();
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 1024;
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = themeProvider.isDark;
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Make scaffold transparent
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
           // Animated Background
@@ -79,204 +156,185 @@ class _DashboardScreenState extends State<DashboardScreen> {
           // Rest of the UI
           Column(
             children: [
-              // AppBar equivalent
-              Container(
-                height: kToolbarHeight + MediaQuery.of(context).padding.top,
-                color: theme.appBarTheme.backgroundColor?.withOpacity(0.95),
-                child: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  leading: isMobile
-                      ? IconButton(
-                          icon: Icon(
-                            _sidebarOpen ? Icons.close : Icons.menu,
-                            color: theme.appBarTheme.foregroundColor,
-                          ),
-                          onPressed: _toggleSidebar,
-                        )
-                      : null,
-                  title: Row(
-                    children: [
-                      const SizedBox(width: 12),
-                      // Title
-                      Expanded(
-                        child: Text(
-                          _getPageTitle(localeProvider),
-                          style: TextStyle(
-                            color: theme.appBarTheme.foregroundColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  12,
+                  MediaQuery.of(context).padding.top + 8,
+                  12,
+                  8,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: theme.cardColor.withValues(alpha: 0.78),
+                        border: Border.all(
+                          color: theme.dividerColor.withValues(alpha: 0.32),
                         ),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ],
-                  ),
-                  actions: [
-                    // Connectivity Indicator
-                    Consumer<ConnectivityProvider>(
-                      builder: (context, connectivityProvider, child) {
-                        return Container(
-                          margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                      child: AppBar(
+                        toolbarHeight: 66,
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        automaticallyImplyLeading: false,
+                        leadingWidth: isMobile ? 56 : 8,
+                        leading: isMobile
+                            ? IconButton.filledTonal(
+                                onPressed: _toggleSidebar,
+                                icon: Icon(
+                                  _sidebarOpen ? Icons.close : Icons.menu,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        titleSpacing: isMobile ? 4 : 16,
+                        title:
+                            _buildTopBarTitle(theme, localeProvider, isMobile),
+                        actions: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: _buildConnectivityButton(tokens),
                           ),
-                          decoration: BoxDecoration(
-                            color: connectivityProvider.isOnline
-                                ? Colors.green.withOpacity(0.1)
-                                : Colors.red.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: connectivityProvider.isOnline
-                                  ? Colors.green
-                                  : Colors.red,
-                              width: 1,
+                          PopupMenuButton<String>(
+                            color: theme.cardColor.withValues(alpha: 0.95),
+                            elevation: 10,
+                            shadowColor:
+                                theme.shadowColor.withValues(alpha: 0.3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            onSelected: (value) {
+                              if (value == 'profile') {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const ProfilePage(),
+                                  ),
+                                );
+                              } else if (value == 'settings') {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const SettingsPage(),
+                                  ),
+                                );
+                              } else if (value == 'logout') {
+                                context.read<AuthProvider>().signOut();
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'profile',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.person,
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      localeProvider.translate(
+                                        'profilePage.title',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 'settings',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.settings,
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      localeProvider.translate(
+                                        'settingsPage.title',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const PopupMenuDivider(),
+                              PopupMenuItem(
+                                value: 'logout',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.logout,
+                                      color: theme.colorScheme.error,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      localeProvider.translate('auth.sign_out'),
+                                      style: TextStyle(
+                                        color: theme.colorScheme.error,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            icon: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.surface.withValues(
+                                  alpha: 0.45,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: theme.dividerColor
+                                      .withValues(alpha: 0.18),
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.more_horiz,
+                                color: theme.colorScheme.onSurface,
+                                size: 18,
+                              ),
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                connectivityProvider.isOnline
-                                    ? Icons.wifi
-                                    : Icons.wifi_off,
-                                size: 16,
-                                color: connectivityProvider.isOnline
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                connectivityProvider.isOnline
-                                    ? 'Online'
-                                    : 'Offline',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: connectivityProvider.isOnline
-                                      ? Colors.green
-                                      : Colors.red,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    // Sync Status Widget
-                    const Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: SyncStatusWidget(),
-                    ),
-                    // User Menu
-                    PopupMenuButton<String>(
-                      color: theme.cardColor.withOpacity(0.95),
-                      elevation: 12,
-                      shadowColor: theme.shadowColor.withOpacity(0.3),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(
-                          color: theme.dividerColor.withOpacity(0.1),
-                          width: 1,
-                        ),
-                      ),
-                      onSelected: (value) {
-                        if (value == 'logout') {
-                          context.read<AuthProvider>().signOut();
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'profile',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.person,
-                                color: theme.textTheme.bodyMedium?.color,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                localeProvider.translate('profile'),
-                                style: TextStyle(
-                                  color: theme.textTheme.bodyMedium?.color,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 'settings',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.settings,
-                                color: theme.textTheme.bodyMedium?.color,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                localeProvider.translate('settings'),
-                                style: TextStyle(
-                                  color: theme.textTheme.bodyMedium?.color,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuDivider(),
-                        PopupMenuItem(
-                          value: 'logout',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.logout,
-                                color: theme.colorScheme.error,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                localeProvider.translate('logout'),
-                                style: TextStyle(
-                                  color: theme.colorScheme.error,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: theme.appBarTheme.foregroundColor,
-                        size: 24,
+                          const SizedBox(width: 8),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
               // Body
               Expanded(
                 child: Stack(
                   children: [
-                    Row(
-                      children: [
-                        if (!isMobile && _sidebarOpen) ...[
-                          Sidebar(
-                            selectedIndex: _selectedIndex,
-                            onItemSelected: _onItemSelected,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      child: Row(
+                        children: [
+                          if (!isMobile && _sidebarOpen) ...[
+                            Sidebar(
+                              selectedIndex: _selectedIndex,
+                              onItemSelected: _onItemSelected,
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          Expanded(
+                            child: DashboardContent(
+                              selectedIndex: _selectedIndex,
+                              onNavigate: _onItemSelected,
+                            ),
                           ),
                         ],
-                        Expanded(
-                          child: DashboardContent(
-                            selectedIndex: _selectedIndex,
-                            onNavigate: _onItemSelected,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                     // Mobile sidebar overlay
                     if (isMobile && _sidebarOpen)
@@ -317,4 +375,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 }
-

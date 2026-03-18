@@ -98,28 +98,41 @@ class DashboardRepository {
           .get();
       final beneficiaryIds = beneficiariesQuery.docs.map((doc) => doc.id).toList();
 
-      final applicationsQuery1 = await _firestore
-          .collection(FirestoreCollections.applications)
-          .where('ownerId', isEqualTo: currentUser.uid)
-          .orderBy('applicationDate', descending: true)
-          .limit(limit)
-          .get();
-
-      final applicationsQuery2 = await FirestoreQueryHelper.queryByWhereIn(
-        firestore: _firestore,
-        collection: FirestoreCollections.applications,
-        field: 'beneficiaryId',
-        values: beneficiaryIds,
+      final applicationsQuery1 = await _fetchRecentOwnerApplications(
+        currentUser.uid,
+        limit,
       );
 
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> applicationsQuery2 = [];
+      try {
+        applicationsQuery2 = await FirestoreQueryHelper.queryByWhereIn(
+          firestore: _firestore,
+          collection: FirestoreCollections.applications,
+          field: 'beneficiaryId',
+          values: beneficiaryIds,
+        );
+      } catch (error, stackTrace) {
+        AppLogger.warning(
+          'Failed to fetch beneficiary-linked applications for recent activities',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
+
       final uniqueApplications = FirestoreQueryHelper.dedupeDocsById([
-        ...applicationsQuery1.docs,
+        ...applicationsQuery1,
         ...applicationsQuery2,
       ])
         ..sort(
           (a, b) =>
-              (b.data()['applicationDate'] as Timestamp).compareTo(
-                a.data()['applicationDate'] as Timestamp,
+              _toDateTime(
+                b.data()['applicationDate'],
+                fallback: DateTime.fromMillisecondsSinceEpoch(0),
+              ).compareTo(
+                _toDateTime(
+                  a.data()['applicationDate'],
+                  fallback: DateTime.fromMillisecondsSinceEpoch(0),
+                ),
               ),
         );
 
@@ -127,7 +140,10 @@ class DashboardRepository {
         final data = doc.data();
         final status = data['status'] as String?;
         final applicantName = data['applicantName'] as String? ?? 'Unknown';
-        final applicationDate = (data['applicationDate'] as Timestamp).toDate();
+        final applicationDate = _toDateTime(
+          data['applicationDate'],
+          fallback: DateTime.now(),
+        );
 
         ActivityType activityType;
         String title;
@@ -162,19 +178,19 @@ class DashboardRepository {
         );
       }
 
-      final grievancesQuery = await _firestore
-          .collection(FirestoreCollections.grievances)
-          .where('userId', isEqualTo: currentUser.uid)
-          .orderBy('createdDate', descending: true)
-          .limit(limit)
-          .get();
+      final grievancesQuery = await _fetchRecentUserGrievances(
+        currentUser.uid,
+        limit,
+      );
 
-      for (final doc in grievancesQuery.docs.take(limit - activities.length)) {
+      for (final doc in grievancesQuery.take(limit - activities.length)) {
         final data = doc.data();
         final status = data['status'] as String?;
         final titleText = data['title'] as String? ?? 'Grievance';
-        final createdDate =
-            (data['createdDate'] as Timestamp?)?.toDate() ?? DateTime.now();
+        final createdDate = _toDateTime(
+          data['createdDate'],
+          fallback: DateTime.now(),
+        );
 
         final isResolved = status == 'resolved' || status == 'closed';
         activities.add(
@@ -195,33 +211,42 @@ class DashboardRepository {
 
       final applicationIds = uniqueApplications.map((doc) => doc.id).toList();
       if (applicationIds.isNotEmpty) {
-        final disbursementDocs = await FirestoreQueryHelper.queryByWhereIn(
-          firestore: _firestore,
-          collection: FirestoreCollections.disbursements,
-          field: 'applicationId',
-          values: applicationIds,
-          equalsField: 'status',
-          equalsValue: 'completed',
-        );
+        try {
+          final disbursementDocs = await FirestoreQueryHelper.queryByWhereIn(
+            firestore: _firestore,
+            collection: FirestoreCollections.disbursements,
+            field: 'applicationId',
+            values: applicationIds,
+            equalsField: 'status',
+            equalsValue: 'completed',
+          );
 
-        final remainingSlots =
-            (limit - activities.length).clamp(0, limit) as int;
-        for (final doc in disbursementDocs.take(remainingSlots)) {
-          final data = doc.data();
-          final amount = (data['reliefAmount'] as num?)?.toDouble() ?? 0.0;
-          final disbursementDate =
-              (data['disbursementDate'] as Timestamp?)?.toDate() ?? DateTime.now();
+          final remainingSlots = (limit - activities.length).clamp(0, limit);
+          for (final doc in disbursementDocs.take(remainingSlots)) {
+            final data = doc.data();
+            final amount = (data['reliefAmount'] as num?)?.toDouble() ?? 0.0;
+            final disbursementDate = _toDateTime(
+              data['disbursementDate'],
+              fallback: DateTime.now(),
+            );
 
-          activities.add(
-            ActivityModel(
-              id: 'disbursement_${doc.id}',
-              type: ActivityType.disbursementCompleted,
-              title: 'Disbursement Completed',
-              description:
-                  'Rs. ${amount.toStringAsFixed(2)} disbursed successfully',
-              timestamp: disbursementDate,
-              relatedId: doc.id,
-            ),
+            activities.add(
+              ActivityModel(
+                id: 'disbursement_${doc.id}',
+                type: ActivityType.disbursementCompleted,
+                title: 'Disbursement Completed',
+                description:
+                    'Rs. ${amount.toStringAsFixed(2)} disbursed successfully',
+                timestamp: disbursementDate,
+                relatedId: doc.id,
+              ),
+            );
+          }
+        } catch (error, stackTrace) {
+          AppLogger.warning(
+            'Failed to fetch disbursement activities',
+            error: error,
+            stackTrace: stackTrace,
           );
         }
       }
@@ -236,6 +261,62 @@ class DashboardRepository {
       );
       return [];
     }
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+  _fetchRecentOwnerApplications(String ownerId, int limit) async {
+    final applications = _firestore.collection(FirestoreCollections.applications);
+    // Avoid index-dependent queries (where + orderBy) and sort client-side.
+    final snapshot = await applications.where('ownerId', isEqualTo: ownerId).get();
+    final docs = [...snapshot.docs]
+      ..sort(
+        (a, b) => _toDateTime(
+          b.data()['applicationDate'],
+          fallback: DateTime.fromMillisecondsSinceEpoch(0),
+        ).compareTo(
+          _toDateTime(
+            a.data()['applicationDate'],
+            fallback: DateTime.fromMillisecondsSinceEpoch(0),
+          ),
+        ),
+      );
+    return docs.take(limit).toList(growable: false);
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+  _fetchRecentUserGrievances(String userId, int limit) async {
+    final grievances = _firestore.collection(FirestoreCollections.grievances);
+    // Avoid index-dependent queries (where + orderBy) and sort client-side.
+    final snapshot = await grievances.where('userId', isEqualTo: userId).get();
+    final docs = [...snapshot.docs]
+      ..sort(
+        (a, b) => _toDateTime(
+          b.data()['createdDate'],
+          fallback: DateTime.fromMillisecondsSinceEpoch(0),
+        ).compareTo(
+          _toDateTime(
+            a.data()['createdDate'],
+            fallback: DateTime.fromMillisecondsSinceEpoch(0),
+          ),
+        ),
+      );
+    return docs.take(limit).toList(growable: false);
+  }
+
+  DateTime _toDateTime(dynamic value, {required DateTime fallback}) {
+    if (value is Timestamp) {
+      return value.toDate();
+    }
+    if (value is DateTime) {
+      return value;
+    }
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    }
+    if (value is String) {
+      return DateTime.tryParse(value) ?? fallback;
+    }
+    return fallback;
   }
 
   Future<double> _sumCompletedDisbursementsForApplicationIds(

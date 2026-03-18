@@ -56,16 +56,17 @@ dependencies:
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.5
   path_provider: ^2.1.3
+  path: ^1.9.0
   sqflite: ^2.3.3
   connectivity_plus: ^6.0.3
 
   # PDF Generation
-  pdf: ^3.10.7
+  pdf: ^3.12.0
   printing: ^5.13.3
 
   # Speech Recognition
   speech_to_text: ^7.0.0
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
 
   # Email functionality
   http: ^1.2.1
@@ -81,7 +82,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

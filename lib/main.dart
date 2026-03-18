@@ -1,3 +1,5 @@
+// ignore_for_file: directives_ordering
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'src/core/providers/locale_provider.dart';
 import 'src/core/providers/auth_provider.dart';
 import 'src/core/providers/connectivity_provider.dart';
 import 'src/core/providers/sync_status_provider.dart';
+import 'src/core/theme/app_theme.dart' as app_theme;
 import 'src/core/constants/app_constants.dart';
 import 'src/core/utils/app_logger.dart';
 import 'src/features/auth/screens/login_screen.dart';
@@ -77,15 +80,19 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, localeProvider, authProvider, child) {
           final home = initializationError != null
               ? InitializationErrorScreen(error: initializationError!)
-              : authProvider.isLoading
-              ? const SplashScreen()
-              : authProvider.isAuthenticated
-              ? const DashboardScreen()
-              : const LoginScreen();
+              : !localeProvider.hasTranslations
+                  ? const SplashScreen()
+                  : authProvider.isLoading
+                      ? const SplashScreen()
+                      : authProvider.isAuthenticated
+                          ? const DashboardScreen()
+                          : const LoginScreen();
 
           return MaterialApp(
             title: AppConstants.appTitle,
-            theme: themeProvider.themeData,
+            theme: app_theme.AppTheme.light(),
+            darkTheme: app_theme.AppTheme.dark(),
+            themeMode: themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
             locale: localeProvider.flutterLocale,
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,

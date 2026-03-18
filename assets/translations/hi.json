@@ -24,6 +24,7 @@
     "save": "सहेजें",
     "status": "स्थिति"
   },
+  "copy_id": "आईडी कॉपी करें",
   "hero": {
     "badge": "सामाजिक न्याय के लिए स्मार्ट DBT समाधान",
     "titleLine1": "सशक्त",
@@ -417,6 +418,7 @@
       "approvedPayments": "स्थानांतरण के लिए तैयार स्वीकृत भुगतान",
       "latestPaymentTransactions": "नवीनतम भुगतान लेनदेन",
       "savedSuccess": "वितरण सहेजा गया",
+      "editDisburment": "वितरण विवरण संपादित करें",
       "editDisbursement": "वितरण विवरण संपादित करें",
       "disbursementDetails": "वितरण विवरण",
       "beneficiaryNotFound": "लाभार्थी डेटा नहीं मिला",
@@ -522,6 +524,7 @@
     "export": "निर्यात करें",
     "registration_date": "पंजीकरण तिथि",
     "caseNumber": "मामला संख्या",
+    "courtName": "न्यायालय का नाम",
     "maritalStatus": "वैवाहिक स्थिति",
     "newApplication": "नया आवेदन",
     "createANewReliefApplication": "नई राहत आवेदन बनाएं",
@@ -539,10 +542,15 @@
     "enter12DigitAadhaarNumber": "12-अंकों की आधार संख्या दर्ज करें",
     "enterDistrict": "जिला दर्ज करें",
     "enterState": "राज्य दर्ज करें",
+    "enterCaseNumber": "मामला संख्या दर्ज करें",
+    "enterCourtName": "न्यायालय का नाम दर्ज करें",
     "caseDetails": "मामला विवरण",
     "firReport": "FIR रिपोर्ट",
     "medicalReport": "मेडिकल रिपोर्ट",
     "policeStation": "पुलिस स्टेशन",
+    "enterFirReport": "FIR रिपोर्ट दर्ज करें",
+    "enterMedicalReport": "मेडिकल रिपोर्ट दर्ज करें",
+    "enterPoliceStation": "पुलिस स्टेशन दर्ज करें",
     "applicationDetails": "आवेदन विवरण",
     "details": "आवेदन विवरण",
     "edit": "संपादित करें",
@@ -802,6 +810,7 @@
       "documentation": "दस्तावेजीकरण",
       "technicalIssue": "तकनीकी समस्या",
       "serviceQuality": "सेवा गुणवत्ता",
+      "disbursement-delay": "वितरण में देरी",
       "officer-behavior": "अधिकारी व्यवहार",
       "other": "अन्य"
     },
@@ -815,13 +824,33 @@
   "extracted": {
     "newApplication": "नया आवेदन",
     "save": "सहेजें",
+    "searchApplications": "आवेदन खोजें...",
+    "allStatuses": "सभी स्थितियाँ",
     "cancel": "रद्द करें",
     "grievance": "शिकायत",
     "contact": "संपर्क",
     "act": "अधिनियम",
     "identification": "पहचान",
+    "loading": "लोड हो रहा है...",
+    "viewCertificate": "प्रमाणपत्र देखें",
     "phone": "फ़ोन",
     "reliefAmountINR": "राहत राशि (₹)",
+    "reliefAmount": "राहत राशि (₹)",
+    "amountRequested": "अनुरोधित राशि (₹)",
+    "sc_st_certificate": "एससी/एसटी प्रमाणपत्र URL",
+    "beneficiaryid": "{beneficiary.id}",
+    "applicationSaved": "आवेदन सहेजा गया",
+    "createdSuccess": "आवेदन सफलतापूर्वक बनाया गया",
+    "deletedSuccess": "आवेदन सफलतापूर्वक हटा दिया गया",
+    "errorDeleting": "आवेदन हटाते समय त्रुटि: {error}",
+    "errorLoading": "आवेदन लोड करने में त्रुटि",
+    "errorValidatingBeneficiary": "लाभार्थी सत्यापित करने में त्रुटि",
+    "invalidBeneficiary": "अमान्य लाभार्थी आईडी",
+    "pleaseEnterValidBeneficiary": "कृपया एक मान्य लाभार्थी आईडी दर्ज करें",
+    "errorGeneral": "त्रुटि: {error}",
+    "no_applications_submitted_yet": "अभी तक कोई आवेदन जमा नहीं किया गया है",
+    "no_matching_applications_found": "कोई मेल खाने वाला आवेदन नहीं मिला",
+    "start_your_first_application": "अपना पहला आवेदन शुरू करें",
     "age": "उम्र",
     "gender": "लिंग",
     "case_details": "मामला विवरण",
@@ -3331,6 +3360,7 @@
       "pcr_act_beneficiaries": "PCR अधिनियम लाभार्थी",
       "poa_act_beneficiaries": "PoA अधिनियम लाभार्थी",
       "beneficiaryname": "{beneficiary.name}",
+      "beneficiaryid": "{beneficiary.id}",
       "beneficiarycategory": "{beneficiary.category}",
       "beneficiaryaadhaarnumber": "{beneficiary.aadhaarNumber}",
       "beneficiarydistrict_beneficiarystate": "{beneficiary.district}, {beneficiary.state}",
@@ -3667,6 +3697,72 @@
     "advanced_search": "एडवांस्ड सर्च"
   },
   "beneficiary_lowercase": "लाभार्थी",
+  "profilePage": {
+  "title": "प्रोफ़ाइल",
+  "defaultName": "न्यंत्रा उपयोगकर्ता",
+  "noEmail": "कोई ईमेल लिंक नहीं है",
+  "noPhone": "प्रदान नहीं किया गया",
+  "notAvailable": "उपलब्ध नहीं",
+  "accountDetails": "खाता विवरण",
+  "securityAccess": "सुरक्षा और एक्सेस",
+  "copyUserId": "यूज़र आईडी कॉपी करें",
+  "userIdCopied": "यूज़र आईडी कॉपी हो गई",
+  "labels": {
+    "userId": "यूज़र आईडी",
+    "email": "ईमेल",
+    "phone": "फ़ोन",
+    "joined": "जुड़े",
+    "lastSignIn": "आखिरी साइन-इन",
+    "provider": "प्रदाता"
+  },
+  "provider": {
+    "unknown": "अज्ञात",
+    "google": "गूगल",
+    "phone": "फ़ोन",
+    "emailPassword": "ईमेल / पासवर्ड",
+    "connected": "कनेक्टेड"
+  }
+},
+"settingsPage": {
+  "title": "सेटिंग्स",
+  "appearance": {
+    "title": "दिखावट",
+    "subtitle": "ऑरेंज लाइट मोड और ब्लू डार्क मोड के बीच स्विच करें",
+    "darkTheme": "डार्क थीम",
+    "lightTheme": "लाइट थीम",
+    "applyInstantly": "पूरे ऐप में तुरंत लागू करें"
+  },
+  "language": {
+    "title": "भाषा",
+    "subtitle": "अपनी पसंदीदा ऐप भाषा चुनें",
+    "english": "अंग्रेज़ी",
+    "hindi": "हिंदी"
+  },
+  "dataSync": {
+    "title": "डेटा और सिंक",
+    "subtitle": "स्थिति मॉनिटर करें और मैन्युअल क्लाउड सिंक ट्रिगर करें",
+    "lastSync": "आखिरी सिंक:",
+    "notSyncedYet": "अभी तक सिंक नहीं हुआ",
+    "syncing": "सिंक हो रहा है...",
+    "syncNow": "अभी सिंक करें"
+  },
+  "session": {
+    "title": "सेशन",
+    "subtitle": "अपने सक्रिय खाते को प्रबंधित करें"
+  },
+  "about": {
+    "title": "ऐप के बारे में",
+    "subtitle": "ऐप की जानकारी",
+    "appName": "न्यंत्रा यूज़र डैशबोर्ड",
+    "version": "संस्करण"
+  },
+  "sync": {
+    "noInternetError": "कोई इंटरनेट कनेक्शन उपलब्ध नहीं है",
+    "offlineSnack": "आप ऑफलाइन हैं। बाद में फिर प्रयास करें।",
+    "successSnack": "सिंक सफलतापूर्वक पूरा हुआ",
+    "failedSnack": "सिंक विफल: {error}"
+  }
+},
   "ui": {
     "lightMode": "लाइट मोड",
     "darkMode": "डार्क मोड",

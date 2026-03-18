@@ -1,10 +1,11 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: directives_ordering, curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/beneficiary_model.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/providers/locale_provider.dart';
+import '../../../components/animated_background.dart';
 
 class BeneficiaryEditPage extends StatefulWidget {
   final BeneficiaryModel beneficiary;
@@ -125,6 +126,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
     final locale = context.watch<LocaleProvider>();
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(locale.translate('beneficiaries.editBeneficiary')),
         actions: [
@@ -143,192 +145,226 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 12),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _nameCtrl,
-                  labelKey: 'beneficiaries.fullName',
-                  keyboardType: TextInputType.name,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Name is required';
-                    return null;
-                  },
+      body: Stack(
+        children: [
+          AnimatedBackground(isDark: theme.brightness == Brightness.dark),
+          SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 920),
+                child: Container(
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: theme.dividerColor.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 12),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _nameCtrl,
+                              labelKey: 'beneficiaries.fullName',
+                              keyboardType: TextInputType.name,
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Name is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _fatherNameCtrl,
+                              labelKey: 'beneficiaries.fatherName',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Father\'s name is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _aadhaarCtrl,
+                              labelKey: 'beneficiaries.aadhaarNumber',
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Aadhaar is required';
+                                if (value!.length != 12)
+                                  return 'Aadhaar must be 12 digits';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _phoneCtrl,
+                              labelKey: 'beneficiaries.phoneNumber',
+                              keyboardType: TextInputType.phone,
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Phone is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _districtCtrl,
+                              labelKey: 'beneficiaries.district',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'District is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _stateCtrl,
+                              labelKey: 'beneficiaries.state',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'State is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _addressCtrl,
+                              labelKey: 'beneficiaries.completeAddress',
+                              maxLines: 3,
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Address is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _ageCtrl,
+                              labelKey: 'beneficiaries.age',
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Age is required';
+                                final age = int.tryParse(value!);
+                                if (age == null)
+                                  return 'Please enter a valid age';
+                                if (age < 0 || age > 120) {
+                                  return 'Please enter a valid age (0-120)';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildGenderDropdown(
+                              theme,
+                              locale,
+                              labelKey: 'beneficiaries.gender',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Gender is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildCategoryDropdown(
+                              theme,
+                              locale,
+                              labelKey: 'beneficiaries.category',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Category is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildMaritalStatusDropdown(
+                              theme,
+                              locale,
+                              labelKey: 'beneficiaries.maritalStatus',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) {
+                                  return 'Marital status is required';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _bankCtrl,
+                              labelKey: 'beneficiaries.bankAccount',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) {
+                                  return 'Bank account is required';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _ifscCtrl,
+                              labelKey: 'beneficiaries.ifscCode',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'IFSC code is required';
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _scStCertificateCtrl,
+                              labelKey: 'beneficiaries.sc_st_certificate',
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) {
+                                  return 'SC/ST Certificate URL is required';
+                                }
+                                // Basic URL validation
+                                final urlPattern =
+                                    RegExp(r'^https?://[^\s/$.?#].[^\s]*$');
+                                if (!urlPattern.hasMatch(value!)) {
+                                  return 'Please enter a valid URL (starting with http:// or https://)';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _fatherNameCtrl,
-                  labelKey: 'beneficiaries.fatherName',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true)
-                      // ignore: curly_braces_in_flow_control_structures
-                      return 'Father\'s name is required';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _aadhaarCtrl,
-                  labelKey: 'beneficiaries.aadhaarNumber',
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Aadhaar is required';
-                    if (value!.length != 12) return 'Aadhaar must be 12 digits';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _phoneCtrl,
-                  labelKey: 'beneficiaries.phoneNumber',
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Phone is required';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _districtCtrl,
-                  labelKey: 'beneficiaries.district',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'District is required';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _stateCtrl,
-                  labelKey: 'beneficiaries.state',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'State is required';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _addressCtrl,
-                  labelKey: 'beneficiaries.completeAddress',
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Address is required';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _ageCtrl,
-                  labelKey: 'beneficiaries.age',
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Age is required';
-                    final age = int.tryParse(value!);
-                    if (age == null) return 'Please enter a valid age';
-                    if (age < 0 || age > 120) {
-                      return 'Please enter a valid age (0-120)';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildGenderDropdown(
-                  theme,
-                  locale,
-                  labelKey: 'beneficiaries.gender',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Gender is required';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildCategoryDropdown(
-                  theme,
-                  locale,
-                  labelKey: 'beneficiaries.category',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Category is required';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildMaritalStatusDropdown(
-                  theme,
-                  locale,
-                  labelKey: 'beneficiaries.maritalStatus',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return 'Marital status is required';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _bankCtrl,
-                  labelKey: 'beneficiaries.bankAccount',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return 'Bank account is required';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _ifscCtrl,
-                  labelKey: 'beneficiaries.ifscCode',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'IFSC code is required';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildInput(
-                  theme,
-                  locale,
-                  controller: _scStCertificateCtrl,
-                  labelKey: 'beneficiaries.sc_st_certificate',
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return 'SC/ST Certificate URL is required';
-                    }
-                    // Basic URL validation
-                    final urlPattern = RegExp(r'^https?://[^\s/$.?#].[^\s]*$');
-                    if (!urlPattern.hasMatch(value!)) {
-                      return 'Please enter a valid URL (starting with http:// or https://)';
-                    }
-                    return null;
-                  },
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -342,8 +378,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
     int maxLines = 1,
     String? Function(String?)? validator,
   }) {
-    final label =
-        labelKey.startsWith('beneficiaries.') ||
+    final label = labelKey.startsWith('beneficiaries.') ||
             labelKey.startsWith('extracted.')
         ? locale.translate(labelKey)
         : labelKey;
@@ -356,7 +391,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -368,8 +403,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
     required String labelKey,
     String? Function(String?)? validator,
   }) {
-    final label =
-        labelKey.startsWith('beneficiaries.') ||
+    final label = labelKey.startsWith('beneficiaries.') ||
             labelKey.startsWith('extracted.')
         ? locale.translate(labelKey)
         : labelKey;
@@ -397,7 +431,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -409,8 +443,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
     required String labelKey,
     String? Function(String?)? validator,
   }) {
-    final label =
-        labelKey.startsWith('beneficiaries.') ||
+    final label = labelKey.startsWith('beneficiaries.') ||
             labelKey.startsWith('extracted.')
         ? locale.translate(labelKey)
         : labelKey;
@@ -431,7 +464,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
@@ -443,8 +476,7 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
     required String labelKey,
     String? Function(String?)? validator,
   }) {
-    final label =
-        labelKey.startsWith('beneficiaries.') ||
+    final label = labelKey.startsWith('beneficiaries.') ||
             labelKey.startsWith('extracted.')
         ? locale.translate(labelKey)
         : labelKey;
@@ -461,13 +493,12 @@ class _BeneficiaryEditPageState extends State<BeneficiaryEditPage> {
       },
       items: ['Single', 'Married', 'Divorced', 'Widowed']
           .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(value: value, child: Text(value));
-          })
-          .toList(),
+        return DropdownMenuItem<String>(value: value, child: Text(value));
+      }).toList(),
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );

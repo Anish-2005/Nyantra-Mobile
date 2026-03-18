@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: directives_ordering, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +7,7 @@ import '../../../core/models/disbursement_model.dart';
 import '../../../core/models/beneficiary_model.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/providers/locale_provider.dart';
+import '../../../components/animated_background.dart';
 
 class DisbursementEditPage extends StatefulWidget {
   final DisbursementModel disbursement;
@@ -140,6 +141,7 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
     final locale = context.watch<LocaleProvider>();
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           locale.translate('dashboard.disbursements.editDisbursement'),
@@ -161,256 +163,304 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
             ),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Show beneficiary info if available
-                    if (_beneficiary != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: theme.cardColor,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: theme.dividerColor.withOpacity(0.1),
-                          ),
-                        ),
+      body: Stack(
+        children: [
+          AnimatedBackground(isDark: theme.brightness == Brightness.dark),
+          if (_loading)
+            const Center(child: CircularProgressIndicator())
+          else
+            SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 920),
+                  child: Container(
+                    margin: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: theme.dividerColor.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+                      child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Beneficiary Information',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text('Name: ${_beneficiary!.name}'),
-                            if (_beneficiary!.phone != null)
-                              Text('Phone: ${_beneficiary!.phone}'),
-                            if (_beneficiary!.district != null)
-                              Text('District: ${_beneficiary!.district}'),
-                          ],
-                        ),
-                      ),
-                    ] else ...[
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.errorContainer.withOpacity(
-                            0.1,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: theme.colorScheme.error.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.warning, color: theme.colorScheme.error),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Beneficiary data not found for ID: ${widget.disbursement.beneficiaryId}. You can still edit the disbursement details.',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.error,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 12),
-                    // Progressive Payment Section
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: theme.cardColor,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Progressive Payment',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Spacer(),
-                              Switch(
-                                value: _isProgressivePayment,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isProgressivePayment = value;
-                                    if (!value) {
-                                      _totalInstallments = 1;
-                                      _completedInstallments = 0;
-                                      _disbursedAmount = 0.0;
-                                    }
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          if (_isProgressivePayment) ...[
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: DropdownButtonFormField<int>(
-                                    value: _totalInstallments,
-                                    decoration: InputDecoration(
-                                      labelText: 'Total Installments',
-                                      filled: true,
-                                      fillColor: theme.cardColor.withOpacity(
-                                        0.03,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    items:
-                                        List.generate(12, (index) => index + 1)
-                                            .map(
-                                              (value) => DropdownMenuItem(
-                                                value: value,
-                                                child: Text('$value'),
-                                              ),
-                                            )
-                                            .toList(),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          _totalInstallments = value;
-                                          if (_completedInstallments > value) {
-                                            _completedInstallments = value;
-                                          }
-                                        });
-                                      }
-                                    },
+                            // Show beneficiary info if available
+                            if (_beneficiary != null) ...[
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                margin: const EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  color: theme.cardColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: theme.dividerColor
+                                        .withValues(alpha: 0.1),
                                   ),
                                 ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: DropdownButtonFormField<int>(
-                                    value: _completedInstallments,
-                                    decoration: InputDecoration(
-                                      labelText: 'Completed Installments',
-                                      filled: true,
-                                      fillColor: theme.cardColor.withOpacity(
-                                        0.03,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Beneficiary Information',
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    items:
-                                        List.generate(
+                                    const SizedBox(height: 8),
+                                    Text('Name: ${_beneficiary!.name}'),
+                                    if (_beneficiary!.phone != null)
+                                      Text('Phone: ${_beneficiary!.phone}'),
+                                    if (_beneficiary!.district != null)
+                                      Text(
+                                          'District: ${_beneficiary!.district}'),
+                                  ],
+                                ),
+                              ),
+                            ] else ...[
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                margin: const EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.errorContainer
+                                      .withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: theme.colorScheme.error
+                                        .withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.warning,
+                                        color: theme.colorScheme.error),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        'Beneficiary data not found for ID: ${widget.disbursement.beneficiaryId}. You can still edit the disbursement details.',
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                          color: theme.colorScheme.error,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 12),
+                            // Progressive Payment Section
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: theme.cardColor,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color:
+                                      theme.dividerColor.withValues(alpha: 0.1),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Progressive Payment',
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Switch(
+                                        value: _isProgressivePayment,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _isProgressivePayment = value;
+                                            if (!value) {
+                                              _totalInstallments = 1;
+                                              _completedInstallments = 0;
+                                              _disbursedAmount = 0.0;
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  if (_isProgressivePayment) ...[
+                                    const SizedBox(height: 16),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: DropdownButtonFormField<int>(
+                                            value: _totalInstallments,
+                                            decoration: InputDecoration(
+                                              labelText: 'Total Installments',
+                                              filled: true,
+                                              fillColor:
+                                                  theme.cardColor.withValues(
+                                                alpha: 0.03,
+                                              ),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            items: List.generate(
+                                                    12, (index) => index + 1)
+                                                .map(
+                                                  (value) => DropdownMenuItem(
+                                                    value: value,
+                                                    child: Text('$value'),
+                                                  ),
+                                                )
+                                                .toList(),
+                                            onChanged: (value) {
+                                              if (value != null) {
+                                                setState(() {
+                                                  _totalInstallments = value;
+                                                  if (_completedInstallments >
+                                                      value) {
+                                                    _completedInstallments =
+                                                        value;
+                                                  }
+                                                });
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: DropdownButtonFormField<int>(
+                                            value: _completedInstallments,
+                                            decoration: InputDecoration(
+                                              labelText:
+                                                  'Completed Installments',
+                                              filled: true,
+                                              fillColor:
+                                                  theme.cardColor.withValues(
+                                                alpha: 0.03,
+                                              ),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            items: List.generate(
                                               _totalInstallments + 1,
                                               (index) => index,
                                             )
-                                            .map(
-                                              (value) => DropdownMenuItem(
-                                                value: value,
-                                                child: Text('$value'),
-                                              ),
-                                            )
-                                            .toList(),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          _completedInstallments = value;
-                                          // Calculate disbursed amount based on completed installments
-                                          _disbursedAmount =
-                                              (widget
-                                                      .disbursement
-                                                      .reliefAmount /
-                                                  _totalInstallments) *
-                                              value;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Disbursed Amount: Rs. ${_disbursedAmount.toStringAsFixed(2)}',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
+                                                .map(
+                                                  (value) => DropdownMenuItem(
+                                                    value: value,
+                                                    child: Text('$value'),
+                                                  ),
+                                                )
+                                                .toList(),
+                                            onChanged: (value) {
+                                              if (value != null) {
+                                                setState(() {
+                                                  _completedInstallments =
+                                                      value;
+                                                  // Calculate disbursed amount based on completed installments
+                                                  _disbursedAmount = (widget
+                                                              .disbursement
+                                                              .reliefAmount /
+                                                          _totalInstallments) *
+                                                      value;
+                                                });
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'Disbursed Amount: Rs. ${_disbursedAmount.toStringAsFixed(2)}',
+                                      style:
+                                          theme.textTheme.bodyLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    LinearProgressIndicator(
+                                      value: _totalInstallments > 0
+                                          ? _completedInstallments /
+                                              _totalInstallments
+                                          : 0,
+                                      backgroundColor:
+                                          theme.colorScheme.surfaceVariant,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${((_completedInstallments / _totalInstallments) * 100).toStringAsFixed(1)}% Complete',
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _phoneCtrl,
+                              labelKey:
+                                  'dashboard.disbursements.labels.phoneNumber',
+                              keyboardType: TextInputType.phone,
                             ),
                             const SizedBox(height: 8),
-                            LinearProgressIndicator(
-                              value: _totalInstallments > 0
-                                  ? _completedInstallments / _totalInstallments
-                                  : 0,
-                              backgroundColor: theme.colorScheme.surfaceVariant,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                theme.colorScheme.primary,
-                              ),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _bankAccountCtrl,
+                              labelKey:
+                                  'dashboard.disbursements.labels.bankAccount',
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${((_completedInstallments / _totalInstallments) * 100).toStringAsFixed(1)}% Complete',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _ifscCtrl,
+                              labelKey:
+                                  'dashboard.disbursements.labels.ifscCode',
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInput(
+                              theme,
+                              locale,
+                              controller: _addressCtrl,
+                              labelKey:
+                                  'dashboard.disbursements.labels.address',
+                              maxLines: 3,
                             ),
                           ],
-                        ],
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    _buildInput(
-                      theme,
-                      locale,
-                      controller: _phoneCtrl,
-                      labelKey: 'dashboard.disbursements.labels.phoneNumber',
-                      keyboardType: TextInputType.phone,
-                    ),
-                    const SizedBox(height: 8),
-                    _buildInput(
-                      theme,
-                      locale,
-                      controller: _bankAccountCtrl,
-                      labelKey: 'dashboard.disbursements.labels.bankAccount',
-                    ),
-                    const SizedBox(height: 8),
-                    _buildInput(
-                      theme,
-                      locale,
-                      controller: _ifscCtrl,
-                      labelKey: 'dashboard.disbursements.labels.ifscCode',
-                    ),
-                    const SizedBox(height: 8),
-                    _buildInput(
-                      theme,
-                      locale,
-                      controller: _addressCtrl,
-                      labelKey: 'dashboard.disbursements.labels.address',
-                      maxLines: 3,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
+        ],
+      ),
     );
   }
 
@@ -431,10 +481,9 @@ class _DisbursementEditPageState extends State<DisbursementEditPage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: theme.cardColor.withOpacity(0.03),
+        fillColor: theme.cardColor.withValues(alpha: 0.03),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
 }
-

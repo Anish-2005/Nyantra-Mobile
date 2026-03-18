@@ -1,3 +1,5 @@
+// ignore_for_file: directives_ordering
+
 import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -72,9 +74,8 @@ class SyncService {
         await _dbHelper!.insertBeneficiary(beneficiary);
       }
 
-      final beneficiaryIds = beneficiariesSnapshot.docs
-          .map((doc) => doc.id)
-          .toList();
+      final beneficiaryIds =
+          beneficiariesSnapshot.docs.map((doc) => doc.id).toList();
 
       // Sync applications owned by user or related to user's beneficiaries
       final applicationsQuery1 = await FirebaseService.firestore
@@ -125,7 +126,8 @@ class SyncService {
 
       // Also sync disbursements directly for user's beneficiaries
       if (beneficiaryIds.isNotEmpty) {
-        final beneficiaryDisbursementsSnapshot = await FirestoreQueryHelper.queryByWhereIn(
+        final beneficiaryDisbursementsSnapshot =
+            await FirestoreQueryHelper.queryByWhereIn(
           firestore: FirebaseService.firestore,
           collection: FirestoreCollections.disbursements,
           field: 'beneficiaryId',
@@ -369,8 +371,7 @@ class SyncService {
         'feedback',
       );
 
-      final totalPending =
-          unsyncedBeneficiaries.length +
+      final totalPending = unsyncedBeneficiaries.length +
           unsyncedApplications.length +
           unsyncedGrievances.length +
           unsyncedFeedback.length;
@@ -589,9 +590,8 @@ class SyncService {
 
         if (applicationsSnapshot.docs.isEmpty) return [];
 
-        final applicationIds = applicationsSnapshot.docs
-            .map((doc) => doc.id)
-            .toList();
+        final applicationIds =
+            applicationsSnapshot.docs.map((doc) => doc.id).toList();
 
         // Then get disbursements for these applications
         final disbursementsSnapshot = await FirestoreQueryHelper.queryByWhereIn(
@@ -643,9 +643,8 @@ class SyncService {
             .get();
 
         if (beneficiariesSnapshot.docs.isNotEmpty) {
-          final beneficiaryIds = beneficiariesSnapshot.docs
-              .map((doc) => doc.id)
-              .toList();
+          final beneficiaryIds =
+              beneficiariesSnapshot.docs.map((doc) => doc.id).toList();
 
           // Get grievances related to user's beneficiaries
           final grievancesQuery2 = await FirestoreQueryHelper.queryByWhereIn(
@@ -758,7 +757,8 @@ class SyncService {
 
     // If no local reports, try to fetch from Firebase directly
     final online = await isOnline();
-    AppLogger.info('SyncService: getReports - No local reports, online status: $online');
+    AppLogger.info(
+        'SyncService: getReports - No local reports, online status: $online');
 
     if (online) {
       try {
@@ -794,7 +794,8 @@ class SyncService {
         return [];
       }
     } else {
-      AppLogger.warning('SyncService: getReports - Offline and no local reports available');
+      AppLogger.warning(
+          'SyncService: getReports - Offline and no local reports available');
       return [];
     }
   }
@@ -809,16 +810,13 @@ class SyncService {
         'status': 'completed',
         'fileSize': '2.5 MB',
         'fileFormat': 'PDF',
-        'generatedDate': DateTime.now()
-            .subtract(const Duration(days: 5))
-            .toIso8601String(),
+        'generatedDate':
+            DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
         'generatedBy': 'System',
-        'lastRun': DateTime.now()
-            .subtract(const Duration(days: 5))
-            .toIso8601String(),
-        'nextRun': DateTime.now()
-            .add(const Duration(days: 25))
-            .toIso8601String(),
+        'lastRun':
+            DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
+        'nextRun':
+            DateTime.now().add(const Duration(days: 25)).toIso8601String(),
         'recordCount': 150,
         'description':
             'Comprehensive report of all applications submitted in the current month',
@@ -838,16 +836,13 @@ class SyncService {
         'status': 'completed',
         'fileSize': '1.8 MB',
         'fileFormat': 'PDF',
-        'generatedDate': DateTime.now()
-            .subtract(const Duration(days: 2))
-            .toIso8601String(),
+        'generatedDate':
+            DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
         'generatedBy': 'System',
-        'lastRun': DateTime.now()
-            .subtract(const Duration(days: 2))
-            .toIso8601String(),
-        'nextRun': DateTime.now()
-            .add(const Duration(days: 5))
-            .toIso8601String(),
+        'lastRun':
+            DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+        'nextRun':
+            DateTime.now().add(const Duration(days: 5)).toIso8601String(),
         'recordCount': 89,
         'description':
             'Weekly summary of all disbursements made to beneficiaries',
@@ -870,9 +865,8 @@ class SyncService {
         'generatedDate': null,
         'generatedBy': 'System',
         'lastRun': null,
-        'nextRun': DateTime.now()
-            .add(const Duration(days: 30))
-            .toIso8601String(),
+        'nextRun':
+            DateTime.now().add(const Duration(days: 30)).toIso8601String(),
         'recordCount': null,
         'description':
             'Analysis of grievance resolution times and effectiveness',
@@ -895,9 +889,8 @@ class SyncService {
         'generatedDate': null,
         'generatedBy': 'System',
         'lastRun': null,
-        'nextRun': DateTime.now()
-            .add(const Duration(days: 10))
-            .toIso8601String(),
+        'nextRun':
+            DateTime.now().add(const Duration(days: 10)).toIso8601String(),
         'recordCount': null,
         'description': 'Analysis of user feedback and satisfaction metrics',
         'parameters': {'month': 'December', 'year': 2024},
@@ -916,16 +909,13 @@ class SyncService {
         'status': 'completed',
         'fileSize': '500 KB',
         'fileFormat': 'PDF',
-        'generatedDate': DateTime.now()
-            .subtract(const Duration(hours: 6))
-            .toIso8601String(),
+        'generatedDate':
+            DateTime.now().subtract(const Duration(hours: 6)).toIso8601String(),
         'generatedBy': 'System',
-        'lastRun': DateTime.now()
-            .subtract(const Duration(hours: 6))
-            .toIso8601String(),
-        'nextRun': DateTime.now()
-            .add(const Duration(hours: 18))
-            .toIso8601String(),
+        'lastRun':
+            DateTime.now().subtract(const Duration(hours: 6)).toIso8601String(),
+        'nextRun':
+            DateTime.now().add(const Duration(hours: 18)).toIso8601String(),
         'recordCount': 24,
         'description': 'Daily system performance metrics and uptime statistics',
         'parameters': {'date': DateTime.now().toIso8601String().split('T')[0]},
@@ -940,8 +930,11 @@ class SyncService {
 
     for (final reportData in sampleReports) {
       try {
-        await FirebaseService.firestore.collection(FirestoreCollections.reports).add(reportData);
-        AppLogger.info('SyncService: Created sample report: ${reportData['name']}');
+        await FirebaseService.firestore
+            .collection(FirestoreCollections.reports)
+            .add(reportData);
+        AppLogger.info(
+            'SyncService: Created sample report: ${reportData['name']}');
       } catch (error, stackTrace) {
         AppLogger.error(
           'SyncService: Error creating sample report ${reportData['name']}',
@@ -952,8 +945,3 @@ class SyncService {
     }
   }
 }
-
-
-
-
-

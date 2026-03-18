@@ -1,8 +1,7 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously, avoid_unnecessary_containers
+// ignore_for_file: use_build_context_synchronously, avoid_unnecessary_containers, directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/widgets/loading_state.dart';
 import '../../../core/models/report_model.dart';
@@ -12,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
+import 'dashboard_hero_header.dart';
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({super.key});
@@ -35,7 +35,6 @@ class _ReportsPageState extends State<ReportsPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localeProvider = context.watch<LocaleProvider>();
-    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       child: Stack(
@@ -44,118 +43,12 @@ class _ReportsPageState extends State<ReportsPage> {
           SafeArea(
             child: Column(
               children: [
-                // Hero Header Section
-                Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isDark
-                              ? [
-                                  const Color(0xFF06B6D4),
-                                  const Color(0xFF8B5CF6),
-                                ]
-                              : [
-                                  const Color(0xFFFB7185),
-                                  const Color(0xFFFB923C),
-                                ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                (isDark
-                                        ? const Color(0xFF06B6D4)
-                                        : const Color(0xFFFB7185))
-                                    .withOpacity(0.3),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Badge
-                          Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.file_copy,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      localeProvider.translate(
-                                        'reports.pageTitle',
-                                      ),
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms)
-                              .slideY(begin: -0.2, end: 0),
-
-                          const SizedBox(height: 16),
-
-                          // Title
-                          Text(
-                                localeProvider.translate('reports.pageTitle'),
-                                style: theme.textTheme.headlineMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.2,
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms, delay: 200.ms)
-                              .slideY(begin: -0.2, end: 0),
-
-                          const SizedBox(height: 8),
-
-                          // Subtitle
-                          Text(
-                                localeProvider.translate(
-                                  'reports.pageSubtitle',
-                                ),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
-                                  height: 1.4,
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(duration: 600.ms, delay: 400.ms)
-                              .slideY(begin: -0.2, end: 0),
-                        ],
-                      ),
-                    )
-                    .animate()
-                    .fadeIn(duration: 800.ms)
-                    .slideY(begin: -0.1, end: 0),
+                DashboardHeroHeader(
+                  icon: Icons.file_copy,
+                  badge: localeProvider.translate('reports.pageTitle'),
+                  title: localeProvider.translate('reports.pageTitle'),
+                  subtitle: localeProvider.translate('reports.pageSubtitle'),
+                ),
 
                 // Search and Filters
                 Container(
@@ -166,10 +59,10 @@ class _ReportsPageState extends State<ReportsPage> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),
                         decoration: BoxDecoration(
-                          color: theme.cardColor.withOpacity(0.8),
+                          color: theme.cardColor.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: theme.dividerColor.withOpacity(0.1),
+                            color: theme.dividerColor.withValues(alpha: 0.1),
                           ),
                         ),
                         child: TextField(
@@ -181,7 +74,7 @@ class _ReportsPageState extends State<ReportsPage> {
                             prefixIcon: Icon(
                               Icons.search,
                               color: theme.textTheme.bodyMedium?.color
-                                  ?.withOpacity(0.6),
+                                  ?.withValues(alpha: 0.6),
                             ),
                             border: InputBorder.none,
                             contentPadding: const EdgeInsets.symmetric(
@@ -198,162 +91,43 @@ class _ReportsPageState extends State<ReportsPage> {
                         margin: const EdgeInsets.only(bottom: 20),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: theme.cardColor.withOpacity(0.8),
+                          color: theme.cardColor.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: theme.dividerColor.withOpacity(0.1),
+                            color: theme.dividerColor.withValues(alpha: 0.1),
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
-                                value: _selectedCategory,
-                                decoration: InputDecoration(
-                                  labelText: localeProvider.translate(
-                                    'reports.category',
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  filled: true,
-                                  fillColor:
-                                      theme.inputDecorationTheme.fillColor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final compact = constraints.maxWidth < 640;
+                            if (compact) {
+                              return Column(
+                                children: [
+                                  _buildCategoryFilter(theme, localeProvider),
+                                  const SizedBox(height: 12),
+                                  _buildStatusFilter(theme, localeProvider),
+                                ],
+                              );
+                            }
+
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: _buildCategoryFilter(
+                                    theme,
+                                    localeProvider,
                                   ),
                                 ),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: 'all',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.allCategories',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'financial',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.financial',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'compliance',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.compliance',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'performance',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.performance',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'statistical',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.statistical',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'analytical',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.analytical',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'technical',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.technical',
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                onChanged: (value) =>
-                                    setState(() => _selectedCategory = value!),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
-                                value: _selectedStatus,
-                                decoration: InputDecoration(
-                                  labelText: localeProvider.translate(
-                                    'reports.status',
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  filled: true,
-                                  fillColor:
-                                      theme.inputDecorationTheme.fillColor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildStatusFilter(
+                                    theme,
+                                    localeProvider,
                                   ),
                                 ),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: 'all',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.allStatuses',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'completed',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.completed',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'processing',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.processing',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'scheduled',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.scheduled',
-                                      ),
-                                    ),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'failed',
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'reports.failed',
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                onChanged: (value) =>
-                                    setState(() => _selectedStatus = value!),
-                              ),
-                            ),
-                          ],
+                              ],
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -389,7 +163,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                   Icon(
                                     Icons.error_outline,
                                     size: 64,
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
@@ -411,18 +185,17 @@ class _ReportsPageState extends State<ReportsPage> {
                           final filteredReports = reports.where((report) {
                             final matchesSearch =
                                 _searchController.text.isEmpty ||
-                                report.name.toLowerCase().contains(
-                                  _searchController.text.toLowerCase(),
-                                ) ||
-                                report.description.toLowerCase().contains(
-                                  _searchController.text.toLowerCase(),
-                                );
+                                    report.name.toLowerCase().contains(
+                                          _searchController.text.toLowerCase(),
+                                        ) ||
+                                    report.description.toLowerCase().contains(
+                                          _searchController.text.toLowerCase(),
+                                        );
 
                             final matchesCategory =
                                 _selectedCategory == 'all' ||
-                                report.category == _selectedCategory;
-                            final matchesStatus =
-                                _selectedStatus == 'all' ||
+                                    report.category == _selectedCategory;
+                            final matchesStatus = _selectedStatus == 'all' ||
                                 report.status == _selectedStatus;
 
                             AppLogger.debug(
@@ -447,7 +220,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                     Icons.file_copy_outlined,
                                     size: 64,
                                     color: theme.textTheme.bodyMedium?.color
-                                        ?.withOpacity(0.5),
+                                        ?.withValues(alpha: 0.5),
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
@@ -475,11 +248,12 @@ class _ReportsPageState extends State<ReportsPage> {
                                       horizontal: 32,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: theme.cardColor.withOpacity(0.5),
+                                      color: theme.cardColor
+                                          .withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: theme.dividerColor.withOpacity(
-                                          0.2,
+                                        color: theme.dividerColor.withValues(
+                                          alpha: 0.2,
                                         ),
                                       ),
                                     ),
@@ -489,8 +263,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                           'Debug Info:',
                                           style: theme.textTheme.bodySmall
                                               ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
@@ -542,7 +316,6 @@ class _ReportsPageState extends State<ReportsPage> {
                                 report,
                                 localeProvider,
                                 theme,
-                                isDark,
                               );
                             },
                           );
@@ -559,19 +332,106 @@ class _ReportsPageState extends State<ReportsPage> {
     );
   }
 
+  Widget _buildCategoryFilter(ThemeData theme, LocaleProvider localeProvider) {
+    return DropdownButtonFormField<String>(
+      value: _selectedCategory,
+      decoration: InputDecoration(
+        labelText: localeProvider.translate('reports.category'),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: theme.inputDecorationTheme.fillColor,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      items: [
+        DropdownMenuItem(
+          value: 'all',
+          child: Text(localeProvider.translate('reports.allCategories')),
+        ),
+        DropdownMenuItem(
+          value: 'financial',
+          child: Text(localeProvider.translate('reports.financial')),
+        ),
+        DropdownMenuItem(
+          value: 'compliance',
+          child: Text(localeProvider.translate('reports.compliance')),
+        ),
+        DropdownMenuItem(
+          value: 'performance',
+          child: Text(localeProvider.translate('reports.performance')),
+        ),
+        DropdownMenuItem(
+          value: 'statistical',
+          child: Text(localeProvider.translate('reports.statistical')),
+        ),
+        DropdownMenuItem(
+          value: 'analytical',
+          child: Text(localeProvider.translate('reports.analytical')),
+        ),
+        DropdownMenuItem(
+          value: 'technical',
+          child: Text(localeProvider.translate('reports.technical')),
+        ),
+      ],
+      onChanged: (value) => setState(() => _selectedCategory = value!),
+    );
+  }
+
+  Widget _buildStatusFilter(ThemeData theme, LocaleProvider localeProvider) {
+    return DropdownButtonFormField<String>(
+      value: _selectedStatus,
+      decoration: InputDecoration(
+        labelText: localeProvider.translate('reports.status'),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: theme.inputDecorationTheme.fillColor,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      items: [
+        DropdownMenuItem(
+          value: 'all',
+          child: Text(localeProvider.translate('reports.allStatuses')),
+        ),
+        DropdownMenuItem(
+          value: 'completed',
+          child: Text(localeProvider.translate('reports.completed')),
+        ),
+        DropdownMenuItem(
+          value: 'processing',
+          child: Text(localeProvider.translate('reports.processing')),
+        ),
+        DropdownMenuItem(
+          value: 'scheduled',
+          child: Text(localeProvider.translate('reports.scheduled')),
+        ),
+        DropdownMenuItem(
+          value: 'failed',
+          child: Text(localeProvider.translate('reports.failed')),
+        ),
+      ],
+      onChanged: (value) => setState(() => _selectedStatus = value!),
+    );
+  }
+
   Widget _buildReportCard(
     BuildContext context,
     Report report,
     LocaleProvider localeProvider,
     ThemeData theme,
-    bool isDark,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.8),
+        color: theme.cardColor.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -589,7 +449,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     decoration: BoxDecoration(
                       color: _getCategoryColor(
                         report.category,
-                      ).withOpacity(0.1),
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -613,7 +473,7 @@ class _ReportsPageState extends State<ReportsPage> {
                           report.id,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.textTheme.bodySmall?.color
-                                ?.withOpacity(0.6),
+                                ?.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -625,7 +485,8 @@ class _ReportsPageState extends State<ReportsPage> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(report.status).withOpacity(0.1),
+                      color:
+                          _getStatusColor(report.status).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
@@ -646,7 +507,8 @@ class _ReportsPageState extends State<ReportsPage> {
               Text(
                 report.description,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                  color:
+                      theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -680,47 +542,80 @@ class _ReportsPageState extends State<ReportsPage> {
               const SizedBox(height: 16),
 
               // Footer
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${localeProvider.translate('reports.type')}: ${report.type}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
-                    ),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: report.status == 'completed'
-                        ? () => _downloadReport(report)
-                        : null,
-                    icon: Icon(
-                      Icons.download,
-                      size: 16,
-                      color: report.status == 'completed'
-                          ? Colors.white
-                          : theme.textTheme.bodySmall?.color?.withOpacity(0.5),
-                    ),
-                    label: Text(localeProvider.translate('reports.download')),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: report.status == 'completed'
-                          ? theme.primaryColor
-                          : theme.disabledColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final compact = constraints.maxWidth < 460;
+                  if (compact) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${localeProvider.translate('reports.type')}: ${report.type}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.textTheme.bodySmall?.color?.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 10),
+                        _buildDownloadButton(theme, localeProvider, report),
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${localeProvider.translate('reports.type')}: ${report.type}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.textTheme.bodySmall?.color?.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      textStyle: const TextStyle(fontSize: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ],
+                      const SizedBox(width: 12),
+                      _buildDownloadButton(theme, localeProvider, report),
+                    ],
+                  );
+                },
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDownloadButton(
+    ThemeData theme,
+    LocaleProvider localeProvider,
+    Report report,
+  ) {
+    return ElevatedButton.icon(
+      onPressed:
+          report.status == 'completed' ? () => _downloadReport(report) : null,
+      icon: Icon(
+        Icons.download,
+        size: 16,
+        color: report.status == 'completed'
+            ? Colors.white
+            : theme.textTheme.bodySmall?.color?.withValues(alpha: 0.5),
+      ),
+      label: Text(localeProvider.translate('reports.download')),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: report.status == 'completed'
+            ? theme.primaryColor
+            : theme.disabledColor,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        textStyle: const TextStyle(fontSize: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -739,7 +634,7 @@ class _ReportsPageState extends State<ReportsPage> {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -808,7 +703,7 @@ class _ReportsPageState extends State<ReportsPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: theme.scaffoldBackgroundColor.withOpacity(0.9),
+      backgroundColor: theme.scaffoldBackgroundColor.withValues(alpha: 0.9),
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.8,
         decoration: BoxDecoration(
@@ -827,7 +722,7 @@ class _ReportsPageState extends State<ReportsPage> {
                 ),
                 border: Border(
                   bottom: BorderSide(
-                    color: theme.dividerColor.withOpacity(0.1),
+                    color: theme.dividerColor.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -839,7 +734,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     decoration: BoxDecoration(
                       color: _getCategoryColor(
                         report.category,
-                      ).withOpacity(0.1),
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -863,7 +758,7 @@ class _ReportsPageState extends State<ReportsPage> {
                           report.id,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.textTheme.bodySmall?.color
-                                ?.withOpacity(0.6),
+                                ?.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -891,12 +786,13 @@ class _ReportsPageState extends State<ReportsPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(report.status).withOpacity(0.1),
+                        color: _getStatusColor(report.status)
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: _getStatusColor(
                             report.status,
-                          ).withOpacity(0.3),
+                          ).withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -923,10 +819,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.cardColor.withOpacity(0.5),
+                        color: theme.cardColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Column(
@@ -964,10 +860,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.cardColor.withOpacity(0.5),
+                        color: theme.cardColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Column(
@@ -1009,10 +905,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.cardColor.withOpacity(0.5),
+                        color: theme.cardColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Column(
@@ -1056,10 +952,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.cardColor.withOpacity(0.5),
+                        color: theme.cardColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withOpacity(0.1),
+                          color: theme.dividerColor.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Text(
@@ -1069,8 +965,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                 'reports.no_description_available',
                               ),
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.textTheme.bodyMedium?.color?.withOpacity(
-                            0.8,
+                          color: theme.textTheme.bodyMedium?.color?.withValues(
+                            alpha: 0.8,
                           ),
                           height: 1.5,
                         ),
@@ -1133,7 +1029,8 @@ class _ReportsPageState extends State<ReportsPage> {
               '$label:',
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                color:
+                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -1141,7 +1038,8 @@ class _ReportsPageState extends State<ReportsPage> {
             child: Text(
               value,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.9),
+                color:
+                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.9),
               ),
             ),
           ),
@@ -1182,9 +1080,9 @@ class _ReportsPageState extends State<ReportsPage> {
           .collection('reports')
           .doc(report.id)
           .update({
-            'downloadCount': FieldValue.increment(1),
-            'lastUpdated': FieldValue.serverTimestamp(),
-          });
+        'downloadCount': FieldValue.increment(1),
+        'lastUpdated': FieldValue.serverTimestamp(),
+      });
 
       // Generate beautiful A4 PDF report
       final pdf = pw.Document();

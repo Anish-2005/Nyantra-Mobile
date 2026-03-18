@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, avoid_unnecessary_containers
+// ignore_for_file: avoid_unnecessary_containers, directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +9,7 @@ import '../../../core/widgets/loading_state.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/models/activity_model.dart';
 import '../../../core/utils/app_logger.dart';
+import 'dashboard_hero_header.dart';
 
 class OverviewPage extends StatefulWidget {
   final Function(int)? onNavigate;
@@ -79,65 +80,65 @@ class _OverviewPageState extends State<OverviewPage> {
     String value,
     String label,
     IconData icon,
-    bool isDark,
     int index,
   ) {
     final theme = Theme.of(context);
 
     return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: theme.cardColor.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: theme.dividerColor.withOpacity(0.1),
-              width: 1,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.cardColor.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.dividerColor.withValues(alpha: 0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.tertiary,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: theme.shadowColor.withOpacity(0.1),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            child: Icon(icon, color: Colors.white, size: 24),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: isDark
-                        ? [const Color(0xFF06B6D4), const Color(0xFF8B5CF6)]
-                        : [const Color(0xFFFB7185), const Color(0xFFFB923C)],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: Colors.white, size: 24),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                value,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.textTheme.bodyLarge?.color,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.textTheme.bodyLarge?.color,
+            ),
+            textAlign: TextAlign.center,
           ),
-        )
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    )
         .animate()
         .fadeIn(duration: 600.ms, delay: (800 + index * 100).ms)
         .scale(begin: const Offset(0.9, 0.9));
@@ -149,65 +150,67 @@ class _OverviewPageState extends State<OverviewPage> {
     String subtitle,
     IconData icon,
     VoidCallback onTap,
-    bool isDark,
     int index,
   ) {
     final theme = Theme.of(context);
 
     return InkWell(
-          onTap: onTap,
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: theme.cardColor.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: theme.cardColor.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: theme.dividerColor.withOpacity(0.1),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: theme.shadowColor.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: theme.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(icon, color: theme.primaryColor, size: 24),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  title,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: theme.textTheme.bodyLarge?.color,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+          border: Border.all(
+            color: theme.dividerColor.withValues(alpha: 0.1),
+            width: 1,
           ),
-        )
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.primaryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: theme.primaryColor, size: 24),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: theme.textTheme.bodyLarge?.color,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color:
+                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    )
         .animate()
         .fadeIn(duration: 600.ms, delay: (1200 + index * 100).ms)
         .scale(begin: const Offset(0.9, 0.9));
@@ -279,11 +282,28 @@ class _OverviewPageState extends State<OverviewPage> {
     }
   }
 
+  int _gridCrossAxisCount(double width) {
+    if (width < 360) {
+      return 1;
+    }
+    return 2;
+  }
+
+  double _actionGridAspectRatio(double width) {
+    if (width < 360) {
+      return 1.22;
+    }
+    if (width < 460) {
+      return 0.82;
+    }
+    return 0.98;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localeProvider = context.watch<LocaleProvider>();
-    final isDark = theme.brightness == Brightness.dark;
+    final screenWidth = MediaQuery.of(context).size.width;
     if (_isLoading) {
       return LoadingState(message: localeProvider.translate('common.loading'));
     }
@@ -303,120 +323,19 @@ class _OverviewPageState extends State<OverviewPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Hero Welcome Section
-                  Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: isDark
-                                ? [
-                                    const Color(0xFF06B6D4),
-                                    const Color(0xFF8B5CF6),
-                                  ]
-                                : [
-                                    const Color(0xFFFB7185),
-                                    const Color(0xFFFB923C),
-                                  ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  (isDark
-                                          ? const Color(0xFF06B6D4)
-                                          : const Color(0xFFFB7185))
-                                      .withOpacity(0.3),
-                              blurRadius: 20,
-                              spreadRadius: 2,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Badge
-                            Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.rocket_launch,
-                                        color: Colors.white,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        localeProvider.translate(
-                                          'dashboard.welcomeBack',
-                                        ),
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms)
-                                .slideY(begin: -0.2, end: 0),
-
-                            const SizedBox(height: 16),
-
-                            // Title
-                            Text(
-                                  localeProvider.translate(
-                                    'dashboard.yourDashboard',
-                                  ),
-                                  style: theme.textTheme.headlineMedium
-                                      ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1.2,
-                                      ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms, delay: 200.ms)
-                                .slideY(begin: -0.2, end: 0),
-
-                            const SizedBox(height: 8),
-
-                            // Subtitle
-                            Text(
-                                  localeProvider.translate(
-                                    'dashboard.dashboardSubtitle',
-                                  ),
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
-                                    height: 1.4,
-                                  ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms, delay: 400.ms)
-                                .slideY(begin: -0.2, end: 0),
-                          ],
-                        ),
-                      )
-                      .animate()
-                      .fadeIn(duration: 800.ms)
-                      .scale(begin: const Offset(0.95, 0.95)),
+                  Animate(
+                    effects: [FadeEffect(duration: 500.ms)],
+                    child: DashboardHeroHeader(
+                      margin: EdgeInsets.zero,
+                      icon: Icons.rocket_launch,
+                      badge: localeProvider.translate('dashboard.welcomeBack'),
+                      title:
+                          localeProvider.translate('dashboard.yourDashboard'),
+                      subtitle: localeProvider.translate(
+                        'dashboard.dashboardSubtitle',
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: 32),
 
@@ -436,7 +355,8 @@ class _OverviewPageState extends State<OverviewPage> {
 
                       // Stats Grid
                       GridView.count(
-                        crossAxisCount: 2,
+                        crossAxisCount: _gridCrossAxisCount(screenWidth),
+                        childAspectRatio: _actionGridAspectRatio(screenWidth),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         mainAxisSpacing: 16,
@@ -449,7 +369,6 @@ class _OverviewPageState extends State<OverviewPage> {
                               'dashboard.stats.totalApplications',
                             ),
                             Icons.file_copy,
-                            isDark,
                             0,
                           ),
                           _buildStatCard(
@@ -466,7 +385,6 @@ class _OverviewPageState extends State<OverviewPage> {
                               'dashboard.stats.totalDisbursed',
                             ),
                             Icons.account_balance_wallet,
-                            isDark,
                             1,
                           ),
                           _buildStatCard(
@@ -474,7 +392,6 @@ class _OverviewPageState extends State<OverviewPage> {
                             '${_stats['pendingApplications'] ?? 0}',
                             localeProvider.translate('dashboard.stats.pending'),
                             Icons.pending,
-                            isDark,
                             2,
                           ),
                           _buildStatCard(
@@ -484,7 +401,6 @@ class _OverviewPageState extends State<OverviewPage> {
                               'dashboard.stats.approved',
                             ),
                             Icons.check_circle,
-                            isDark,
                             3,
                           ),
                         ],
@@ -512,7 +428,8 @@ class _OverviewPageState extends State<OverviewPage> {
 
                       // Action Cards
                       GridView.count(
-                        crossAxisCount: 2,
+                        crossAxisCount: _gridCrossAxisCount(screenWidth),
+                        childAspectRatio: _actionGridAspectRatio(screenWidth),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         mainAxisSpacing: 16,
@@ -531,7 +448,6 @@ class _OverviewPageState extends State<OverviewPage> {
                               // Navigate to applications page
                               widget.onNavigate?.call(1);
                             },
-                            isDark,
                             0,
                           ),
                           _buildActionCard(
@@ -547,7 +463,6 @@ class _OverviewPageState extends State<OverviewPage> {
                               // Navigate to applications page
                               widget.onNavigate?.call(1);
                             },
-                            isDark,
                             1,
                           ),
                           _buildActionCard(
@@ -563,7 +478,6 @@ class _OverviewPageState extends State<OverviewPage> {
                               // Navigate to grievance page
                               widget.onNavigate?.call(5);
                             },
-                            isDark,
                             2,
                           ),
                           _buildActionCard(
@@ -579,7 +493,6 @@ class _OverviewPageState extends State<OverviewPage> {
                               // Navigate to beneficiaries page
                               widget.onNavigate?.call(2);
                             },
-                            isDark,
                             3,
                           ),
                         ],
@@ -594,15 +507,15 @@ class _OverviewPageState extends State<OverviewPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: theme.cardColor.withOpacity(0.8),
+                      color: theme.cardColor.withValues(alpha: 0.8),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: theme.dividerColor.withOpacity(0.1),
+                        color: theme.dividerColor.withValues(alpha: 0.1),
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.shadowColor.withOpacity(0.1),
+                          color: theme.shadowColor.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -642,44 +555,44 @@ class _OverviewPageState extends State<OverviewPage> {
                                   ),
                                 )
                               : _recentActivities.isEmpty
-                              ? Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Text(
-                                      localeProvider.translate(
-                                        'dashboard.recentActivity.noActivity',
-                                      ),
-                                      style: theme.textTheme.bodyMedium
-                                          ?.copyWith(
-                                            color: theme
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.color
-                                                ?.withOpacity(0.6),
+                                  ? Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Text(
+                                          localeProvider.translate(
+                                            'dashboard.recentActivity.noActivity',
                                           ),
-                                      textAlign: TextAlign.center,
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                            color: theme
+                                                .textTheme.bodyMedium?.color
+                                                ?.withValues(alpha: 0.6),
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )
+                                  : SingleChildScrollView(
+                                      child: Column(
+                                        children:
+                                            _recentActivities.map<Widget>((
+                                          activity,
+                                        ) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12,
+                                            ),
+                                            child: _buildActivityItem(
+                                              activity.title,
+                                              _formatTimeAgo(
+                                                  activity.timestamp),
+                                              activity.icon,
+                                              activity.color,
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : SingleChildScrollView(
-                                  child: Column(
-                                    children: _recentActivities.map<Widget>((
-                                      activity,
-                                    ) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 12,
-                                        ),
-                                        child: _buildActivityItem(
-                                          activity.title,
-                                          _formatTimeAgo(activity.timestamp),
-                                          activity.icon,
-                                          activity.color,
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
                         ),
                       ],
                     ),
@@ -695,4 +608,3 @@ class _OverviewPageState extends State<OverviewPage> {
     );
   }
 }
-

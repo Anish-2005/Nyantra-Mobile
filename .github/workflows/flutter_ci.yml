@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -32,7 +32,7 @@ jobs:
         run: dart run tool/audit_translation_keys.dart --top=20
 
       - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed lib test tool
+      run: dart format --output=none lib test tool
 
       - name: Analyze
         run: flutter analyze

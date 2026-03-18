@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +8,7 @@ import '../../../core/services/data_service.dart';
 import '../../../core/providers/locale_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../widgets/dashboard_hero_header.dart';
 
 // PoA Act Offences Data Structure
 const Map<String, Map<String, dynamic>> poaOffences = {
@@ -140,11 +141,14 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
       _beneficiaryError = null;
     });
 
+    final locale = context.read<LocaleProvider>();
+
     try {
       final beneficiaryDoc = await FirebaseFirestore.instance
           .collection('beneficiaries')
           .doc(beneficiaryId.trim())
           .get();
+      if (!mounted) return;
 
       if (beneficiaryDoc.exists) {
         final data = beneficiaryDoc.data()!;
@@ -199,15 +203,14 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
         setState(() {
           _beneficiaryValid = false;
           _checkingBeneficiary = false;
-          final locale = context.read<LocaleProvider>();
           _beneficiaryError = locale.translate('extracted.beneficiaryNotFound');
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _beneficiaryValid = false;
         _checkingBeneficiary = false;
-        final locale = context.read<LocaleProvider>();
         _beneficiaryError = locale.translate(
           'extracted.errorValidatingBeneficiary',
         );
@@ -343,11 +346,11 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
             colors: isDark
                 ? [
                     theme.scaffoldBackgroundColor,
-                    theme.scaffoldBackgroundColor.withOpacity(0.8),
+                    theme.scaffoldBackgroundColor.withValues(alpha: 0.8),
                   ]
                 : [
                     theme.scaffoldBackgroundColor,
-                    theme.scaffoldBackgroundColor.withOpacity(0.9),
+                    theme.scaffoldBackgroundColor.withValues(alpha: 0.9),
                   ],
           ),
         ),
@@ -359,120 +362,18 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header Section
-                  Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: isDark
-                                ? [
-                                    const Color(0xFF06B6D4),
-                                    const Color(0xFF8B5CF6),
-                                  ]
-                                : [
-                                    const Color(0xFFFB7185),
-                                    const Color(0xFFFB923C),
-                                  ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color:
-                                  (isDark
-                                          ? const Color(0xFF06B6D4)
-                                          : const Color(0xFFFB7185))
-                                      .withOpacity(0.3),
-                              blurRadius: 20,
-                              spreadRadius: 2,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Badge
-                            Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.add_circle_outline,
-                                        color: Colors.white,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        localeProvider.translate(
-                                          'applications.newApplication',
-                                        ),
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms)
-                                .slideY(begin: -0.2, end: 0),
-
-                            const SizedBox(height: 16),
-
-                            // Title
-                            Text(
-                                  localeProvider.translate(
-                                    'applications.createNewApplication',
-                                  ),
-                                  style: theme.textTheme.headlineMedium
-                                      ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1.2,
-                                      ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms, delay: 200.ms)
-                                .slideY(begin: -0.2, end: 0),
-
-                            const SizedBox(height: 8),
-
-                            // Subtitle
-                            Text(
-                                  localeProvider.translate(
-                                    'applications.fillDetailsBelow',
-                                  ),
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white.withOpacity(0.9),
-                                    height: 1.4,
-                                  ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 600.ms, delay: 400.ms)
-                                .slideY(begin: -0.2, end: 0),
-                          ],
-                        ),
-                      )
-                      .animate()
-                      .fadeIn(duration: 800.ms)
-                      .slideY(begin: -0.1, end: 0),
+                  DashboardHeroHeader(
+                    margin: EdgeInsets.zero,
+                    icon: Icons.add_circle_outline,
+                    badge:
+                        localeProvider.translate('applications.newApplication'),
+                    title: localeProvider.translate(
+                      'applications.createNewApplication',
+                    ),
+                    subtitle: localeProvider.translate(
+                      'applications.fillDetailsBelow',
+                    ),
+                  ),
 
                   const SizedBox(height: 32),
 
@@ -507,8 +408,10 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                         displayMapper: (value) => value == 'M'
                             ? localeProvider.translate('applications.male')
                             : value == 'F'
-                            ? localeProvider.translate('applications.female')
-                            : localeProvider.translate('applications.other'),
+                                ? localeProvider
+                                    .translate('applications.female')
+                                : localeProvider
+                                    .translate('applications.other'),
                       ),
                       _buildTextField(
                         _ageCtrl,
@@ -603,8 +506,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                           );
                           if (date != null) {
                             _incidentDateCtrl.text = date.toString().split(
-                              ' ',
-                            )[0];
+                                  ' ',
+                                )[0];
                           }
                         },
                       ),
@@ -695,12 +598,13 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.dividerColor.withOpacity(0.1),
+          color: theme.dividerColor.withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            color:
+                (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
             blurRadius: 10,
             spreadRadius: 0,
             offset: const Offset(0, 2),
@@ -717,12 +621,12 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
               gradient: LinearGradient(
                 colors: isDark
                     ? [
-                        theme.cardColor.withOpacity(0.8),
-                        theme.cardColor.withOpacity(0.6),
+                        theme.cardColor.withValues(alpha: 0.8),
+                        theme.cardColor.withValues(alpha: 0.6),
                       ]
                     : [
-                        theme.cardColor.withOpacity(0.9),
-                        theme.cardColor.withOpacity(0.7),
+                        theme.cardColor.withValues(alpha: 0.9),
+                        theme.cardColor.withValues(alpha: 0.7),
                       ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -780,7 +684,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+            borderSide:
+                BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -825,7 +730,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+            borderSide:
+                BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -866,10 +772,10 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                       ),
                     )
                   : _beneficiaryValid
-                  ? Icon(Icons.check_circle, color: Colors.green)
-                  : _beneficiaryError != null
-                  ? Icon(Icons.error, color: Colors.red)
-                  : null,
+                      ? Icon(Icons.check_circle, color: Colors.green)
+                      : _beneficiaryError != null
+                          ? Icon(Icons.error, color: Colors.red)
+                          : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: theme.dividerColor),
@@ -880,8 +786,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
                   color: _beneficiaryError != null
                       ? Colors.red
                       : _beneficiaryValid
-                      ? Colors.green
-                      : theme.dividerColor.withOpacity(0.5),
+                          ? Colors.green
+                          : theme.dividerColor.withValues(alpha: 0.5),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -946,7 +852,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+            borderSide:
+                BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -1005,7 +912,8 @@ class _ApplicationCreatePageState extends State<ApplicationCreatePage> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+            borderSide:
+                BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

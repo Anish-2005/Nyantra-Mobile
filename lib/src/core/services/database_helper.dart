@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: directives_ordering
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';

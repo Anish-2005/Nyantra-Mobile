@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: directives_ordering
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +68,10 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     final localeProvider = context.watch<LocaleProvider>();
     final themeProvider = context.watch<ThemeProvider>();
     final authProvider = context.watch<AuthProvider>();
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = themeProvider.isDark;
+    final selectedGradient = LinearGradient(
+      colors: [theme.colorScheme.primary, theme.colorScheme.tertiary],
+    );
 
     final List<Map<String, dynamic>> menuItems = [
       {'icon': Icons.home, 'label': localeProvider.translate('nav.dashboard')},
@@ -110,7 +113,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                 GestureDetector(
                   onTap: () => widget.onToggle?.call(false),
                   child: Container(
-                    color: Colors.black.withOpacity(0.5 * _animation.value),
+                    color:
+                        Colors.black.withValues(alpha: 0.5 * _animation.value),
                   ),
                 ),
 
@@ -126,14 +130,14 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                     height: MediaQuery.of(context).size.height,
                     constraints: const BoxConstraints(maxWidth: 280),
                     decoration: BoxDecoration(
-                      color: theme.cardColor.withOpacity(0.95),
+                      color: theme.cardColor.withValues(alpha: 0.95),
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(16),
                         bottomRight: Radius.circular(16),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 20,
                           offset: const Offset(4, 0),
                         ),
@@ -147,7 +151,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: theme.dividerColor.withOpacity(0.1),
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.1),
                                 width: 1,
                               ),
                             ),
@@ -177,27 +182,21 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                   children: [
                                     Text(
                                       localeProvider.translate('nav.brandName'),
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: theme
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.color,
-                                          ),
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.textTheme.bodyLarge?.color,
+                                      ),
                                     ),
                                     Text(
                                       localeProvider.translate(
                                         'auth.your_portal',
                                       ),
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: theme
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.color
-                                                ?.withOpacity(0.7),
-                                          ),
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.textTheme.bodyMedium?.color
+                                            ?.withValues(alpha: 0.7),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -231,19 +230,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                  gradient: isSelected
-                                      ? LinearGradient(
-                                          colors: isDark
-                                              ? [
-                                                  const Color(0xFF06B6D4),
-                                                  const Color(0xFF8B5CF6),
-                                                ]
-                                              : [
-                                                  const Color(0xFFFB7185),
-                                                  const Color(0xFFFB923C),
-                                                ],
-                                        )
-                                      : null,
+                                  gradient:
+                                      isSelected ? selectedGradient : null,
                                   color: isSelected ? null : Colors.transparent,
                                 ),
                                 child: ListTile(
@@ -288,7 +276,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                           decoration: BoxDecoration(
                             border: Border(
                               top: BorderSide(
-                                color: theme.dividerColor.withOpacity(0.1),
+                                color:
+                                    theme.dividerColor.withValues(alpha: 0.1),
                                 width: 1,
                               ),
                             ),
@@ -310,9 +299,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                       color: theme.textTheme.bodyMedium?.color,
                                       size: 20,
                                     ),
-                                    tooltip: isDark
-                                        ? 'Light Mode'
-                                        : 'Dark Mode',
+                                    tooltip:
+                                        isDark ? 'Light Mode' : 'Dark Mode',
                                   ),
                                   // Language Toggle
                                   IconButton(
@@ -343,8 +331,11 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                     localeProvider.translate('auth.sign_out'),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red.shade50,
-                                    foregroundColor: Colors.red.shade700,
+                                    backgroundColor: theme
+                                        .colorScheme.errorContainer
+                                        .withValues(alpha: 0.45),
+                                    foregroundColor:
+                                        theme.colorScheme.onErrorContainer,
                                     elevation: 0,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
@@ -352,7 +343,10 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       side: BorderSide(
-                                        color: Colors.red.shade200,
+                                        color:
+                                            theme.colorScheme.error.withValues(
+                                          alpha: 0.35,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -377,16 +371,16 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 300),
       width: widget.isOpen ? 280 : 80,
       decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.95),
+        color: theme.cardColor.withValues(alpha: 0.95),
         border: Border(
           right: BorderSide(
-            color: theme.dividerColor.withOpacity(0.1),
+            color: theme.dividerColor.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(2, 0),
           ),
@@ -400,7 +394,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: theme.dividerColor.withOpacity(0.1),
+                  color: theme.dividerColor.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -440,7 +434,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                               localeProvider.translate('auth.your_portal'),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.textTheme.bodyMedium?.color
-                                    ?.withOpacity(0.7),
+                                    ?.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -483,19 +477,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    gradient: isSelected
-                        ? LinearGradient(
-                            colors: isDark
-                                ? [
-                                    const Color(0xFF06B6D4),
-                                    const Color(0xFF8B5CF6),
-                                  ]
-                                : [
-                                    const Color(0xFFFB7185),
-                                    const Color(0xFFFB923C),
-                                  ],
-                          )
-                        : null,
+                    gradient: isSelected ? selectedGradient : null,
                     color: isSelected ? null : Colors.transparent,
                   ),
                   child: widget.isOpen
@@ -550,7 +532,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
             decoration: BoxDecoration(
               border: Border(
                 top: BorderSide(
-                  color: theme.dividerColor.withOpacity(0.1),
+                  color: theme.dividerColor.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -605,13 +587,18 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                             localeProvider.translate('auth.sign_out'),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red.shade50,
-                            foregroundColor: Colors.red.shade700,
+                            backgroundColor: theme.colorScheme.errorContainer
+                                .withValues(alpha: 0.45),
+                            foregroundColor: theme.colorScheme.onErrorContainer,
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(color: Colors.red.shade200),
+                              side: BorderSide(
+                                color: theme.colorScheme.error.withValues(
+                                  alpha: 0.35,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -652,9 +639,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         onPressed: () async {
                           await authProvider.signOut();
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.logout,
-                          color: Colors.red,
+                          color: theme.colorScheme.error,
                           size: 20,
                         ),
                         tooltip: localeProvider.translate('ui.signOut'),

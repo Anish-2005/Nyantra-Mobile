@@ -1,3 +1,5 @@
+// ignore_for_file: directives_ordering
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
 import '../utils/app_logger.dart';
@@ -130,15 +132,15 @@ class Report {
         recordCount: json['recordCount'] is int
             ? json['recordCount']
             : json['recordCount'] is String
-            ? int.tryParse(json['recordCount'])
-            : null,
+                ? int.tryParse(json['recordCount'])
+                : null,
         description: description,
         parameters: parseJsonMap(json['parameters']),
         downloadCount: json['downloadCount'] is int
             ? json['downloadCount']
             : json['downloadCount'] is String
-            ? int.tryParse(json['downloadCount']) ?? 0
-            : 0,
+                ? int.tryParse(json['downloadCount']) ?? 0
+                : 0,
         isScheduled: json['isScheduled'] is bool
             ? json['isScheduled']
             : json['isScheduled']?.toString().toLowerCase() == 'true',
