@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/app_logger.dart';
 
 enum AppLocale { en, hi }
 
@@ -9,6 +10,7 @@ class LocaleProvider extends ChangeNotifier {
   static const String _localeKey = 'nyantra_locale';
   AppLocale _locale = AppLocale.hi;
   Map<String, dynamic> _translations = {};
+  Map<String, dynamic> _fallbackTranslations = {};
 
   AppLocale get locale => _locale;
   Locale get flutterLocale =>
@@ -19,19 +21,28 @@ class LocaleProvider extends ChangeNotifier {
   }
 
   Future<void> _loadLocale() async {
-    final prefs = await SharedPreferences.getInstance();
-    final localeString = prefs.getString(_localeKey);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final localeString = prefs.getString(_localeKey);
 
-    if (localeString == 'en') {
+      if (localeString == 'en') {
+        _locale = AppLocale.en;
+      } else if (localeString == 'hi') {
+        _locale = AppLocale.hi;
+      } else {
+        // Check system language
+        final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+        _locale = systemLocale.languageCode.startsWith('hi')
+            ? AppLocale.hi
+            : AppLocale.en;
+      }
+    } catch (error, stackTrace) {
       _locale = AppLocale.en;
-    } else if (localeString == 'hi') {
-      _locale = AppLocale.hi;
-    } else {
-      // Check system language
-      final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
-      _locale = systemLocale.languageCode.startsWith('hi')
-          ? AppLocale.hi
-          : AppLocale.en;
+      AppLogger.warning(
+        'Failed to load saved locale, defaulting to English',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
 
     await _loadTranslations();
@@ -40,36 +51,60 @@ class LocaleProvider extends ChangeNotifier {
 
   Future<void> _loadTranslations() async {
     final localeFile = _locale == AppLocale.en ? 'en.json' : 'hi.json';
+    _translations = await _loadTranslationFile(localeFile);
+    _fallbackTranslations = _locale == AppLocale.en
+        ? _translations
+        : await _loadTranslationFile('en.json');
+  }
+
+  Future<Map<String, dynamic>> _loadTranslationFile(String localeFile) async {
     try {
       final jsonString = await rootBundle.loadString(
         'assets/translations/$localeFile',
       );
-      _translations = json.decode(jsonString);
-    } catch (e) {
-      _translations = {}; // Fallback to empty map
+      final decoded = json.decode(jsonString);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+      AppLogger.warning(
+        'Translation file has invalid root object',
+        error: localeFile,
+      );
+      return {};
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Failed to load translation file',
+        error: '$localeFile: $error',
+        stackTrace: stackTrace,
+      );
+      return {};
     }
   }
 
   Future<void> setLocale(AppLocale locale) async {
+    if (_locale == locale) {
+      return;
+    }
     _locale = locale;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_localeKey, locale.name);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_localeKey, locale.name);
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Failed to persist selected locale',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
     await _loadTranslations();
     notifyListeners();
   }
 
   String translate(String key, [Map<String, dynamic>? args]) {
     try {
-      final keys = key.split('.');
-      dynamic value = _translations;
-
-      for (final k in keys) {
-        if (value is Map<String, dynamic>) {
-          value = value[k];
-        } else {
-          return key; // Return key if translation not found
-        }
-      }
+      dynamic value = _resolveValue(_translations, key);
+      value ??= _resolveValue(_fallbackTranslations, key);
+      if (value == null) return key;
 
       if (value is String && args != null) {
         String result = value;
@@ -83,6 +118,19 @@ class LocaleProvider extends ChangeNotifier {
     } catch (e) {
       return key;
     }
+  }
+
+  dynamic _resolveValue(Map<String, dynamic> source, String key) {
+    final keys = key.split('.');
+    dynamic value = source;
+    for (final k in keys) {
+      if (value is Map<String, dynamic>) {
+        value = value[k];
+      } else {
+        return null;
+      }
+    }
+    return value;
   }
 
   String Function(String, [Map<String, dynamic>?]) get t => translate;

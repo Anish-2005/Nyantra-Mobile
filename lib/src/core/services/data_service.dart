@@ -59,13 +59,9 @@ class DataService {
         ...applicationsQuery2,
       ];
 
-      // Remove duplicates
-      final applicationIds = <String>{};
-      final uniqueApplications = allApplicationDocs.where((doc) {
-        if (applicationIds.contains(doc.id)) return false;
-        applicationIds.add(doc.id);
-        return true;
-      }).toList();
+      final uniqueApplications = FirestoreQueryHelper.dedupeDocsById(
+        allApplicationDocs,
+      );
 
       // Get disbursements for user's applications (sum completed amounts)
       final applicationIdsList = uniqueApplications
@@ -147,18 +143,13 @@ class DataService {
         ...applicationsQuery2,
       ];
 
-      // Remove duplicates and sort by date
-      final applicationIds = <String>{};
       final uniqueApplications =
-          allApplicationDocs.where((doc) {
-            if (applicationIds.contains(doc.id)) return false;
-            applicationIds.add(doc.id);
-            return true;
-          }).toList()..sort(
-            (a, b) => (b.data()['applicationDate'] as Timestamp).compareTo(
-              a.data()['applicationDate'] as Timestamp,
-            ),
-          );
+          FirestoreQueryHelper.dedupeDocsById(allApplicationDocs)
+            ..sort(
+              (a, b) => (b.data()['applicationDate'] as Timestamp).compareTo(
+                a.data()['applicationDate'] as Timestamp,
+              ),
+            );
 
       // Convert to activities
       for (final doc in uniqueApplications.take(limit)) {
@@ -331,13 +322,9 @@ class DataService {
             ...applicationsQuery2,
           ];
 
-          // Remove duplicates
-          final applicationIds = <String>{};
-          final uniqueApplications = allApplicationDocs.where((doc) {
-            if (applicationIds.contains(doc.id)) return false;
-            applicationIds.add(doc.id);
-            return true;
-          }).toList();
+          final uniqueApplications = FirestoreQueryHelper.dedupeDocsById(
+            allApplicationDocs,
+          );
 
           return uniqueApplications.map((doc) {
             return ApplicationModel.fromFirestore(doc.data(), doc.id);
@@ -433,14 +420,9 @@ class DataService {
             ...applicationsQuery2,
           ];
 
-          // Remove duplicates
-          final applicationIds = <String>{};
-          final uniqueApplicationIds = allApplicationDocs
-              .where((doc) {
-                if (applicationIds.contains(doc.id)) return false;
-                applicationIds.add(doc.id);
-                return true;
-              })
+          final uniqueApplicationIds = FirestoreQueryHelper.dedupeDocsById(
+                allApplicationDocs,
+              )
               .map((doc) => doc.id)
               .toList();
 

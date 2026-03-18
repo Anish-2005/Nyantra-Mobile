@@ -4,6 +4,7 @@ enum LogLevel { debug, info, warning, error }
 
 class AppLogger {
   const AppLogger._();
+  static LogLevel minimumLevel = kDebugMode ? LogLevel.debug : LogLevel.info;
 
   static void debug(
     String message, {
@@ -43,17 +44,18 @@ class AppLogger {
     Object? error,
     StackTrace? stackTrace,
   }) {
-    if (!kDebugMode && level == LogLevel.debug) {
+    if (level.index < minimumLevel.index) {
       return;
     }
 
     final tag = level.name.toUpperCase();
-    debugPrint('[$tag] $message');
+    final timestamp = DateTime.now().toUtc().toIso8601String();
+    debugPrint('[$timestamp][$tag] $message');
     if (error != null) {
-      debugPrint('[$tag] error: $error');
+      debugPrint('[$timestamp][$tag] error: $error');
     }
-    if (stackTrace != null && kDebugMode) {
-      debugPrint('[$tag] stackTrace: $stackTrace');
+    if (stackTrace != null && (kDebugMode || level == LogLevel.error)) {
+      debugPrint('[$timestamp][$tag] stackTrace: $stackTrace');
     }
   }
 }

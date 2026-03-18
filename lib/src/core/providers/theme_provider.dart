@@ -1,7 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/app_logger.dart';
 
 enum AppTheme { light, dark }
 
@@ -20,18 +23,28 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    final themeString = prefs.getString(_themeKey);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final themeString = prefs.getString(_themeKey);
 
-    if (themeString == 'light') {
-      _theme = AppTheme.light;
-    } else if (themeString == 'dark') {
+      if (themeString == 'light') {
+        _theme = AppTheme.light;
+      } else if (themeString == 'dark') {
+        _theme = AppTheme.dark;
+      } else {
+        // Check system preference
+        final brightness =
+            WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        _theme =
+            brightness == Brightness.dark ? AppTheme.dark : AppTheme.light;
+      }
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Failed to load saved theme, defaulting to dark',
+        error: error,
+        stackTrace: stackTrace,
+      );
       _theme = AppTheme.dark;
-    } else {
-      // Check system preference
-      final brightness =
-          WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      _theme = brightness == Brightness.dark ? AppTheme.dark : AppTheme.light;
     }
 
     notifyListeners();
@@ -39,13 +52,21 @@ class ThemeProvider extends ChangeNotifier {
 
   Future<void> setTheme(AppTheme theme) async {
     _theme = theme;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_themeKey, theme.name);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_themeKey, theme.name);
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Failed to persist selected theme',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
     notifyListeners();
   }
 
   void toggleTheme() {
-    setTheme(isDark ? AppTheme.light : AppTheme.dark);
+    unawaited(setTheme(isDark ? AppTheme.light : AppTheme.dark));
   }
 
   ThemeData _getThemeData() {

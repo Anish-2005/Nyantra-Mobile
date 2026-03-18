@@ -96,13 +96,10 @@ class SyncService {
         applications.addAll(applicationsQuery2);
       }
 
-      // Remove duplicates
-      final applicationIds = <String>{};
-      final uniqueApplications = applications.where((doc) {
-        if (applicationIds.contains(doc.id)) return false;
-        applicationIds.add(doc.id);
-        return true;
-      }).toList();
+      final uniqueApplications = FirestoreQueryHelper.dedupeDocsById(
+        applications,
+      );
+      final applicationIds = uniqueApplications.map((doc) => doc.id).toList();
 
       for (var doc in uniqueApplications) {
         final application = ApplicationModel.fromFirestore(doc.data(), doc.id);
@@ -115,7 +112,7 @@ class SyncService {
           firestore: FirebaseService.firestore,
           collection: FirestoreCollections.disbursements,
           field: 'applicationId',
-          values: applicationIds.toList(),
+          values: applicationIds,
         );
         for (var doc in disbursementsSnapshot) {
           final disbursement = DisbursementModel.fromFirestore(
@@ -163,13 +160,7 @@ class SyncService {
         grievances.addAll(grievancesQuery2);
       }
 
-      // Remove duplicates
-      final grievanceIds = <String>{};
-      final uniqueGrievances = grievances.where((doc) {
-        if (grievanceIds.contains(doc.id)) return false;
-        grievanceIds.add(doc.id);
-        return true;
-      }).toList();
+      final uniqueGrievances = FirestoreQueryHelper.dedupeDocsById(grievances);
 
       for (var doc in uniqueGrievances) {
         final grievance = GrievanceModel.fromFirestore(doc.data(), doc.id);
@@ -243,8 +234,12 @@ class SyncService {
           }
         }
       }
-    } catch (e) {
-      AppLogger.error('Error syncing from Firestore: $e');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error syncing from Firestore',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -262,8 +257,12 @@ class SyncService {
     if (await isOnline()) {
       try {
         await syncToFirestore();
-      } catch (e) {
-        AppLogger.error('Error syncing beneficiary immediately: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error syncing beneficiary immediately',
+          error: error,
+          stackTrace: stackTrace,
+        );
       }
     }
   }
@@ -282,8 +281,12 @@ class SyncService {
     if (await isOnline()) {
       try {
         await syncToFirestore();
-      } catch (e) {
-        AppLogger.error('Error syncing application immediately: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error syncing application immediately',
+          error: error,
+          stackTrace: stackTrace,
+        );
       }
     }
   }
@@ -302,8 +305,12 @@ class SyncService {
     if (await isOnline()) {
       try {
         await syncToFirestore();
-      } catch (e) {
-        AppLogger.error('Error syncing grievance immediately: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error syncing grievance immediately',
+          error: error,
+          stackTrace: stackTrace,
+        );
       }
     }
   }
@@ -322,8 +329,12 @@ class SyncService {
     if (await isOnline()) {
       try {
         await syncToFirestore();
-      } catch (e) {
-        AppLogger.error('Error syncing feedback immediately: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error syncing feedback immediately',
+          error: error,
+          stackTrace: stackTrace,
+        );
       }
     }
   }
@@ -381,8 +392,12 @@ class SyncService {
               'SyncService: syncToFirestore - Synced beneficiary: ${beneficiary.name}',
             );
           }
-        } catch (e) {
-          AppLogger.error('Error syncing beneficiary ${beneficiaryData['id']}: $e');
+        } catch (error, stackTrace) {
+          AppLogger.error(
+            'Error syncing beneficiary ${beneficiaryData['id']}',
+            error: error,
+            stackTrace: stackTrace,
+          );
         }
       }
 
@@ -401,8 +416,12 @@ class SyncService {
               'SyncService: syncToFirestore - Synced application: ${application.id}',
             );
           }
-        } catch (e) {
-          AppLogger.error('Error syncing application ${applicationData['id']}: $e');
+        } catch (error, stackTrace) {
+          AppLogger.error(
+            'Error syncing application ${applicationData['id']}',
+            error: error,
+            stackTrace: stackTrace,
+          );
         }
       }
 
@@ -421,8 +440,12 @@ class SyncService {
               'SyncService: syncToFirestore - Synced grievance: ${grievance.title}',
             );
           }
-        } catch (e) {
-          AppLogger.error('Error syncing grievance ${grievanceData['id']}: $e');
+        } catch (error, stackTrace) {
+          AppLogger.error(
+            'Error syncing grievance ${grievanceData['id']}',
+            error: error,
+            stackTrace: stackTrace,
+          );
         }
       }
 
@@ -444,16 +467,24 @@ class SyncService {
               'SyncService: syncToFirestore - Synced feedback: ${feedback.id}',
             );
           }
-        } catch (e) {
-          AppLogger.error('Error syncing feedback ${feedbackData['id']}: $e');
+        } catch (error, stackTrace) {
+          AppLogger.error(
+            'Error syncing feedback ${feedbackData['id']}',
+            error: error,
+            stackTrace: stackTrace,
+          );
         }
       }
 
       _syncStatusProvider?.setStatus(SyncStatus.success);
       AppLogger.info('SyncService: syncToFirestore - Upload sync completed');
-    } catch (e) {
-      _syncStatusProvider?.setStatus(SyncStatus.error, error: e.toString());
-      AppLogger.error('Error syncing to Firestore: $e');
+    } catch (error, stackTrace) {
+      _syncStatusProvider?.setStatus(SyncStatus.error, error: error.toString());
+      AppLogger.error(
+        'Error syncing to Firestore',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -472,8 +503,12 @@ class SyncService {
           return [UserModel.fromFirestore(userDoc.data()!, userDoc.id)];
         }
         return [];
-      } catch (e) {
-        AppLogger.error('Error fetching users from Firebase: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error fetching users from Firebase',
+          error: error,
+          stackTrace: stackTrace,
+        );
         return [];
       }
     }
@@ -496,8 +531,12 @@ class SyncService {
         return applicationsSnapshot.docs
             .map((doc) => ApplicationModel.fromFirestore(doc.data(), doc.id))
             .toList();
-      } catch (e) {
-        AppLogger.error('Error fetching applications from Firebase: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error fetching applications from Firebase',
+          error: error,
+          stackTrace: stackTrace,
+        );
         return [];
       }
     }
@@ -520,8 +559,12 @@ class SyncService {
         return beneficiariesSnapshot.docs
             .map((doc) => BeneficiaryModel.fromFirestore(doc.data(), doc.id))
             .toList();
-      } catch (e) {
-        AppLogger.error('Error fetching beneficiaries from Firebase: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error fetching beneficiaries from Firebase',
+          error: error,
+          stackTrace: stackTrace,
+        );
         return [];
       }
     }
@@ -561,8 +604,12 @@ class SyncService {
         return disbursementsSnapshot
             .map((doc) => DisbursementModel.fromFirestore(doc.data(), doc.id))
             .toList();
-      } catch (e) {
-        AppLogger.error('Error fetching disbursements from Firebase: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error fetching disbursements from Firebase',
+          error: error,
+          stackTrace: stackTrace,
+        );
         return [];
       }
     }
@@ -611,19 +658,19 @@ class SyncService {
           grievances.addAll(grievancesQuery2);
         }
 
-        // Remove duplicates
-        final grievanceIds = <String>{};
-        final uniqueGrievances = grievances.where((doc) {
-          if (grievanceIds.contains(doc.id)) return false;
-          grievanceIds.add(doc.id);
-          return true;
-        }).toList();
+        final uniqueGrievances = FirestoreQueryHelper.dedupeDocsById(
+          grievances,
+        );
 
         return uniqueGrievances
             .map((doc) => GrievanceModel.fromFirestore(doc.data(), doc.id))
             .toList();
-      } catch (e) {
-        AppLogger.error('Error fetching grievances from Firebase: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error fetching grievances from Firebase',
+          error: error,
+          stackTrace: stackTrace,
+        );
         return [];
       }
     }
@@ -646,8 +693,12 @@ class SyncService {
         return feedbackSnapshot.docs
             .map((doc) => FeedbackModel.fromMap(doc.id, doc.data()))
             .toList();
-      } catch (e) {
-        AppLogger.error('Error fetching feedback from Firebase: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error fetching feedback from Firebase',
+          error: error,
+          stackTrace: stackTrace,
+        );
         return [];
       }
     }
@@ -667,8 +718,12 @@ class SyncService {
         return reportsSnapshot.docs
             .map((doc) => Report.fromJson(doc.data(), doc.id))
             .toList();
-      } catch (e) {
-        AppLogger.error('Error fetching reports from Firebase: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'Error fetching reports from Firebase',
+          error: error,
+          stackTrace: stackTrace,
+        );
         return [];
       }
     }
@@ -690,8 +745,12 @@ class SyncService {
         try {
           await syncFromFirestore();
           AppLogger.info('SyncService: getReports - Background sync completed');
-        } catch (e) {
-          AppLogger.warning('SyncService: getReports - Background sync failed: $e');
+        } catch (error, stackTrace) {
+          AppLogger.warning(
+            'SyncService: getReports - Background sync failed',
+            error: error,
+            stackTrace: stackTrace,
+          );
         }
       }
       return localReports;
@@ -726,8 +785,12 @@ class SyncService {
           'SyncService: getReports - Saved ${reports.length} reports to local DB',
         );
         return reports;
-      } catch (e) {
-        AppLogger.error('SyncService: getReports - Error fetching from Firestore: $e');
+      } catch (error, stackTrace) {
+        AppLogger.error(
+          'SyncService: getReports - Error fetching from Firestore',
+          error: error,
+          stackTrace: stackTrace,
+        );
         return [];
       }
     } else {
@@ -879,9 +942,11 @@ class SyncService {
       try {
         await FirebaseService.firestore.collection(FirestoreCollections.reports).add(reportData);
         AppLogger.info('SyncService: Created sample report: ${reportData['name']}');
-      } catch (e) {
+      } catch (error, stackTrace) {
         AppLogger.error(
-          'SyncService: Error creating sample report ${reportData['name']}: $e',
+          'SyncService: Error creating sample report ${reportData['name']}',
+          error: error,
+          stackTrace: stackTrace,
         );
       }
     }

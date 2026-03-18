@@ -86,3 +86,4 @@ On Windows PowerShell, you can run all checks via:
 - Architecture: `docs/ARCHITECTURE.md`
 - Contribution Guide: `CONTRIBUTING.md`
 - Security Policy: `SECURITY.md`
+- Changelog: `CHANGELOG.md`
