@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print, use_rethrow_when_possible
-
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,10 +8,62 @@ import '../models/disbursement_model.dart';
 import '../models/grievance_model.dart';
 import '../models/feedback_model.dart';
 import '../models/activity_model.dart';
+import '../utils/app_logger.dart';
 
 class DataService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static const int _whereInLimit = 10;
+
+  static Iterable<List<T>> _chunkList<T>(List<T> values, int size) sync* {
+    for (var i = 0; i < values.length; i += size) {
+      final end = (i + size) > values.length ? values.length : i + size;
+      yield values.sublist(i, end);
+    }
+  }
+
+  static List<QueryDocumentSnapshot<Map<String, dynamic>>> _dedupeDocsById(
+    Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  ) {
+    final seenIds = <String>{};
+    final uniqueDocs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+    for (final doc in docs) {
+      if (seenIds.add(doc.id)) {
+        uniqueDocs.add(doc);
+      }
+    }
+    return uniqueDocs;
+  }
+
+  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+  _queryCollectionByIds({
+    required String collection,
+    required String whereInField,
+    required List<String> ids,
+    String? equalsField,
+    Object? equalsValue,
+  }) async {
+    if (ids.isEmpty) {
+      return [];
+    }
+
+    final docs = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+
+    for (final chunk in _chunkList(ids, _whereInLimit)) {
+      Query<Map<String, dynamic>> query = _firestore
+          .collection(collection)
+          .where(whereInField, whereIn: chunk);
+
+      if (equalsField != null) {
+        query = query.where(equalsField, isEqualTo: equalsValue);
+      }
+
+      final snapshot = await query.get();
+      docs.addAll(snapshot.docs);
+    }
+
+    return _dedupeDocsById(docs);
+  }
 
   // Dashboard Stats - filtered by current user
   static Future<Map<String, dynamic>> getDashboardStats() async {
@@ -45,16 +95,15 @@ class DataService {
           .where('ownerId', isEqualTo: currentUser.uid)
           .get();
 
-      final applicationsQuery2 = beneficiaryIds.isNotEmpty
-          ? await _firestore
-                .collection('applications')
-                .where('beneficiaryId', whereIn: beneficiaryIds)
-                .get()
-          : null;
+      final applicationsQuery2 = await _queryCollectionByIds(
+        collection: 'applications',
+        whereInField: 'beneficiaryId',
+        ids: beneficiaryIds,
+      );
 
       final allApplicationDocs = [
         ...applicationsQuery1.docs,
-        if (applicationsQuery2 != null) ...applicationsQuery2.docs,
+        ...applicationsQuery2,
       ];
 
       // Remove duplicates
@@ -93,8 +142,12 @@ class DataService {
         'totalDisbursed': totalDisbursed,
         'beneficiariesCount': beneficiariesCount,
       };
-    } catch (e) {
-      print('Error fetching dashboard stats: $e');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error fetching dashboard stats',
+        error: error,
+        stackTrace: stackTrace,
+      );
       return {
         'totalApplications': 0,
         'approvedApplications': 0,
@@ -135,16 +188,15 @@ class DataService {
           .limit(limit)
           .get();
 
-      final applicationsQuery2 = beneficiaryIds.isNotEmpty
-          ? await _firestore
-                .collection('applications')
-                .where('beneficiaryId', whereIn: beneficiaryIds.take(10))
-                .get()
-          : null;
+      final applicationsQuery2 = await _queryCollectionByIds(
+        collection: 'applications',
+        whereInField: 'beneficiaryId',
+        ids: beneficiaryIds,
+      );
 
       final allApplicationDocs = [
         ...applicationsQuery1.docs,
-        if (applicationsQuery2 != null) ...applicationsQuery2.docs,
+        ...applicationsQuery2,
       ];
 
       // Remove duplicates and sort by date
@@ -246,14 +298,20 @@ class DataService {
           .map((doc) => doc.id)
           .toList();
       if (applicationIdsList.isNotEmpty) {
-        final disbursementsQuery = await _firestore
-            .collection('disbursements')
-            .where('applicationId', whereIn: applicationIdsList.take(10))
-            .where('status', isEqualTo: 'completed')
-            .limit(limit - activities.length)
-            .get();
+        final disbursementDocs = await _queryCollectionByIds(
+          collection: 'disbursements',
+          whereInField: 'applicationId',
+          ids: applicationIdsList,
+          equalsField: 'status',
+          equalsValue: 'completed',
+        );
+        final remainingSlots =
+            (limit - activities.length).clamp(0, limit) as int;
+        final disbursementsQuery = disbursementDocs
+            .take(remainingSlots)
+            .toList();
 
-        for (final doc in disbursementsQuery.docs) {
+        for (final doc in disbursementsQuery) {
           final data = doc.data();
           final amount = (data['reliefAmount'] as num?)?.toDouble() ?? 0.0;
           final disbursementDate =
@@ -278,8 +336,12 @@ class DataService {
       activities.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
       return activities.take(limit).toList();
-    } catch (e) {
-      print('Error fetching recent activities: $e');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error fetching recent activities',
+        error: error,
+        stackTrace: stackTrace,
+      );
       return [];
     }
   }
@@ -308,19 +370,15 @@ class DataService {
               .get();
 
           // Get applications where beneficiaryId is in user's beneficiaries
-          final applicationsQuery2 = beneficiaryIds.isNotEmpty
-              ? await _firestore
-                    .collection('applications')
-                    .where(
-                      'beneficiaryId',
-                      whereIn: beneficiaryIds.take(10),
-                    ) // Firestore limit
-                    .get()
-              : null;
+          final applicationsQuery2 = await _queryCollectionByIds(
+            collection: 'applications',
+            whereInField: 'beneficiaryId',
+            ids: beneficiaryIds,
+          );
 
           final allApplicationDocs = [
             ...applicationsQuery1.docs,
-            if (applicationsQuery2 != null) ...applicationsQuery2.docs,
+            ...applicationsQuery2,
           ];
 
           // Remove duplicates
@@ -413,19 +471,15 @@ class DataService {
               .get();
 
           // Get applications where beneficiaryId is in user's beneficiaries
-          final applicationsQuery2 = beneficiaryIds.isNotEmpty
-              ? await _firestore
-                    .collection('applications')
-                    .where(
-                      'beneficiaryId',
-                      whereIn: beneficiaryIds.take(10),
-                    ) // Firestore limit
-                    .get()
-              : null;
+          final applicationsQuery2 = await _queryCollectionByIds(
+            collection: 'applications',
+            whereInField: 'beneficiaryId',
+            ids: beneficiaryIds,
+          );
 
           final allApplicationDocs = [
             ...applicationsQuery1.docs,
-            if (applicationsQuery2 != null) ...applicationsQuery2.docs,
+            ...applicationsQuery2,
           ];
 
           // Remove duplicates
@@ -447,16 +501,14 @@ class DataService {
 
           // Get disbursements for applications
           if (uniqueApplicationIds.isNotEmpty) {
-            final disbursementsSnapshot = await _firestore
-                .collection('disbursements')
-                .where(
-                  'applicationId',
-                  whereIn: uniqueApplicationIds.take(10),
-                ) // Firestore limit
-                .get();
+            final disbursementsSnapshot = await _queryCollectionByIds(
+              collection: 'disbursements',
+              whereInField: 'applicationId',
+              ids: uniqueApplicationIds,
+            );
 
             allDisbursements.addAll(
-              disbursementsSnapshot.docs.map((doc) {
+              disbursementsSnapshot.map((doc) {
                 return DisbursementModel.fromFirestore(doc.data(), doc.id);
               }).toList(),
             );
@@ -464,16 +516,14 @@ class DataService {
 
           // Get disbursements directly for beneficiaries
           if (beneficiaryIds.isNotEmpty) {
-            final beneficiaryDisbursementsSnapshot = await _firestore
-                .collection('disbursements')
-                .where(
-                  'beneficiaryId',
-                  whereIn: beneficiaryIds.take(10),
-                ) // Firestore limit
-                .get();
+            final beneficiaryDisbursementsSnapshot = await _queryCollectionByIds(
+              collection: 'disbursements',
+              whereInField: 'beneficiaryId',
+              ids: beneficiaryIds,
+            );
 
             allDisbursements.addAll(
-              beneficiaryDisbursementsSnapshot.docs.map((doc) {
+              beneficiaryDisbursementsSnapshot.map((doc) {
                 return DisbursementModel.fromFirestore(doc.data(), doc.id);
               }).toList(),
             );
@@ -673,8 +723,12 @@ class DataService {
         return UserModel.fromFirestore(doc.data()!, doc.id);
       }
       return null;
-    } catch (e) {
-      print('Error fetching user profile: $e');
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error fetching user profile',
+        error: error,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -705,16 +759,20 @@ class DataService {
         'updatedAt': FieldValue.serverTimestamp(),
       };
 
-      await _firestore.collection('feedbacks').add(feedbackData);
-    } catch (e) {
-      print('Error submitting feedback: $e');
-      throw e;
+      await _firestore.collection('feedback').add(feedbackData);
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error submitting feedback',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 
   static Stream<List<FeedbackModel>> getUserFeedbacks(String userId) {
     return _firestore
-        .collection('feedbacks')
+        .collection('feedback')
         .where('userId', isEqualTo: userId)
         .snapshots()
         .map((snapshot) {
@@ -733,19 +791,27 @@ class DataService {
   ) async {
     try {
       updates['updatedAt'] = FieldValue.serverTimestamp();
-      await _firestore.collection('feedbacks').doc(feedbackId).update(updates);
-    } catch (e) {
-      print('Error updating feedback: $e');
-      throw e;
+      await _firestore.collection('feedback').doc(feedbackId).update(updates);
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error updating feedback',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 
   static Future<void> deleteFeedback(String feedbackId) async {
     try {
-      await _firestore.collection('feedbacks').doc(feedbackId).delete();
-    } catch (e) {
-      print('Error deleting feedback: $e');
-      throw e;
+      await _firestore.collection('feedback').doc(feedbackId).delete();
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Error deleting feedback',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 }

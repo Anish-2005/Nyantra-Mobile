@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../utils/app_logger.dart';
 
 class FirebaseService {
   static FirebaseAuth? _auth;
@@ -19,22 +20,32 @@ class FirebaseService {
   }
 
   static Future<void> initialize() async {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: 'AIzaSyD8TI9q43-YJSEZ3sGiq5vDOXY7DIHLKOI',
-        authDomain: 'nyantara-388dd.firebaseapp.com',
-        projectId: 'nyantara-388dd',
-        storageBucket: 'nyantara-388dd.firebasestorage.app',
-        messagingSenderId: '680451659563',
-        appId: '1:680451659563:web:0ee90690456e61b219976e',
-        measurementId: 'G-NV8KH8EKNX',
-      ),
-    );
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: 'AIzaSyD8TI9q43-YJSEZ3sGiq5vDOXY7DIHLKOI',
+          authDomain: 'nyantara-388dd.firebaseapp.com',
+          projectId: 'nyantara-388dd',
+          storageBucket: 'nyantara-388dd.firebasestorage.app',
+          messagingSenderId: '680451659563',
+          appId: '1:680451659563:web:0ee90690456e61b219976e',
+          measurementId: 'G-NV8KH8EKNX',
+        ),
+      );
+    }
 
-    // Enable offline persistence for Firestore
-    FirebaseFirestore.instance.settings = const Settings(
-      persistenceEnabled: true,
-    );
+    try {
+      // Persistence setting should only be configured once.
+      FirebaseFirestore.instance.settings = const Settings(
+        persistenceEnabled: true,
+      );
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Firestore persistence settings were not applied',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   static Future<UserCredential> signInWithGoogle() async {

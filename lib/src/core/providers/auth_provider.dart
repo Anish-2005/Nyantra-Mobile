@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/firebase_service.dart';
@@ -8,6 +10,7 @@ class AuthProvider extends ChangeNotifier {
   User? _user;
   bool _isLoading = true;
   SyncStatusProvider? _syncStatusProvider;
+  StreamSubscription<User?>? _authStateSubscription;
 
   User? get user => _user;
   bool get isLoading => _isLoading;
@@ -18,8 +21,10 @@ class AuthProvider extends ChangeNotifier {
     _init();
   }
 
-  Future<void> _init() async {
-    FirebaseService.auth.authStateChanges().listen((User? user) {
+  void _init() {
+    _authStateSubscription = FirebaseService.auth.authStateChanges().listen((
+      User? user,
+    ) {
       _user = user;
       _isLoading = false;
 
@@ -48,5 +53,11 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('Error signing out: $e');
       rethrow;
     }
+  }
+
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
   }
 }

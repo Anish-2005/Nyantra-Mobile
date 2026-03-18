@@ -10,6 +10,7 @@ import 'src/core/providers/locale_provider.dart';
 import 'src/core/providers/auth_provider.dart';
 import 'src/core/providers/connectivity_provider.dart';
 import 'src/core/providers/sync_status_provider.dart';
+import 'src/core/utils/app_logger.dart';
 import 'src/features/auth/screens/login_screen.dart';
 import 'src/features/dashboard/screens/dashboard_screen.dart';
 
@@ -17,7 +18,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  await FirebaseService.initialize();
+  try {
+    await FirebaseService.initialize();
+  } catch (error, stackTrace) {
+    AppLogger.error(
+      'Firebase initialization failed',
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 
   // Initialize sync service only if user is authenticated and not on web
   if (!kIsWeb) {
