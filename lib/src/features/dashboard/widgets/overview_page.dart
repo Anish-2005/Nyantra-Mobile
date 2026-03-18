@@ -302,15 +302,18 @@ class _OverviewPageState extends State<OverviewPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DashboardHeroHeader(
-                    margin: EdgeInsets.zero,
-                    icon: Icons.rocket_launch,
-                    badge: localeProvider.translate('dashboard.welcomeBack'),
-                    title: localeProvider.translate('dashboard.yourDashboard'),
-                    subtitle: localeProvider.translate(
-                      'dashboard.dashboardSubtitle',
+                  Animate(
+                    effects: [FadeEffect(duration: 500.ms)],
+                    child: DashboardHeroHeader(
+                      margin: EdgeInsets.zero,
+                      icon: Icons.rocket_launch,
+                      badge: localeProvider.translate('dashboard.welcomeBack'),
+                      title: localeProvider.translate('dashboard.yourDashboard'),
+                      subtitle: localeProvider.translate(
+                        'dashboard.dashboardSubtitle',
+                      ),
                     ),
-                  ).animate().fadeIn(duration: 500.ms),
+                  ),
 
                   const SizedBox(height: 32),
 

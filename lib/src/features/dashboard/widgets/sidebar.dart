@@ -67,6 +67,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     final themeProvider = context.watch<ThemeProvider>();
     final authProvider = context.watch<AuthProvider>();
     final isDark = theme.brightness == Brightness.dark;
+    final selectedGradient = LinearGradient(
+      colors: [theme.colorScheme.primary, theme.colorScheme.tertiary],
+    );
 
     final List<Map<String, dynamic>> menuItems = [
       {'icon': Icons.home, 'label': localeProvider.translate('nav.dashboard')},
@@ -229,19 +232,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                  gradient: isSelected
-                                      ? LinearGradient(
-                                          colors: isDark
-                                              ? [
-                                                  const Color(0xFF06B6D4),
-                                                  const Color(0xFF8B5CF6),
-                                                ]
-                                              : [
-                                                  const Color(0xFFFB7185),
-                                                  const Color(0xFFFB923C),
-                                                ],
-                                        )
-                                      : null,
+                                  gradient: isSelected ? selectedGradient : null,
                                   color: isSelected ? null : Colors.transparent,
                                 ),
                                 child: ListTile(
@@ -341,8 +332,13 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                     localeProvider.translate('auth.sign_out'),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red.shade50,
-                                    foregroundColor: Colors.red.shade700,
+                                    backgroundColor: theme
+                                        .colorScheme
+                                        .errorContainer
+                                        .withValues(alpha: 0.45),
+                                    foregroundColor: theme
+                                        .colorScheme
+                                        .onErrorContainer,
                                     elevation: 0,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
@@ -350,7 +346,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       side: BorderSide(
-                                        color: Colors.red.shade200,
+                                        color: theme.colorScheme.error.withValues(
+                                          alpha: 0.35,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -481,19 +479,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    gradient: isSelected
-                        ? LinearGradient(
-                            colors: isDark
-                                ? [
-                                    const Color(0xFF06B6D4),
-                                    const Color(0xFF8B5CF6),
-                                  ]
-                                : [
-                                    const Color(0xFFFB7185),
-                                    const Color(0xFFFB923C),
-                                  ],
-                          )
-                        : null,
+                    gradient: isSelected ? selectedGradient : null,
                     color: isSelected ? null : Colors.transparent,
                   ),
                   child: widget.isOpen
@@ -603,13 +589,20 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                             localeProvider.translate('auth.sign_out'),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red.shade50,
-                            foregroundColor: Colors.red.shade700,
+                            backgroundColor: theme
+                                .colorScheme
+                                .errorContainer
+                                .withValues(alpha: 0.45),
+                            foregroundColor: theme.colorScheme.onErrorContainer,
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(color: Colors.red.shade200),
+                              side: BorderSide(
+                                color: theme.colorScheme.error.withValues(
+                                  alpha: 0.35,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -650,9 +643,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         onPressed: () async {
                           await authProvider.signOut();
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.logout,
-                          color: Colors.red,
+                          color: theme.colorScheme.error,
                           size: 20,
                         ),
                         tooltip: localeProvider.translate('ui.signOut'),

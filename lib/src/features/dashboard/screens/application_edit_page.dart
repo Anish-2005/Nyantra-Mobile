@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/models/application_model.dart';
 import '../../../core/services/data_service.dart';
 import '../../../core/providers/locale_provider.dart';
+import '../../../components/animated_background.dart';
 
 class ApplicationEditPage extends StatefulWidget {
   final ApplicationModel application;
@@ -171,6 +172,7 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
     final locale = context.watch<LocaleProvider>();
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(locale.translate('applications.editANewReliefApplication')),
         actions: [
@@ -189,13 +191,29 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
+      body: Stack(
+        children: [
+          AnimatedBackground(isDark: theme.brightness == Brightness.dark),
+          SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 980),
+                child: Container(
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: theme.dividerColor.withValues(alpha: 0.22),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
                 const SizedBox(height: 12),
                 _buildInput(
                   theme,
@@ -396,10 +414,16 @@ class _ApplicationEditPageState extends State<ApplicationEditPage> {
                 ),
 
                 const SizedBox(height: 16),
-              ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
