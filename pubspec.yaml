@@ -62,7 +62,7 @@ dependencies:
 
   # PDF Generation
   pdf: ^3.12.0
-  printing: ^5.13.3
+  printing: ^5.14.3
 
   # Speech Recognition
   speech_to_text: ^7.0.0
