@@ -1,4 +1,4 @@
-# Nyantra Mobile 🚀
+# Nyantra Mobile 🚀📈
 
 Offline-first Flutter application for managing SC/ST Act relief workflows, including applications, beneficiaries, disbursements, grievances, and feedback.
 
